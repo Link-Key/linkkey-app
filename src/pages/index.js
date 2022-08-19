@@ -1,6 +1,7 @@
 import { Button, Paper } from "@mui/material";
 import { useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { chainsInfo } from "../config/const";
 import store from "../store";
 import { splitAddress } from "../utils";
 
@@ -17,9 +18,8 @@ export default function Home() {
     try {
       await ethereum.request({
         method: "wallet_switchEthereumChain",
-        params: [{ chainId: "0x13881" }],
+        params: [{ chainId: chainsInfo.chainIdHex }],
       });
-      console.log("switch");
     } catch (switchError) {
       console.log("switchError:", switchError);
       // This error code indicates that the chain has not been added to MetaMask.
@@ -29,9 +29,9 @@ export default function Home() {
             method: "wallet_addEthereumChain",
             params: [
               {
-                chainId: "0x13881",
-                chainName: "Polygon Mumbai",
-                rpcUrls: ["https://mumbai.polygonscan.com"],
+                chainId: chainsInfo.chainIdHex,
+                chainName: chainsInfo.chainName,
+                rpcUrls: [chainsInfo.rpcUrl],
               },
             ],
           });
@@ -44,6 +44,38 @@ export default function Home() {
     }
   }, []);
 
+  const subscribeFn = useCallback(() => {
+    const eth = window.ethereum;
+    // Contract
+    // Subscribe to accounts change
+    eth.on("accountsChanged", (accounts) => {
+      console.log("accounts22:", accounts);
+      dispatch({
+        type: "SET_ACCOUNTS",
+        value: accounts[0],
+      });
+    });
+
+    // Subscribe to chainId change
+    eth.on("chainChanged", (chainId) => {
+      console.log("chainChanged:", chainId);
+      console.log("chainIdHex:", chainsInfo.chainIdHex);
+      console.log("isChain:", chainId === chainsInfo.chainIdHex);
+      if (chainId !== chainsInfo.chainIdHex) {
+        console.log("执行了");
+        dispatch({
+          type: "SET_CHAIN_ID",
+          value: null,
+        });
+
+        dispatch({
+          type: "SET_ACCOUNTS",
+          value: null,
+        });
+      }
+    });
+  }, [dispatch]);
+
   const connectWallet = useCallback(async () => {
     const eth = window.ethereum;
     if (typeof eth == "undefined") {
@@ -55,6 +87,7 @@ export default function Home() {
     const accounts = await eth.request({ method: "eth_requestAccounts" });
     console.log("accounts:", accounts);
     if (accounts && accounts[0]) {
+      subscribeFn();
       store.dispatch({
         type: "SET_ACCOUNTS",
         value: accounts[0],
@@ -67,7 +100,7 @@ export default function Home() {
     if (chainId && chainId !== 80001) {
       await switchChainToPolygon();
     }
-  }, [switchChainToPolygon]);
+  }, [subscribeFn, switchChainToPolygon]);
 
   const disconnectWallet = useCallback(() => {
     dispatch({
@@ -97,7 +130,6 @@ export default function Home() {
         <Button
           variant="contained"
           onClick={() => {
-            console.log("account111:", account);
             if (account) {
               disconnectWallet();
             } else {

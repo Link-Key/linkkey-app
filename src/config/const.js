@@ -12,3 +12,23 @@ export const linkList = {
   dao: "https://client.aragon.org/#/linkkey.aragonid.eth",
   teamDao: "https://client.aragon.org/#/linkkeyteam.aragonid.eth",
 };
+
+// Main net
+// export const chainsInfo = {
+//   chainId: "137",
+//   chainIdHex: "0x89",
+//   chainName: "Polygon Mainnet",
+//   token: "MATIC",
+//   rpcUrl: "https://polygon-rpc.com",
+//   blockExplorerUrls: "https://polygonscan.com",
+// };
+
+// Test net
+export const chainsInfo = {
+  chainId: 80001,
+  chainIdHex: "0x13881",
+  chainName: "Polygon Mumbai",
+  token: "MATIC",
+  rpcUrl: "https://rpc-mumbai.maticvigil.com/",
+  blockExplorerUrls: "https://mumbai.polygonscan.com/",
+};

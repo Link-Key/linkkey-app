@@ -99,6 +99,8 @@ export default function Home() {
     });
   }, [dispatch]);
 
+  useEffect(() => {});
+
   return (
     <div>
       <Paper

@@ -13,7 +13,7 @@ export const linkList = {
   teamDao: "https://client.aragon.org/#/linkkeyteam.aragonid.eth",
 };
 
-// Main net
+// Main Network
 // export const chainsInfo = {
 //   chainId: "137",
 //   chainIdHex: "0x89",
@@ -21,9 +21,10 @@ export const linkList = {
 //   token: "MATIC",
 //   rpcUrl: "https://polygon-rpc.com",
 //   blockExplorerUrls: "https://polygonscan.com",
+//   infuraUrl:'https://polygon-mainnet.infura.io/v3/5a380f9dfbb44b2abf9f681d39ddc382'
 // };
 
-// Test net
+// Test Network
 export const chainsInfo = {
   chainId: 80001,
   chainIdHex: "0x13881",
@@ -31,4 +32,11 @@ export const chainsInfo = {
   token: "MATIC",
   rpcUrl: "https://rpc-mumbai.maticvigil.com/",
   blockExplorerUrls: "https://mumbai.polygonscan.com/",
+  infuraUrl:
+    "https://polygon-mumbai.g.alchemy.com/v2/lzpTmazJeflJIPmTouaSiDo4uYtKC1tw",
+};
+
+// Test Network
+export const contractAddress = {
+  snsAdd: "0x23bf7e618c5C2F2772620aa7D57fE6db27eeA176",
 };

@@ -12,6 +12,8 @@ const WalletReducer = (state = initialWalletState, action) => {
       return { ...state, account: action.value };
     case "SET_CHAIN_ID":
       return { ...state, chainId: action.value };
+    case "SET_SNS_NAME":
+      return { ...state, snsName: action.value };
     default:
       return state;
   }

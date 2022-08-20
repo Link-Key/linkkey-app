@@ -1,15 +1,35 @@
 import { Link } from "@mui/material";
-import { createContext, useCallback, useContext } from "react";
-import { useDispatch } from "react-redux";
+import { createContext, useCallback, useContext, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import ToastMention from "../components/ToastMessage";
 import { chainsInfo } from "../config/const";
+import { SNSInstance, getInfo } from "../contracts/SNS";
 import store from "../store";
 
 const WalletInfoContent = createContext();
 
 const WalletProvider = ({ children }) => {
   const dispatch = useDispatch();
+  const { account } = useSelector((state) => {
+    return {
+      account: state.walletInfo.account,
+    };
+  });
 
+  const getSNSName = useCallback(async () => {
+    const info = await getInfo(account, "", 0);
+    dispatch({
+      type: "SET_SNS_NAME",
+      value: info[2],
+    });
+  }, [account, dispatch]);
+
+  // 实例化合约
+  // const initialContractInstance = () => {
+  //   SNSInstance();
+  // };
+
+  // 切换至polygon链
   const switchChainToPolygon = useCallback(async () => {
     try {
       await ethereum.request({
@@ -40,12 +60,16 @@ const WalletProvider = ({ children }) => {
     }
   }, []);
 
+  // 监听钱包的链及账户变化
   const subscribeFn = useCallback(() => {
     const eth = window.ethereum;
     // Contract
     // Subscribe to accounts change
-    eth.on("accountsChanged", (accounts) => {
+    eth.on("accountsChanged", async (accounts) => {
       console.log("accounts22:", accounts);
+
+      const info = await getInfo(accounts[0], "", 0);
+      console.log("info:", info);
       dispatch({
         type: "SET_ACCOUNTS",
         value: accounts[0],
@@ -83,8 +107,14 @@ const WalletProvider = ({ children }) => {
     console.log("eth:", eth);
 
     const accounts = await eth.request({ method: "eth_requestAccounts" });
+    console.log("accounts:", accounts);
     if (accounts && accounts[0]) {
+      // 监听账户与链的变化
       subscribeFn();
+
+      // 实例化合约
+      // initialContractInstance();
+
       store.dispatch({
         type: "SET_ACCOUNTS",
         value: accounts[0],
@@ -107,7 +137,17 @@ const WalletProvider = ({ children }) => {
       type: "SET_ACCOUNTS",
       value: null,
     });
+    dispatch({
+      type: "SET_SNS_NAME",
+      value: null,
+    });
   }, [dispatch]);
+
+  useEffect(() => {
+    if (account) {
+      getSNSName();
+    }
+  }, [getSNSName, account]);
 
   return (
     <WalletInfoContent.Provider

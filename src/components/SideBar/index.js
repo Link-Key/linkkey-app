@@ -16,6 +16,9 @@ import OuterLink from "./OuterLink";
 import InsertEmoticonIcon from "@mui/icons-material/InsertEmoticon";
 import DescriptionRoundedIcon from "@mui/icons-material/DescriptionRounded";
 import HelpCenterIcon from "@mui/icons-material/HelpCenter";
+import { useWalletInfo } from "../../providers/wallet";
+import { useSelector } from "react-redux";
+import { splitAddress } from "../../utils";
 
 const SideBarWrapper = styled(Box)(() => ({
   display: "flex",
@@ -31,21 +34,29 @@ const SideBarWrapper = styled(Box)(() => ({
   width: "260px",
 }));
 
+const menuList = [
+  {
+    name: "Profile",
+    icon: <InsertEmoticonIcon />,
+  },
+  {
+    name: "Docs",
+    icon: <DescriptionRoundedIcon />,
+  },
+  {
+    name: "FAQ",
+    icon: <HelpCenterIcon />,
+  },
+];
+
 const SideBar = () => {
-  const menuList = [
-    {
-      name: "Profile",
-      icon: <InsertEmoticonIcon />,
-    },
-    {
-      name: "Docs",
-      icon: <DescriptionRoundedIcon />,
-    },
-    {
-      name: "FAQ",
-      icon: <HelpCenterIcon />,
-    },
-  ];
+  const { connectWallet, disconnectWallet } = useWalletInfo();
+
+  const { account } = useSelector((state) => {
+    return {
+      account: state.walletInfo.account,
+    };
+  });
 
   return (
     <SideBarWrapper>
@@ -113,8 +124,15 @@ const SideBar = () => {
           sx={{
             textAlign: "center",
           }}
+          onClick={() => {
+            if (account) {
+              disconnectWallet();
+            } else {
+              connectWallet();
+            }
+          }}
         >
-          Connect Wallet
+          {account ? splitAddress(account) : "Connect Wallet"}
         </Button>
         <OuterLink />
         <Typography>© 2021-2022 by Linkkey DAO</Typography>

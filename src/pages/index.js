@@ -58,16 +58,8 @@ export default function Home() {
 
     // Subscribe to chainId change
     eth.on("chainChanged", (chainId) => {
-      console.log("chainChanged:", chainId);
-      console.log("chainIdHex:", chainsInfo.chainIdHex);
-      console.log("isChain:", chainId === chainsInfo.chainIdHex);
+      console.log("chainId:", parseInt(chainId, 16));
       if (chainId !== chainsInfo.chainIdHex) {
-        console.log("执行了");
-        dispatch({
-          type: "SET_CHAIN_ID",
-          value: null,
-        });
-
         dispatch({
           type: "SET_ACCOUNTS",
           value: null,
@@ -108,10 +100,6 @@ export default function Home() {
       value: null,
     });
   }, [dispatch]);
-
-  useEffect(() => {
-    // connectWallet();
-  }, []);
 
   return (
     <div>

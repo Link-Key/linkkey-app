@@ -5,6 +5,7 @@ import { lightTheme } from "../config/theme";
 import { Provider } from "react-redux";
 import store from "../store";
 import { useEffect, useState } from "react";
+import { WalletProvider } from "../providers/wallet";
 
 function MyApp({ Component, pageProps }) {
   const [isWin, setIsWin] = useState(false);
@@ -16,11 +17,13 @@ function MyApp({ Component, pageProps }) {
   if (isWin) {
     return (
       <Provider store={store}>
-        <ThemeProvider theme={lightTheme}>
-          <Layout>
-            <Component {...pageProps} />
-          </Layout>
-        </ThemeProvider>
+        <WalletProvider>
+          <ThemeProvider theme={lightTheme}>
+            <Layout>
+              <Component {...pageProps} />
+            </Layout>
+          </ThemeProvider>
+        </WalletProvider>
       </Provider>
     );
   } else {

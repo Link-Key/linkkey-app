@@ -1,5 +1,7 @@
+import { Link } from "@mui/material";
 import { createContext, useCallback, useContext } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import ToastMention from "../components/ToastMessage";
 import { chainsInfo } from "../config/const";
 import store from "../store";
 
@@ -7,12 +9,6 @@ const WalletInfoContent = createContext();
 
 const WalletProvider = ({ children }) => {
   const dispatch = useDispatch();
-  const { account, chainId } = useSelector((state) => {
-    return {
-      account: state.walletInfo.account,
-      chainId: state.walletInfo.chainId,
-    };
-  });
 
   const switchChainToPolygon = useCallback(async () => {
     try {
@@ -72,22 +68,34 @@ const WalletProvider = ({ children }) => {
     const eth = window.ethereum;
     if (typeof eth == "undefined") {
       console.log("MetaMask no install");
+      ToastMention({
+        message: (
+          <span>
+            Please install{" "}
+            <Link href="https://metamask.io/" target="_blank">
+              MetaMask
+            </Link>
+          </span>
+        ),
+      });
       return;
     }
     console.log("eth:", eth);
 
     const accounts = await eth.request({ method: "eth_requestAccounts" });
-    console.log("accounts:", accounts);
     if (accounts && accounts[0]) {
       subscribeFn();
       store.dispatch({
         type: "SET_ACCOUNTS",
         value: accounts[0],
       });
+      ToastMention({
+        message: "Connect wallet and sign in successfully.",
+        type: "success",
+      });
     }
 
     const chainId = eth.networkVersion;
-    console.log("chainId:", chainId);
 
     if (chainId && chainId !== 80001) {
       await switchChainToPolygon();

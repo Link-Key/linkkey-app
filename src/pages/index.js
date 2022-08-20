@@ -77,7 +77,6 @@ export default function Home() {
     console.log("eth:", eth);
 
     const accounts = await eth.request({ method: "eth_requestAccounts" });
-    console.log("accounts:", accounts);
     if (accounts && accounts[0]) {
       subscribeFn();
       store.dispatch({
@@ -87,7 +86,6 @@ export default function Home() {
     }
 
     const chainId = eth.networkVersion;
-    console.log("chainId:", chainId);
 
     if (chainId && chainId !== 80001) {
       await switchChainToPolygon();

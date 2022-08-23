@@ -15,6 +15,7 @@ import EllipsisAddress from "../../components/EllipsisAddress";
 import OuterLink from "../../components/SideBar/OuterLink";
 import SettingIcon from "../../assets/icons/common/Setting.svg";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import OperationCard from "../../components/Profile/OperationCard";
 
 const CardInfoWrapper = styled(Card)(() => ({
   display: "flex",
@@ -22,32 +23,32 @@ const CardInfoWrapper = styled(Card)(() => ({
   borderRadius: "12px",
 }));
 
-const OperationCard = styled(Card)(() => ({
-  display: "flex",
-  flexDirection: "column",
-  gap: "20px",
-  borderRadius: "12px",
-  // height: "500px",
-  padding: "16px 20px",
+// const OperationCard = styled(Card)(() => ({
+//   display: "flex",
+//   flexDirection: "column",
+//   gap: "20px",
+//   borderRadius: "12px",
+//   // height: "500px",
+//   padding: "16px 20px",
 
-  ".MuiTypography-title": {
-    fontWeight: 500,
-    fontSize: "25px",
-    color: "#9a9a9a",
-  },
-}));
+//   ".MuiTypography-title": {
+//     fontWeight: 500,
+//     fontSize: "25px",
+//     color: "#9a9a9a",
+//   },
+// }));
 
-const OperationAlert = styled(Paper)(() => ({
-  maxWidth: "500px",
-  height: "70px",
-  padding: "16px 20px",
-  borderRadius: "12px",
-  textAlign: "center",
-  background: "#ea6060",
-  color: "#fff",
-  fontWeight: 500,
-  margin: "0 auto",
-}));
+// const OperationAlert = styled(Paper)(() => ({
+//   maxWidth: "500px",
+//   height: "70px",
+//   padding: "16px 20px",
+//   borderRadius: "12px",
+//   textAlign: "center",
+//   background: "#ea6060",
+//   color: "#fff",
+//   fontWeight: 500,
+//   margin: "0 auto",
+// }));
 
 const IconButtonWrapper = styled(IconButton)(() => ({
   backgroundColor: "rgba(255, 255, 255, 0.06)",
@@ -141,7 +142,9 @@ const Profile = () => {
         </Stack>
       </CardInfoWrapper>
 
-      <OperationCard>
+      <OperationCard />
+
+      {/* <OperationCard>
         <Typography variant="title">Operation</Typography>
         <OperationAlert>
           You are not currently release Friend-NFT or Group-NFT, click the
@@ -195,7 +198,7 @@ const Profile = () => {
             </Stack>
           </Paper>
         </Stack>
-      </OperationCard>
+      </OperationCard> */}
     </Stack>
   );
 };

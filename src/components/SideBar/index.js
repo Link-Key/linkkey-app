@@ -22,6 +22,7 @@ import { splitAddress } from "../../utils";
 import CommonLoadingBtn from "../Button/LoadingButton";
 import { useRouter } from "next/router";
 import { useCallback } from "react";
+import ToastMention from "../ToastMessage";
 
 const SideBarWrapper = styled(Box)(() => ({
   display: "flex",

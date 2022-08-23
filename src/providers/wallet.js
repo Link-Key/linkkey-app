@@ -10,24 +10,65 @@ const WalletInfoContent = createContext();
 
 const WalletProvider = ({ children }) => {
   const dispatch = useDispatch();
+
   const { account } = useSelector((state) => {
     return {
       account: state.walletInfo.account,
     };
   });
 
-  const getSNSName = useCallback(async () => {
-    const info = await getInfo(account, "", 0);
+  const startLoading = useCallback(() => {
+    dispatch({
+      type: "WALLET_LOADING",
+      value: true,
+    });
+  }, [dispatch]);
+
+  const closeLoading = useCallback(() => {
+    dispatch({
+      type: "WALLET_LOADING",
+      value: false,
+    });
+  }, [dispatch]);
+
+  const disconnectWallet = useCallback(() => {
+    dispatch({
+      type: "SET_ACCOUNTS",
+      value: null,
+    });
     dispatch({
       type: "SET_SNS_NAME",
-      value: info[2],
+      value: null,
     });
-  }, [account, dispatch]);
+  }, [dispatch]);
 
-  // 实例化合约
-  // const initialContractInstance = () => {
-  //   SNSInstance();
-  // };
+  const getSNSName = useCallback(
+    async (address) => {
+      try {
+        if (address) {
+          const info = await getInfo(address, "", 0);
+          dispatch({
+            type: "SET_SNS_NAME",
+            value: info[2],
+          });
+          return;
+        }
+
+        dispatch({
+          type: "SET_SNS_NAME",
+          value: null,
+        });
+        return;
+      } catch (error) {
+        console.log("getSNSNameError:", error);
+        dispatch({
+          type: "SET_SNS_NAME",
+          value: null,
+        });
+      }
+    },
+    [dispatch]
+  );
 
   // 切换至polygon链
   const switchChainToPolygon = useCallback(async () => {
@@ -66,19 +107,19 @@ const WalletProvider = ({ children }) => {
     // Contract
     // Subscribe to accounts change
     eth.on("accountsChanged", async (accounts) => {
-      console.log("accounts22:", accounts);
+      startLoading();
+      // disconnectWallet();
+      await getSNSName(accounts[0]);
 
-      const info = await getInfo(accounts[0], "", 0);
-      console.log("info:", info);
       dispatch({
         type: "SET_ACCOUNTS",
         value: accounts[0],
       });
+      closeLoading();
     });
 
     // Subscribe to chainId change
     eth.on("chainChanged", (chainId) => {
-      console.log("chainId:", parseInt(chainId, 16));
       if (chainId !== chainsInfo.chainIdHex) {
         dispatch({
           type: "SET_ACCOUNTS",
@@ -86,12 +127,11 @@ const WalletProvider = ({ children }) => {
         });
       }
     });
-  }, [dispatch]);
+  }, [dispatch, getSNSName, startLoading, closeLoading]);
 
   const connectWallet = useCallback(async () => {
     const eth = window.ethereum;
     if (typeof eth == "undefined") {
-      console.log("MetaMask no install");
       ToastMention({
         message: (
           <span>
@@ -104,7 +144,8 @@ const WalletProvider = ({ children }) => {
       });
       return;
     }
-    console.log("eth:", eth);
+
+    startLoading();
 
     const accounts = await eth.request({ method: "eth_requestAccounts" });
     console.log("accounts:", accounts);
@@ -112,42 +153,39 @@ const WalletProvider = ({ children }) => {
       // 监听账户与链的变化
       subscribeFn();
 
-      // 实例化合约
-      // initialContractInstance();
-
       store.dispatch({
         type: "SET_ACCOUNTS",
         value: accounts[0],
       });
+
+      // 获取SNS名称
+      await getSNSName(accounts[0]);
+
       ToastMention({
         message: "Connect wallet and sign in successfully.",
         type: "success",
       });
     }
+    closeLoading();
 
     const chainId = eth.networkVersion;
 
     if (chainId && chainId !== 80001) {
       await switchChainToPolygon();
     }
-  }, [subscribeFn, switchChainToPolygon]);
-
-  const disconnectWallet = useCallback(() => {
-    dispatch({
-      type: "SET_ACCOUNTS",
-      value: null,
-    });
-    dispatch({
-      type: "SET_SNS_NAME",
-      value: null,
-    });
-  }, [dispatch]);
+  }, [
+    subscribeFn,
+    switchChainToPolygon,
+    getSNSName,
+    startLoading,
+    closeLoading,
+  ]);
 
   useEffect(() => {
     if (account) {
-      getSNSName();
+      getSNSName(account);
     }
-  }, [getSNSName, account]);
+  }, [getSNSName, account, startLoading, closeLoading]);
 
   return (
     <WalletInfoContent.Provider

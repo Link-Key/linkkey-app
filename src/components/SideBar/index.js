@@ -19,6 +19,9 @@ import HelpCenterIcon from "@mui/icons-material/HelpCenter";
 import { useWalletInfo } from "../../providers/wallet";
 import { useSelector } from "react-redux";
 import { splitAddress } from "../../utils";
+import CommonLoadingBtn from "../Button/LoadingButton";
+import { useRouter } from "next/router";
+import { useCallback } from "react";
 
 const SideBarWrapper = styled(Box)(() => ({
   display: "flex",
@@ -32,6 +35,28 @@ const SideBarWrapper = styled(Box)(() => ({
   boxShadow: "1px 0px 0px rgba(255, 255, 255, 0.1)",
 
   width: "260px",
+}));
+
+const SideListItem = styled(ListItemButton)((props) => ({
+  display: "flex",
+  width: "100%",
+  background: props.active ? "#00000012" : "transparent",
+  borderRadius: "16px",
+  cursor: "pointer",
+  span: {
+    fontSize: 16,
+    fontWeight: 500,
+  },
+  "& span,svg": {
+    color: props.active ? "#ea6060" : "inherit",
+  },
+  "&:hover": {
+    backgroundColor: "#00000012",
+    color: "#ea6060",
+    svg: {
+      color: "#ea6060",
+    },
+  },
 }));
 
 const menuList = [
@@ -52,11 +77,44 @@ const menuList = [
 const SideBar = () => {
   const { connectWallet, disconnectWallet } = useWalletInfo();
 
-  const { account } = useSelector((state) => {
+  const router = useRouter();
+
+  const { account, connecting } = useSelector((state) => {
     return {
       account: state.walletInfo.account,
+      connecting: state.walletInfo.connecting,
     };
   });
+
+  const handleHref = (name) => {
+    if (name === "Profile") {
+      if (account) {
+        return router.push(`/${name}/${account}`);
+      }
+      ToastMention({ message: "未注册SNS域名", type: "warn" });
+      return null;
+    }
+    return router.push(`/${name}`);
+  };
+
+  const handleListActive = useCallback(
+    (item) => {
+      if (item.name === "Profile") {
+        const address =
+          router.query && router.query.address ? router.query.address[0] : "";
+        if (
+          router.pathname.includes(item.name) &&
+          address &&
+          address === account
+        ) {
+          return 1;
+        }
+        return 0;
+      }
+      return router.pathname.includes(item.name) ? 1 : 0;
+    },
+    [router, account]
+  );
 
   return (
     <SideBarWrapper>
@@ -69,6 +127,9 @@ const SideBar = () => {
             img: {
               width: "100%",
             },
+          }}
+          onClick={() => {
+            router.push("/");
           }}
         >
           <Image src={LinkkeyLogo} alt="logo" />
@@ -86,28 +147,16 @@ const SideBar = () => {
           }}
         >
           {menuList.map((item, index) => (
-            <ListItemButton
+            <SideListItem
               key={index}
-              sx={{
-                display: "flex",
-                width: "100%",
-                borderRadius: "16px",
-                span: {
-                  fontSize: 16,
-                  fontWeight: 500,
-                },
-                "&:hover": {
-                  backgroundColor: "#ea606063",
-                  color: "white",
-                  svg: {
-                    color: "white",
-                  },
-                },
+              active={handleListActive(item)}
+              onClick={() => {
+                handleHref(item.name);
               }}
             >
               <ListItemIcon>{item.icon}</ListItemIcon>
               <ListItemText primary={item.name} />
-            </ListItemButton>
+            </SideListItem>
           ))}
         </List>
       </Box>
@@ -119,8 +168,9 @@ const SideBar = () => {
           gap: "25px",
         }}
       >
-        <Button
+        <CommonLoadingBtn
           variant="outlined"
+          loading={connecting}
           sx={{
             textAlign: "center",
           }}
@@ -132,8 +182,8 @@ const SideBar = () => {
             }
           }}
         >
-          {account ? splitAddress(account) : "Connect Wallet"}
-        </Button>
+          {account ? "disconnect" : "Connect Wallet"}
+        </CommonLoadingBtn>
         <OuterLink />
         <Typography>© 2021-2022 by Linkkey DAO</Typography>
       </Box>

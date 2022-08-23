@@ -5,12 +5,10 @@ import SNSContract from "./ABI.json";
 
 export const SNSInstance = () => {
   const provider = getProvider();
-  getSigner().then((signer) => {
-    console.log("signer:", signer);
-  });
-  console.log("provider:", provider);
+  // getSigner().then((signer) => {
+  //   console.log("signer:", signer);
+  // });
   const SNS = new Contract(contractAddress.snsAdd, SNSContract, provider);
-  console.log("sns:", SNS);
   return SNS;
 };
 

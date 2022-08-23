@@ -1,122 +1,58 @@
-import { Button, Paper } from "@mui/material";
+import { LoadingButton } from "@mui/lab";
+import { Box, Button, Paper, Typography } from "@mui/material";
 import { useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import CommonLoadingBtn from "../components/Button/LoadingButton";
 import { chainsInfo } from "../config/const";
+import { useWalletInfo } from "../providers/wallet";
 import store from "../store";
 import { splitAddress } from "../utils";
 
 export default function Home() {
-  const dispatch = useDispatch();
-  const { account, chainId } = useSelector((state) => {
+  const { connectWallet, disconnectWallet } = useWalletInfo();
+  const { account, snsName, connecting } = useSelector((state) => {
     return {
       account: state.walletInfo.account,
-      chainId: state.walletInfo.chainId,
+      snsName: state.walletInfo.snsName,
+      connecting: state.walletInfo.connecting,
     };
   });
 
-  const switchChainToPolygon = useCallback(async () => {
-    try {
-      await ethereum.request({
-        method: "wallet_switchEthereumChain",
-        params: [{ chainId: chainsInfo.chainIdHex }],
-      });
-    } catch (switchError) {
-      console.log("switchError:", switchError);
-      // This error code indicates that the chain has not been added to MetaMask.
-      if (switchError.code === 4902) {
-        try {
-          await ethereum.request({
-            method: "wallet_addEthereumChain",
-            params: [
-              {
-                chainId: chainsInfo.chainIdHex,
-                chainName: chainsInfo.chainName,
-                rpcUrls: [chainsInfo.rpcUrl],
-              },
-            ],
-          });
-        } catch (addError) {
-          console.log("addError:", addError);
-          // handle "add" error
-        }
-      }
-      // handle other "switch" errors
-    }
-  }, []);
-
-  const subscribeFn = useCallback(() => {
-    const eth = window.ethereum;
-    // Contract
-    // Subscribe to accounts change
-    eth.on("accountsChanged", (accounts) => {
-      console.log("accounts22:", accounts);
-      dispatch({
-        type: "SET_ACCOUNTS",
-        value: accounts[0],
-      });
-    });
-
-    // Subscribe to chainId change
-    eth.on("chainChanged", (chainId) => {
-      console.log("chainId:", parseInt(chainId, 16));
-      if (chainId !== chainsInfo.chainIdHex) {
-        dispatch({
-          type: "SET_ACCOUNTS",
-          value: null,
-        });
-      }
-    });
-  }, [dispatch]);
-
-  const connectWallet = useCallback(async () => {
-    const eth = window.ethereum;
-    if (typeof eth == "undefined") {
-      console.log("MetaMask no install");
-      return;
-    }
-    console.log("eth:", eth);
-
-    const accounts = await eth.request({ method: "eth_requestAccounts" });
-    if (accounts && accounts[0]) {
-      subscribeFn();
-      store.dispatch({
-        type: "SET_ACCOUNTS",
-        value: accounts[0],
-      });
-    }
-
-    const chainId = eth.networkVersion;
-
-    if (chainId && chainId !== 80001) {
-      await switchChainToPolygon();
-    }
-  }, [subscribeFn, switchChainToPolygon]);
-
-  const disconnectWallet = useCallback(() => {
-    dispatch({
-      type: "SET_ACCOUNTS",
-      value: null,
-    });
-  }, [dispatch]);
-
-  useEffect(() => {});
-
   return (
-    <div>
+    <Box
+      sx={{
+        position: "relative",
+      }}
+    >
       <Paper
         sx={{
-          width: "200px",
-          height: "200px",
+          position: "absolute",
+          top: "30vh",
+          right: "100px",
+
+          width: "400px",
+          height: "300px",
           borderRadius: "12px",
           boxShadow: "none",
+          padding: "20px",
 
           display: "flex",
+          // flexDirection: "column",
           justifyContent: "center",
-          alignItems: "center",
+          alignItems: "flex-start",
         }}
       >
-        <Button
+        <Typography
+          sx={{
+            textAlign: "center",
+          }}
+        >
+          {account ? snsName : null}
+        </Typography>
+
+        <CommonLoadingBtn
           variant="contained"
+          loading={connecting}
           onClick={() => {
             if (account) {
               disconnectWallet();
@@ -125,9 +61,9 @@ export default function Home() {
             }
           }}
         >
-          {account ? splitAddress(account) : "Connect Wallet"}
-        </Button>
+          {account ? splitAddress(account) : "🦊Connect Wallet"}
+        </CommonLoadingBtn>
       </Paper>
-    </div>
+    </Box>
   );
 }

@@ -4,6 +4,7 @@ const initialWalletState = {
   chainId: chainsInfo.chainId,
   account: null,
   snsName: null,
+  connecting: false,
 };
 
 const WalletReducer = (state = initialWalletState, action) => {
@@ -14,6 +15,8 @@ const WalletReducer = (state = initialWalletState, action) => {
       return { ...state, chainId: action.value };
     case "SET_SNS_NAME":
       return { ...state, snsName: action.value };
+    case "WALLET_LOADING":
+      return { ...state, connecting: action.value };
     default:
       return state;
   }

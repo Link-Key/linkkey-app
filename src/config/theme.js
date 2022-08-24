@@ -73,6 +73,54 @@ const lightTheme = responsiveFontSizes(
           },
         },
       },
+      MuiCard: {
+        styleOverrides: {
+          root: {
+            borderRadius: "12px",
+            padding: "16px 20px",
+          },
+        },
+      },
+      MuiPaper: {
+        styleOverrides: {
+          root: {
+            borderRadius: "12px",
+            padding: "16px 20px",
+          },
+        },
+      },
+      MuiStack: {
+        styleOverrides: {
+          root: {
+            borderRadius: "12px",
+            padding: "16px 20px",
+          },
+        },
+      },
+      MuiDialog: {
+        styleOverrides: {
+          root: {
+            top: "-10vh",
+          },
+        },
+      },
+      MuiInputBase: {
+        styleOverrides: {
+          root: {
+            border: "1px solid #ddd",
+            padding: "2px 15px",
+            borderRadius: "12px",
+            caretColor: "#ea6060",
+          },
+        },
+      },
+      MuiMenuItem: {
+        styleOverrides: {
+          root: {
+            borderRadius: "12px",
+          },
+        },
+      },
     },
   })
 );

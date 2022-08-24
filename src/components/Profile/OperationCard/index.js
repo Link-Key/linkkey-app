@@ -8,8 +8,6 @@ const OperationCardWrapper = styled(Card)(() => ({
   flexDirection: "column",
   gap: "20px",
   borderRadius: "12px",
-  // height: "500px",
-  padding: "16px 20px",
 
   ".MuiTypography-title": {
     fontWeight: 500,
@@ -19,9 +17,8 @@ const OperationCardWrapper = styled(Card)(() => ({
 }));
 
 const OperationAlert = styled(Paper)(() => ({
-  maxWidth: "500px",
+  width: "500px",
   height: "70px",
-  padding: "16px 20px",
   borderRadius: "12px",
   textAlign: "center",
   background: "#ea6060",
@@ -30,23 +27,7 @@ const OperationAlert = styled(Paper)(() => ({
   margin: "0 auto",
 }));
 
-const ReleaseIntroduce = {
-  friend: ["1.twitter verification", "2.friend-nft", "3.friend-nft", "4.when"],
-
-  group: ["1.twitter verification", "2.group-nft", "3.group-nft", "4.when"],
-};
-
 const OperationCard = () => {
-  const [infoVisible, setInfoVisible] = useState(false);
-
-  const openInfoDialog = useCallback(() => {
-    setInfoVisible(true);
-  }, []);
-
-  const closeInfoDialog = useCallback(() => {
-    setInfoVisible(false);
-  }, []);
-
   return (
     <OperationCardWrapper>
       <Typography variant="title">Operation</Typography>
@@ -54,14 +35,13 @@ const OperationCard = () => {
         You are not currently release Friend-NFT or Group-NFT, click the button
         below to release your NFT!
       </OperationAlert>
+
       <Stack
         direction="row"
         spacing={2}
         sx={{
           "& .MuiPaper-root": {
             width: "100%",
-            minHeight: "300px",
-            padding: "16px 20px",
             borderRadius: "12px",
           },
           ".MuiTypography-subtitle1": {
@@ -74,22 +54,8 @@ const OperationCard = () => {
           },
         }}
       >
-        <Details
-          title="Friend-NFT details"
-          btnText="Release Friend-NFT"
-          open={infoVisible}
-          openFn={openInfoDialog}
-          closeFn={closeInfoDialog}
-          introduceList={ReleaseIntroduce.friend}
-        />
-        <Details
-          title="Friend-NFT details"
-          btnText="Release Friend-NFT"
-          open={infoVisible}
-          openFn={openInfoDialog}
-          closeFn={closeInfoDialog}
-          introduceList={ReleaseIntroduce.group}
-        />
+        <Details type="friend" />
+        <Details type="group" />
       </Stack>
     </OperationCardWrapper>
   );

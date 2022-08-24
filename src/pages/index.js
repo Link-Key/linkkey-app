@@ -34,7 +34,6 @@ export default function Home() {
           height: "300px",
           borderRadius: "12px",
           boxShadow: "none",
-          padding: "20px",
 
           display: "flex",
           // flexDirection: "column",

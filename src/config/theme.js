@@ -25,6 +25,7 @@ const lightTheme = responsiveFontSizes(
         styleOverrides: {
           root: {
             borderRadius: "12px",
+            textTransform: "none",
           },
           containedPrimary: {},
         },
@@ -118,6 +119,7 @@ const lightTheme = responsiveFontSizes(
         styleOverrides: {
           root: {
             borderRadius: "12px",
+            margin: "5px 0",
           },
         },
       },

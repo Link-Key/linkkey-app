@@ -9,7 +9,7 @@ import {
   styled,
   Typography,
 } from "@mui/material";
-import { memo } from "react";
+import { memo, useCallback, useState } from "react";
 import { useSelector } from "react-redux";
 import EllipsisAddress from "../../components/EllipsisAddress";
 import OuterLink from "../../components/SideBar/OuterLink";
@@ -17,6 +17,7 @@ import SettingIcon from "../../assets/icons/common/Setting.svg";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import OperationCard from "../../components/Profile/OperationCard";
 import FriendAndGroupCard from "../../components/Profile/FriendAndGroupCard";
+import DIDCardDialog from "../../components/DIDCardDialog";
 
 const CardInfoWrapper = styled(Card)(() => ({
   display: "flex",
@@ -60,6 +61,16 @@ const Profile = () => {
     };
   });
 
+  const [showDIDCard, setShowDIDCard] = useState(false);
+
+  const handleShowDIDCard = useCallback(() => {
+    setShowDIDCard(true);
+  }, []);
+
+  const handleCloseDIDCard = useCallback(() => {
+    setShowDIDCard(false);
+  }, []);
+
   return (
     <Stack spacing={3}>
       <CardInfoWrapper>
@@ -100,7 +111,9 @@ const Profile = () => {
           alignItems="flex-end"
           justifyContent="space-between"
         >
-          <Button variant="outlined">DID Card</Button>
+          <Button variant="outlined" onClick={handleShowDIDCard}>
+            DID Card
+          </Button>
           <IconButtonWrapper>
             <SettingIcon />
           </IconButtonWrapper>
@@ -110,6 +123,12 @@ const Profile = () => {
       <OperationCard />
 
       <FriendAndGroupCard />
+
+      <DIDCardDialog
+        open={showDIDCard}
+        onOpen={handleShowDIDCard}
+        onClose={handleCloseDIDCard}
+      />
     </Stack>
   );
 };

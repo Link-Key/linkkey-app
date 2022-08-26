@@ -17,36 +17,9 @@ import CloseIcon from "@mui/icons-material/Close";
 import TwitterIcon from "../../../assets/icons/common/twitterIcon.svg";
 import ToastMention from "../../ToastMessage";
 import EllipsisAddress from "../../EllipsisAddress";
-
-const BaseDialog = styled(Dialog)(() => ({
-  "& .MuiDialog-paper": {
-    borderRadius: 40,
-    width: "600px",
-    "& .MuiDialogTitle-root": {
-      display: "flex",
-      justifyContent: "center",
-      paddingTop: "20px",
-      fontSize: "24px",
-      fontWeight: 700,
-      color: "#ea6060",
-      ".MuiTypography-root": {
-        fontSize: "24px",
-        fontWeight: 700,
-        color: "#ea6060",
-      },
-    },
-    "& .MuiButton-root": {
-      textTransform: "none",
-      fontWeight: 700,
-      fontSize: "15px",
-    },
-    ".MuiDialogContent-root": {
-      display: "flex",
-      flexDirection: "column",
-      justifyContent: "center",
-    },
-  },
-}));
+import CommonDialog from "../../CommonDialog";
+import TransferDialog from "./TransferDialog";
+import SaleDialog from "./SaleDialog";
 
 const ReleaseData = styled(Box)(() => ({
   display: "flex",
@@ -61,10 +34,8 @@ const ReleaseData = styled(Box)(() => ({
 const ReleaseDetailsWrapper = styled(Box)(() => ({
   display: "flex",
   flexDirection: "column",
-  gap: "20px",
+  gap: "10px",
   marginTop: "10px",
-  padding: "10px 0",
-  borderTop: "1px solid #ddd",
 
   ".MuiTypography-root": {
     fontSize: "15px",
@@ -99,14 +70,26 @@ const TypographyBox = styled(Box)(() => ({
 }));
 
 const ReleaseIntroduce = {
-  friend: ["1.twitter verification", "2.friend-nft", "3.friend-nft", "4.when"],
-
-  group: ["1.twitter verification", "2.group-nft", "3.group-nft", "4.when"],
+  friend: [
+    "1. Twitter verification is required to release friend-NFT and only eligible Twitter accounts can be released",
+    "2. friend-NFT can be released by paying the release service fee",
+    "3. friend-NFT is fixed at 150 nft, all of which can be sold to the public",
+    "4. When releasing friend-NFT, a flat floor price is currently set to avoid pricing reasonableness",
+  ],
+  group: [
+    "1. Twitter verification is required to release group-NFT and only eligible Twitter accounts can be released",
+    "2. group-NFT can be released by paying the release service fee",
+    "3. group-NFT is fixed at 1500 nft, all of which can be sold to the public",
+    "4. When releasing group-NFT, a flat floor price is currently set to avoid pricing reasonableness",
+  ],
 };
 
 const Details = ({ type }) => {
   const [infoOpen, setInfoOpen] = useState(false);
   const [releaseOpen, setReleaseOpen] = useState(false);
+  const [transferOpen, setTransferOpen] = useState(false);
+  const [saleOpen, setSaleOpen] = useState(false);
+
   const [showDetails, setShowDetails] = useState(false);
 
   const [twitterStatus, setTwitterStatus] = useState(false);
@@ -123,17 +106,10 @@ const Details = ({ type }) => {
     setReleaseOpen(false);
   }, []);
 
-  // check is required
-  const judgeMint = useCallback(() => {
-    if (mintInp.length === 0) {
-      ToastMention({ message: "mint value is required" });
-    }
-  }, [mintInp]);
-
   const changeMintInp = (e) => {
     const value = e.target.value;
     if (/^[0-9]*$/.test(value)) {
-      setMintInp(e.target.value);
+      setMintInp(value);
     }
   };
 
@@ -146,7 +122,13 @@ const Details = ({ type }) => {
 
   return (
     <Paper>
-      <Typography variant="subtitle1">
+      <Typography
+        variant="subtitle1"
+        sx={{
+          padding: "10px 0",
+          borderBottom: "1px solid #ddd",
+        }}
+      >
         {isFriend ? "Friend-NFT details" : "Group-NFT details"}
       </Typography>
 
@@ -158,12 +140,32 @@ const Details = ({ type }) => {
               <EllipsisAddress account="0x5435e8bb74d7ba8f4a76287dc0e75e203d87647e" />
             </ReleaseDetailsItem>
             <Typography>Release Amount: 150</Typography>
-            <Typography>Mint to self: 50</Typography>
+            <Typography>Holding Amount: 50</Typography>
+            <Typography>Total earnings: 16.6 KEY</Typography>
+            <Typography>Royalties: 5%</Typography>
 
             <Typography variant="subtitle1">
               Note:Your Friend-NFT is still not listed,please click button below
               for listing operation
             </Typography>
+            <Stack direction="row" justifyContent="center" spacing={2}>
+              <Button
+                variant="outlined"
+                onClick={() => {
+                  setTransferOpen(true);
+                }}
+              >
+                Transfer
+              </Button>
+              <Button
+                variant="outlined"
+                onClick={() => {
+                  setSaleOpen(true);
+                }}
+              >
+                Sale
+              </Button>
+            </Stack>
           </ReleaseDetailsWrapper>
         ) : (
           <Stack
@@ -193,28 +195,14 @@ const Details = ({ type }) => {
         )}
       </Box>
 
-      <BaseDialog aria-label="Release_NFT_Modal" open={releaseOpen}>
-        <DialogTitle>
-          <Typography>
-            {isFriend ? "Release Friend-NFT" : "Release Group-NFT"}
-          </Typography>
-
-          <IconButton
-            aria-label="close"
-            onClick={() => {
-              setReleaseOpen(false);
-            }}
-            sx={{
-              position: "absolute",
-              right: 18,
-              top: 18,
-              color: (theme) => theme.palette.grey[500],
-            }}
-          >
-            <CloseIcon />
-          </IconButton>
-        </DialogTitle>
-
+      {/* Release Modal */}
+      <CommonDialog
+        open={releaseOpen}
+        title={isFriend ? "Release Friend-NFT" : "Release Group-NFT"}
+        onClose={() => {
+          setReleaseOpen(false);
+        }}
+      >
         <DialogContent aria-label="Release_NFT">
           <ReleaseData>
             <Typography>Release amount: {isFriend ? "150" : "1500"}</Typography>
@@ -268,39 +256,67 @@ const Details = ({ type }) => {
               contract
             </Typography>
           </ReleaseData>
-          <Button
-            variant="contained"
-            onClick={() => {
-              handlePayMint();
-            }}
-          >
-            Pay 100 Key
-          </Button>
         </DialogContent>
-      </BaseDialog>
+        <Button
+          variant="contained"
+          sx={{
+            margin: "0 auto",
+          }}
+          onClick={() => {
+            handlePayMint();
+          }}
+        >
+          Pay 100 Key
+        </Button>
+      </CommonDialog>
 
-      <BaseDialog open={infoOpen}>
-        <DialogTitle>Release Introduce</DialogTitle>
+      {/* Info modal */}
+      <CommonDialog
+        open={infoOpen}
+        title="Release Introduce"
+        onClose={() => {
+          setInfoOpen(false);
+        }}
+      >
         <DialogContent>
-          <Box>
+          <Stack direction="column" spacing={3}>
             {introduceList &&
               introduceList.map((item, index) => (
-                <Typography key={index}>{item}</Typography>
+                <Typography key={index} sx={{ fontWeight: 500 }}>
+                  {item}
+                </Typography>
               ))}
-          </Box>
-          <Button
-            variant="contained"
-            sx={{
-              margin: "0 auto",
-            }}
-            onClick={() => {
-              setInfoOpen(false);
-            }}
-          >
-            OK
-          </Button>
+          </Stack>
         </DialogContent>
-      </BaseDialog>
+        <Button
+          variant="contained"
+          sx={{
+            margin: "0 auto",
+          }}
+          onClick={() => {
+            setInfoOpen(false);
+          }}
+        >
+          OK
+        </Button>
+      </CommonDialog>
+
+      <TransferDialog
+        open={transferOpen}
+        title="Transfer"
+        contractAdd="0x5435e8bb74d7ba8f4a76287dc0e75e203d87647e"
+        onClose={() => {
+          setTransferOpen(false);
+        }}
+      />
+      <SaleDialog
+        open={saleOpen}
+        title="Sale"
+        contractAdd="0x5435e8bb74d7ba8f4a76287dc0e75e203d87647e"
+        onClose={() => {
+          setSaleOpen(false);
+        }}
+      />
     </Paper>
   );
 };

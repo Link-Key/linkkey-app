@@ -16,13 +16,14 @@ const LinkBtn = styled(Link)(() => ({
   },
 }));
 
-const OuterLink = () => {
+const OuterLink = ({ sx }) => {
   return (
     <Box
       sx={{
         display: "flex",
         justifyContent: "center",
         gap: "21px",
+        ...sx,
       }}
     >
       {/* <LinkBtn href="#" underline="none">

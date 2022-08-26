@@ -46,6 +46,10 @@ a {
   }
 }
 
+.MuiPopover-paper{
+  /* padding:0px !important; */
+}
+
 
 ::-webkit-scrollbar {
   width: 3px;

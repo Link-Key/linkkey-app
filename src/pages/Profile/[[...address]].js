@@ -76,7 +76,7 @@ const Profile = () => {
   return (
     <Stack spacing={3}>
       <CardInfoWrapper>
-        <Stack direction="row" alignItems="center" spacing={4}>
+        <Stack direction="row" alignItems="flex-start" spacing={4}>
           <Avatar
             sx={{
               width: "100px",
@@ -84,7 +84,7 @@ const Profile = () => {
               borderRadius: "12px",
             }}
           />
-          <Stack spacing={2}>
+          <Stack spacing={2} p={0}>
             <Typography
               sx={{
                 fontWeight: 700,
@@ -105,7 +105,8 @@ const Profile = () => {
             >
               <EllipsisAddress account={account} />
             </Box>
-            <OuterLink />
+            <OuterLink sx={{ justifyContent: "flex-start" }} />
+            <Typography>description</Typography>
           </Stack>
         </Stack>
         <Stack

@@ -17,6 +17,8 @@ import SettingIcon from "../../assets/icons/common/Setting.svg";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import OperationCard from "../../components/Profile/OperationCard";
 import FriendAndGroupCard from "../../components/Profile/FriendAndGroupCard";
+import DIDCardDialog from "../../components/DIDCardDialog";
+import { useRouter } from "next/router";
 
 const CardInfoWrapper = styled(Card)(() => ({
   display: "flex",
@@ -117,8 +119,14 @@ const Profile = () => {
           alignItems="flex-end"
           justifyContent="space-between"
         >
-          <Button variant="outlined">DID Card</Button>
-          <IconButtonWrapper>
+          <Button variant="outlined" onClick={handleShowDIDCard}>
+            DID Card
+          </Button>
+          <IconButtonWrapper
+            onClick={() => {
+              router.push("/Setting");
+            }}
+          >
             <SettingIcon />
           </IconButtonWrapper>
         </Stack>
@@ -127,6 +135,12 @@ const Profile = () => {
       <OperationCard />
 
       <FriendAndGroupCard />
+
+      <DIDCardDialog
+        open={showDIDCard}
+        onOpen={handleShowDIDCard}
+        onClose={handleCloseDIDCard}
+      />
     </Stack>
   );
 };

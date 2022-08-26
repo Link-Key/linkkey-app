@@ -38,7 +38,7 @@ const BaseDialog = styled(Dialog)(() => ({
     "& .MuiButton-root": {
       textTransform: "none",
       fontWeight: 700,
-      fontSize: 16,
+      fontSize: "15px",
     },
     ".MuiDialogContent-root": {
       display: "flex",
@@ -150,7 +150,7 @@ const Details = ({ type }) => {
         {isFriend ? "Friend-NFT details" : "Group-NFT details"}
       </Typography>
 
-      <Box sx={{}}>
+      <Box>
         {showDetails ? (
           <ReleaseDetailsWrapper>
             <ReleaseDetailsItem>

@@ -18,6 +18,7 @@ import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import OperationCard from "../../components/Profile/OperationCard";
 import FriendAndGroupCard from "../../components/Profile/FriendAndGroupCard";
 import DIDCardDialog from "../../components/DIDCardDialog";
+import { useRouter } from "next/router";
 
 const CardInfoWrapper = styled(Card)(() => ({
   display: "flex",
@@ -60,6 +61,7 @@ const Profile = () => {
       snsName: state.walletInfo.snsName,
     };
   });
+  const router = useRouter();
 
   const [showDIDCard, setShowDIDCard] = useState(false);
 
@@ -114,7 +116,11 @@ const Profile = () => {
           <Button variant="outlined" onClick={handleShowDIDCard}>
             DID Card
           </Button>
-          <IconButtonWrapper>
+          <IconButtonWrapper
+            onClick={() => {
+              router.push("/Setting");
+            }}
+          >
             <SettingIcon />
           </IconButtonWrapper>
         </Stack>

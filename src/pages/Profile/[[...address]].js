@@ -18,6 +18,8 @@ import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import OperationCard from "../../components/Profile/OperationCard";
 import FriendAndGroupCard from "../../components/Profile/FriendAndGroupCard";
 
+import { getFee, stakeNFT } from "../../contracts/Stake";
+
 const CardInfoWrapper = styled(Card)(() => ({
   display: "flex",
   justifyContent: "space-between",
@@ -50,6 +52,12 @@ export async function getStaticProps({ params }) {
   return {
     props: { ...params },
   };
+}
+
+const testfunction = async () => {
+  // const fee = await getFee(1);
+  // console.log('fee', fee)
+  stakeNFT(1, 1)
 }
 
 const Profile = () => {
@@ -100,17 +108,17 @@ const Profile = () => {
           alignItems="flex-end"
           justifyContent="space-between"
         >
-          <Button variant="outlined">DID Card</Button>
+          <Button variant="outlined" onClick={() => testfunction()}>DID Card</Button>
           <IconButtonWrapper>
             <SettingIcon />
           </IconButtonWrapper>
         </Stack>
-      </CardInfoWrapper>
+      </CardInfoWrapper >
 
       <OperationCard />
 
       <FriendAndGroupCard />
-    </Stack>
+    </Stack >
   );
 };
 

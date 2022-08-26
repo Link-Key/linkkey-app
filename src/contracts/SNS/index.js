@@ -1,14 +1,13 @@
 import { Contract, ethers } from "ethers";
 import { chainsInfo, contractAddress } from "../../config/const";
-import { getProvider, getSigner } from "../../utils/web3";
-import SNSContract from "./ABI.json";
+import { getProvider, getSigner, getChainId } from "../../utils/web3";
+import SNSContractABI from "./SNS.json";
 
 export const SNSInstance = () => {
   const provider = getProvider();
-  // getSigner().then((signer) => {
-  //   console.log("signer:", signer);
-  // });
-  const SNS = new Contract(contractAddress.snsAdd, SNSContract, provider);
+  const chainId = getChainId();
+  const snsAddress = contractAddress(chainId).snsAddress;
+  const SNS = new Contract(snsAddress, SNSContractABI, provider);
   return SNS;
 };
 

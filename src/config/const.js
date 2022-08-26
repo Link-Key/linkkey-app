@@ -24,7 +24,7 @@ export const linkList = {
 //   infuraUrl:'https://polygon-mainnet.infura.io/v3/5a380f9dfbb44b2abf9f681d39ddc382'
 // };
 
-// Test Network
+// Test Network //可以不需要这个
 export const chainsInfo = {
   chainId: 80001,
   chainIdHex: "0x13881",
@@ -37,6 +37,31 @@ export const chainsInfo = {
 };
 
 // Test Network
-export const contractAddress = {
-  snsAdd: "0x23bf7e618c5C2F2772620aa7D57fE6db27eeA176",
+export const contractAddress = (chainId) => {
+  let snsAddress
+  let keyAddress
+  let stakeAddress
+  let tradingAddress
+  switch (chainId) {
+    case '137':
+      snsAddress = "0x19AD2b1F012349645C3173EA63F98948A2b43d27"
+      keyAddress = "0x5CA9A8405499a1Ee8fbB1849f197b2b7e518985f"
+      stakeAddress = ""
+      tradingAddress = ""
+      break;
+    case '80001':
+      snsAddress = "0x23bf7e618c5C2F2772620aa7D57fE6db27eeA176"
+      keyAddress = "0xFA12F5ff3c2A137a02F1678E50c54276624b50FB"
+      stakeAddress = "0x53B8188e95e41E9BedA3D2e37b723129BA3A8985"
+      tradingAddress = "0x21dBc1EE1591E08bE0a5c508374aA97475bD0dB9"
+      break;
+    default:
+      break;
+  }
+  return {
+    snsAddress,
+    keyAddress,
+    stakeAddress,
+    tradingAddress
+  }
 };

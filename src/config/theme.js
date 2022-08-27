@@ -30,6 +30,15 @@ const lightTheme = responsiveFontSizes(
           containedPrimary: {},
         },
       },
+      MuiIconButton: {
+        styleOverrides: {
+          root: {
+            "&:hover": {
+              color: "#ea6060",
+            },
+          },
+        },
+      },
       MuiLoadingButton: {
         styleOverrides: {
           root: {

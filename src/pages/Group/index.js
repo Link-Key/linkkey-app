@@ -11,8 +11,9 @@ import {
   IconButton,
   List,
   ListItem,
+  TextField,
 } from "@mui/material";
-import { memo } from "react";
+import { memo, useCallback, useState } from "react";
 import { useSelector } from "react-redux";
 import CopyText from "../../components/CopyText";
 import EllipsisAddress from "../../components/EllipsisAddress";
@@ -21,6 +22,9 @@ import TwitterIcon from "../../assets/icons/common/twitterIcon.svg";
 import SearchIcon from "@mui/icons-material/Search";
 import GroupIcon from "@mui/icons-material/Group";
 import GroupAddIcon from "@mui/icons-material/GroupAdd";
+import BorderColorIcon from "@mui/icons-material/BorderColor";
+import CheckIcon from "@mui/icons-material/Check";
+import CommonDialog from "../../components/CommonDialog";
 
 const ItemWrapper = styled(Box)(() => ({
   display: "flex",
@@ -40,9 +44,9 @@ const ItemWrapper = styled(Box)(() => ({
 const BasicGroupInfo = styled(Box)(() => ({
   display: "flex",
   flexDirection: "column",
-  gap: "10px",
+  gap: "15px",
   borderTop: "1px solid #9a9a9a",
-  paddingTop: "20px",
+  padding: "20px 0px",
 }));
 
 const ButtonIcon = styled(Button)(() => ({
@@ -85,6 +89,30 @@ const ListItemWrapper = styled(ListItem)(() => ({
   },
 }));
 
+const DesInput = styled(TextField)(() => ({
+  width: "100%",
+  borderRadius: "8px",
+  fontWeight: 400,
+  fontSize: "16px",
+  lineHeight: "20px",
+  ".MuiInputBase-root": {
+    padding: "10px 10px",
+  },
+  ".MuiOutlinedInput-notchedOutline": {
+    borderWidth: "0px",
+    border: "none",
+  },
+  "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
+    borderWidth: "1px",
+    // borderColor: "rgba(251, 109, 5, 0.8)",
+  },
+  "& .MuiTextField-root": {
+    ".Mui-focused": {
+      borderWidth: "1px",
+    },
+  },
+}));
+
 const keyList = [0, 1, 2, 3];
 
 const GroupInfo = () => {
@@ -94,6 +122,20 @@ const GroupInfo = () => {
       snsName: state.walletInfo.snsName,
     };
   });
+
+  const [joinGroupOpen, setJoinGroupOpen] = useState(false);
+  const [editDes, setEditDes] = useState(false);
+  const [desInp, setDesInp] = useState(
+    "Dedicated to building a worthwhile and fun web3 world"
+  );
+
+  const handleChangeDesInp = useCallback((e) => {
+    setDesInp(e.target.value);
+  }, []);
+
+  const closeJoinGroupOpen = useCallback(() => {
+    setJoinGroupOpen(false);
+  }, []);
 
   return (
     <Stack spacing={3}>
@@ -147,32 +189,68 @@ const GroupInfo = () => {
 
           <ItemWrapper>
             <Typography variant="title">Description:</Typography>
-            <Typography>
-              Dedicated to building a worthwhile and fun web3 world
-            </Typography>
+            {editDes ? (
+              <Stack
+                direction="row"
+                alignItems="center"
+                spacing={2}
+                sx={{
+                  width: "100%",
+                }}
+              >
+                <DesInput
+                  value={desInp}
+                  multiline
+                  maxRows={2}
+                  onChange={handleChangeDesInp}
+                />
+                <IconButton
+                  onClick={() => {
+                    setEditDes(false);
+                  }}
+                >
+                  <CheckIcon />
+                </IconButton>
+              </Stack>
+            ) : (
+              <Stack direction="row" alignItems="center" p={0} spacing={1}>
+                <Typography>{desInp}</Typography>
+                <IconButton
+                  onClick={() => {
+                    setEditDes(true);
+                  }}
+                >
+                  <BorderColorIcon />
+                </IconButton>
+              </Stack>
+            )}
           </ItemWrapper>
         </BasicGroupInfo>
       </Paper>
 
       <GroupWrapper>
         <GroupHeader>
-          <InputBase
-            placeholder="Please input name"
-            sx={{ height: "40px" }}
-            endAdornment={
-              <IconButton>
-                <SearchIcon />
-              </IconButton>
-            }
-          />
+          <Stack direction="row" p={0} alignItems="center" spacing={1}>
+            <GroupIcon />
+            <MembersText>1304 Members</MembersText>
+          </Stack>
           <Stack direction="row" p={0} alignItems="center" spacing={2}>
-            <IconButton sx={{ color: "black" }}>
+            <InputBase
+              placeholder="Please input name"
+              sx={{ height: "40px", paddingRight: "0px" }}
+              endAdornment={
+                <IconButton sx={{ borderRadius: "12px" }}>
+                  <SearchIcon />
+                </IconButton>
+              }
+            />
+            <IconButton
+              onClick={() => {
+                setJoinGroupOpen(true);
+              }}
+            >
               <GroupAddIcon />
             </IconButton>
-            <Stack direction="row" p={0} alignItems="center" spacing={1}>
-              <GroupIcon />
-              <MembersText>1304 Members</MembersText>
-            </Stack>
           </Stack>
         </GroupHeader>
 
@@ -185,6 +263,26 @@ const GroupInfo = () => {
           ))}
         </List>
       </GroupWrapper>
+
+      <CommonDialog
+        open={joinGroupOpen}
+        title="Join Group"
+        onClose={closeJoinGroupOpen}
+      >
+        <Stack direction="column" spacing={3}>
+          <Button variant="outlined">Mint at owner</Button>
+          <Button variant="outlined">Buy at market</Button>
+          <Typography
+            sx={{
+              color: "#9a9a9a",
+              fontWeight: 500,
+            }}
+          >
+            Note: buy a Group-NFT, you will automatically join the Group chat.
+            You can buy it in the above two ways
+          </Typography>
+        </Stack>
+      </CommonDialog>
     </Stack>
   );
 };

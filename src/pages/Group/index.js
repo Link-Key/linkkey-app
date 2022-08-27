@@ -45,7 +45,7 @@ const BasicGroupInfo = styled(Box)(() => ({
   display: "flex",
   flexDirection: "column",
   gap: "15px",
-  borderTop: "1px solid #9a9a9a",
+  borderTop: "1px solid #ddd",
   padding: "20px 0px",
 }));
 

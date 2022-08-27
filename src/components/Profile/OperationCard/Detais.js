@@ -21,6 +21,13 @@ import CommonDialog from "../../CommonDialog";
 import TransferDialog from "./TransferDialog";
 import SaleDialog from "./SaleDialog";
 
+const TitleWrapper = styled(Box)(() => ({
+  display: "flex",
+  justifyContent: "space-between",
+  padding: "10px 0",
+  borderBottom: "1px solid #ddd",
+}));
+
 const ReleaseData = styled(Box)(() => ({
   display: "flex",
   flexDirection: "column",
@@ -122,15 +129,16 @@ const Details = ({ type }) => {
 
   return (
     <Paper>
-      <Typography
-        variant="subtitle1"
-        sx={{
-          padding: "10px 0",
-          borderBottom: "1px solid #ddd",
-        }}
-      >
-        {isFriend ? "Friend-NFT details" : "Group-NFT details"}
-      </Typography>
+      <TitleWrapper>
+        <Typography variant="subtitle1" sx={{}}>
+          {isFriend ? "Friend-NFT details" : "Group-NFT details"}
+        </Typography>
+        {!isFriend && showDetails ? (
+          <Button variant="outlined">Info</Button>
+        ) : (
+          <></>
+        )}
+      </TitleWrapper>
 
       <Box>
         {showDetails ? (

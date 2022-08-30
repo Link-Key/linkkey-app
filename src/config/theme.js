@@ -132,6 +132,26 @@ const lightTheme = responsiveFontSizes(
           },
         },
       },
+      MuiDataGrid: {
+        styleOverrides: {
+          root: {
+            borderRadius: "12px",
+          },
+          cell: {
+            "&:focus": {
+              outline: "none",
+            },
+            "&:focus-within": {
+              outline: "none",
+            },
+          },
+          columnHeader: {
+            "&:focus": {
+              outline: "none",
+            },
+          },
+        },
+      },
     },
   })
 );

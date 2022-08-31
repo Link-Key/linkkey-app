@@ -137,7 +137,8 @@ const Details = ({ type }) => {
     const stakeInstance = StakeInstance();
     console.log("stakeInstance:", stakeInstance);
     try {
-      const fee = await stakeInstance.getFee(1);
+      const typeNumber = isFriend ? 1 : 2;
+      const fee = await stakeInstance.getFee(typeNumber);
       console.log("fee:", handleHexEthValue(fee[1]));
     } catch (error) {
       console.log("stakeGetFee:", error);
@@ -145,7 +146,7 @@ const Details = ({ type }) => {
 
     setBtnLoading(false);
     // setReleaseOpen(true);
-  }, []);
+  }, [isFriend]);
 
   return (
     <Paper>

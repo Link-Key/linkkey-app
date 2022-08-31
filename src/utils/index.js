@@ -13,5 +13,6 @@ export const hexToNumber = (value) => {
 export const handleHexEthValue = (value) => {
   const number = hexToNumber(value);
   console.log("number:", number);
-  return new EthVal(`${number || 0}`).toEth();
+  console.log("value:", value._hex);
+  return new EthVal(value).toEth();
 };

@@ -1,4 +1,4 @@
-import EthVal from "ethval";
+import { formatEther } from "ethers/lib/utils";
 
 export function splitAddress(address, start = 11, end = -4) {
   return (
@@ -11,7 +11,6 @@ export const hexToNumber = (value) => {
 };
 
 export const handleHexEthValue = (value) => {
-  const number = hexToNumber(value);
-  console.log("number:", number);
-  return new EthVal(`${number || 0}`).toEth();
+  const number = hexToNumber(value).toString();
+  return formatEther(number);
 };

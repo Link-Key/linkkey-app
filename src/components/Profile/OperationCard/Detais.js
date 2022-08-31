@@ -20,6 +20,9 @@ import EllipsisAddress from "../../EllipsisAddress";
 import CommonDialog from "../../CommonDialog";
 import TransferDialog from "./TransferDialog";
 import SaleDialog from "./SaleDialog";
+import { StakeInstance } from "../../../contracts/Stake";
+import CommonLoadingBtn from "../../Button/LoadingButton";
+import { handleHexEthValue, hexToNumber } from "../../../utils";
 
 const TitleWrapper = styled(Box)(() => ({
   display: "flex",
@@ -96,6 +99,7 @@ const Details = ({ type }) => {
   const [releaseOpen, setReleaseOpen] = useState(false);
   const [transferOpen, setTransferOpen] = useState(false);
   const [saleOpen, setSaleOpen] = useState(false);
+  const [btnLoading, setBtnLoading] = useState(false);
 
   const [showDetails, setShowDetails] = useState(false);
 
@@ -126,6 +130,22 @@ const Details = ({ type }) => {
       setRoyaltiesInp(e.target.value);
     }
   };
+
+  const handleReleaseDialogOpen = useCallback(async () => {
+    setBtnLoading(true);
+
+    const stakeInstance = StakeInstance();
+    console.log("stakeInstance:", stakeInstance);
+    try {
+      const fee = await stakeInstance.getFee(1);
+      console.log("fee:", handleHexEthValue(fee[1]));
+    } catch (error) {
+      console.log("stakeGetFee:", error);
+    }
+
+    setBtnLoading(false);
+    // setReleaseOpen(true);
+  }, []);
 
   return (
     <Paper>
@@ -183,17 +203,18 @@ const Details = ({ type }) => {
             minHeight="200px"
             spacing={1}
           >
-            <Button
+            <CommonLoadingBtn
+              loading={btnLoading}
               variant="outlined"
               sx={{
                 fontWeight: 500,
               }}
               onClick={() => {
-                setReleaseOpen(true);
+                handleReleaseDialogOpen();
               }}
             >
               {isFriend ? "Release Friend-NFT" : "Release Group-NFT"}
-            </Button>
+            </CommonLoadingBtn>
             <InfoOutlinedIcon
               onClick={() => {
                 setInfoOpen(true);

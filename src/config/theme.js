@@ -46,9 +46,9 @@ const lightTheme = responsiveFontSizes(
             fontSize: "14px",
             textTransform: "none",
             "&.Mui-disabled": {
-              background: "#ea6060",
+              // background: "#ea6060",
               opacity: 0.5,
-              color: "white",
+              // color: "white",
               cursor: "not-allowed",
             },
           },

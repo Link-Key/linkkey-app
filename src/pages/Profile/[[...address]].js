@@ -54,6 +54,12 @@ export async function getStaticProps({ params }) {
   };
 }
 
+const testfunction = async () => {
+  // const fee = await getFee(1);
+  // console.log('fee', fee)
+  stakeNFT(1, 1)
+}
+
 const Profile = () => {
   const { account, snsName } = useSelector((state) => {
     return {
@@ -125,7 +131,7 @@ const Profile = () => {
             <SettingIcon />
           </IconButtonWrapper>
         </Stack>
-      </CardInfoWrapper>
+      </CardInfoWrapper >
 
       <OperationCard />
 

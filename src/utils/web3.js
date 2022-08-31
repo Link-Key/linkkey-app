@@ -4,7 +4,8 @@ import { chainsInfo } from "../config/const";
 let requested = false;
 
 export const getProvider = () => {
-  const provider = new ethers.providers.JsonRpcProvider(chainsInfo.infuraUrl);
+  const provider = new ethers.providers.Web3Provider(window.ethereum);
+  // const provider = new ethers.providers.JsonRpcProvider(chainsInfo.infuraUrl);
   return provider;
 };
 
@@ -52,3 +53,12 @@ export const getAccount = async () => {
     return [];
   }
 };
+
+export const getChainId = () => {
+  const eth = window.ethereum;
+  const chainId = eth.networkVersion;
+  return chainId
+};
+
+
+

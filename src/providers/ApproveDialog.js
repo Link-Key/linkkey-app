@@ -10,10 +10,16 @@ const reducer = (state, action) => {
   switch (action.type) {
     case "SET_STEP":
       return { ...state, step: action.payload };
+    case "ADD_STEP":
+      return { ...state, step: state.step + 1 };
+    case "RESET_STEP":
+      return { ...state, step: 0 };
     case "SET_LOADING":
       return { ...state, loading: action.payload };
-    case "SET_VISIBLE":
-      return { ...state, open: action.payload };
+    case "OPEN_DIALOG":
+      return { ...state, open: true };
+    case "CLOSE_DIALOG":
+      return { ...state, open: false, step: 0 };
   }
 };
 

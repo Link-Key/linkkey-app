@@ -1,5 +1,5 @@
-import { formatFixed } from "@ethersproject/bignumber";
-import { formatEther } from "ethers/lib/utils";
+import BigNumber from "bignumber.js";
+import { formatEther, parseEther } from "ethers/lib/utils";
 
 export function splitAddress(address, start = 11, end = -4) {
   return (
@@ -12,6 +12,17 @@ export const hexToNumber = (value) => {
 };
 
 export const handleHexEthValue = (value) => {
-  const number = hexToNumber(value).toString();
+  let number = value;
+  if (value && value._hex) {
+    number = hexToNumber(value).toString();
+  }
   return Number(formatEther(number)).toFixed(0);
+};
+
+export const handleWeiValue = (value) => {
+  let number = value;
+  if (value && value._hex) {
+    number = hexToNumber(value).toString();
+  }
+  return Number(parseEther(number)).toFixed(0);
 };

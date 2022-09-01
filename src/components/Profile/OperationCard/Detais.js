@@ -20,19 +20,16 @@ import EllipsisAddress from "../../EllipsisAddress";
 import CommonDialog from "../../CommonDialog";
 import TransferDialog from "./TransferDialog";
 import SaleDialog from "./SaleDialog";
-import { StakeInstance } from "../../../contracts/Stake";
+import { StakeInstance, stakeNFT } from "../../../contracts/Stake";
 import CommonLoadingBtn from "../../Button/LoadingButton";
-import { handleHexEthValue, hexToNumber } from "../../../utils";
-import {
-  getInfo,
-  getResolverOwner,
-  getTokenIdOfName,
-} from "../../../contracts/SNS";
+import { handleHexEthValue, handleWeiValue, hexToNumber } from "../../../utils";
+import { getResolverOwner, getTokenIdOfName } from "../../../contracts/SNS";
 import { useRouter } from "next/router";
 import { useDialog } from "../../../providers/ApproveDialog";
-import { allowance, ERC20Instance } from "../../../contracts/ERC20";
+import { allowance, approve } from "../../../contracts/ERC20";
 import { contractAddress } from "../../../config/const";
 import { getChainId } from "../../../utils/web3";
+import { useSelector } from "react-redux";
 
 const TitleWrapper = styled(Box)(() => ({
   display: "flex",
@@ -105,19 +102,24 @@ const ReleaseIntroduce = {
 };
 
 const Details = ({ type }) => {
+  // dialog switch
   const [infoOpen, setInfoOpen] = useState(false);
   const [releaseOpen, setReleaseOpen] = useState(false);
   const [transferOpen, setTransferOpen] = useState(false);
   const [saleOpen, setSaleOpen] = useState(false);
-
-  const [btnLoading, setBtnLoading] = useState(false);
-  const [feeState, setFeeState] = useState(0);
-  const [feeAddress, setFeeAddress] = useState("");
-
+  // show nft details
   const [showDetails, setShowDetails] = useState(false);
-
+  const [btnLoading, setBtnLoading] = useState(false);
+  const [payBtnLoading, setPayBtnLoading] = useState(false);
+  // min fee price
+  const [feeState, setFeeState] = useState(0);
+  // fee of erc20 address
+  const [feeAddress, setFeeAddress] = useState("");
+  // profile address
+  const [profileAdd, setProfileAdd] = useState("");
+  // is self profile
+  const [isSelf, setIsSelf] = useState(false);
   const [twitterStatus, setTwitterStatus] = useState(false);
-
   const [mintInp, setMintInp] = useState("");
   const [royaltiesInp, setRoyaltiesInp] = useState("");
 
@@ -125,34 +127,91 @@ const Details = ({ type }) => {
   const introduceList =
     type === "friend" ? ReleaseIntroduce.friend : ReleaseIntroduce.group;
 
+  const { account } = useSelector((state) => ({
+    account: state.walletInfo.account,
+  }));
+  const chainId = getChainId();
+  // to address
+  const stakeAdd = contractAddress(chainId).stakeAddress;
+
   const router = useRouter();
   const keyName = router.query.name[0];
 
   const { dialogDispatch } = useDialog();
 
   const queryAllowance = useCallback(async () => {
-    // from address
-    const address = await getResolverOwner(keyName);
-    const chainId = getChainId();
-    // to address
-    const stakeAdd = contractAddress(chainId).stakeAddress;
-    const value = await allowance(feeAddress, address, stakeAdd);
+    try {
+      const value = await allowance(feeAddress, profileAdd, stakeAdd);
+      return hexToNumber(value);
+    } catch (error) {
+      console.log("allowanceError:", error);
+      return 0;
+    }
+  }, [feeAddress, profileAdd, stakeAdd]);
 
-    return hexToNumber(value);
-  }, [keyName, feeAddress]);
+  const callApprove = useCallback(async () => {
+    const value = await queryAllowance();
+    console.log("approveFee:", handleWeiValue(feeState));
+    try {
+      if (value >= feeState) {
+        return "approve";
+      } else {
+        const resp = await approve(
+          feeAddress,
+          stakeAdd,
+          handleWeiValue(feeState)
+        );
+        console.log("approveResp:", resp);
+        return "unApprove";
+      }
+    } catch (error) {
+      console.log("callApproveErr:", error);
+      return false;
+    }
+  }, [feeAddress, feeState, queryAllowance, stakeAdd]);
+
+  const mintNFT = useCallback(async () => {
+    clearInterval(window.timer);
+    dialogDispatch({ type: "ADD_STEP" });
+    try {
+      const tokenId = await getTokenIdOfName(keyName);
+      console.log("tokenId:", tokenId);
+      const mintType = isFriend ? 1 : 2;
+      await stakeNFT(tokenId, mintType);
+      setShowDetails(true);
+      dialogDispatch({ type: "ADD_STEP" });
+      dialogDispatch({ type: "CLOSE_DIALOG" });
+    } catch (error) {
+      console.log("mintNFTErr:", error);
+    }
+  }, [isFriend, dialogDispatch, keyName]);
 
   // pay mint NFT
   const handlePayMint = useCallback(async () => {
-    // dialogDispatch({ type: "SET_VISIBLE", payload: true });
+    setPayBtnLoading(true);
+    const approveStatus = await callApprove();
+    console.log("approveStatus:", approveStatus);
+    if (approveStatus === "unApprove") {
+      dialogDispatch({ type: "OPEN_DIALOG" });
+      setTimeout(() => {
+        window.timer = setInterval(async () => {
+          const allowancePrice = await queryAllowance();
+          console.log("allowancePrice:", allowancePrice);
+          if (allowancePrice > 0) {
+            await mintNFT();
+          }
+        }, 1000);
+      }, 0);
+    }
 
-    const value = await queryAllowance();
-    console.log("value:", value);
+    if (approveStatus === "approve") {
+      dialogDispatch({ type: "OPEN_DIALOG" });
+      await mintNFT();
+    }
 
-    const tokenId = await getTokenIdOfName(keyName);
-    console.log("tokenId:", tokenId);
-    // setShowDetails(true);
-    // setReleaseOpen(false);
-  }, [keyName, dialogDispatch, queryAllowance]);
+    setReleaseOpen(false);
+    setPayBtnLoading(false);
+  }, [callApprove, queryAllowance, dialogDispatch, mintNFT]);
 
   const changeMintInp = (e) => {
     const value = e.target.value;
@@ -184,12 +243,22 @@ const Details = ({ type }) => {
       }
       setBtnLoading(false);
       setReleaseOpen(true);
-      console.log("fee:", fee);
     } catch (error) {
       setBtnLoading(false);
       console.log("stakeGetFee:", error);
     }
   }, [isFriend]);
+
+  useEffect(() => {
+    if (keyName) {
+      getResolverOwner(keyName).then((address) => {
+        setProfileAdd(address);
+        if (address === account) {
+          setIsSelf(true);
+        }
+      });
+    }
+  }, [keyName, account]);
 
   return (
     <Paper>
@@ -330,7 +399,8 @@ const Details = ({ type }) => {
             </Typography>
           </ReleaseData>
         </DialogContent>
-        <Button
+        <CommonLoadingBtn
+          loading={payBtnLoading}
           variant="contained"
           sx={{
             margin: "0 auto",
@@ -340,7 +410,7 @@ const Details = ({ type }) => {
           }}
         >
           Pay {feeState} Key
-        </Button>
+        </CommonLoadingBtn>
       </CommonDialog>
 
       {/* Info modal */}

@@ -2,15 +2,16 @@ import { createContext, useContext, useReducer } from "react";
 
 const initialState = {
   open: false,
-  title: "",
-  content: "",
-  btnText: "close",
+  step: 0,
+  loading: "",
 };
 
 const reducer = (state, action) => {
   switch (action.type) {
-    case "SET_DIALOG_INFO":
-      return { ...action.payload };
+    case "SET_STEP":
+      return { ...state, step: action.payload };
+    case "SET_LOADING":
+      return { ...state, loading: action.payload };
     case "SET_VISIBLE":
       return { ...state, open: action.payload };
   }

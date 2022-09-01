@@ -1,4 +1,5 @@
 import { Box, CssBaseline, Grid, styled } from "@mui/material";
+import CommonApproveDialog from "./CommonApproveDialog";
 import SideBar from "./SideBar";
 
 const Main = styled("main")`
@@ -31,6 +32,8 @@ const Layout = ({ children }) => {
           <Main>{children}</Main>
         </Grid>
       </Grid>
+
+      <CommonApproveDialog />
     </Box>
   );
 };

@@ -41,7 +41,7 @@ export async function getStaticPaths() {
     paths: [
       {
         params: {
-          address: [""],
+          name: [""],
         },
       },
     ],
@@ -57,8 +57,8 @@ export async function getStaticProps({ params }) {
 const testfunction = async () => {
   // const fee = await getFee(1);
   // console.log('fee', fee)
-  stakeNFT(1, 1)
-}
+  stakeNFT(1, 1);
+};
 
 const Profile = () => {
   const { account, snsName } = useSelector((state) => {
@@ -131,7 +131,7 @@ const Profile = () => {
             <SettingIcon />
           </IconButtonWrapper>
         </Stack>
-      </CardInfoWrapper >
+      </CardInfoWrapper>
 
       <OperationCard />
 

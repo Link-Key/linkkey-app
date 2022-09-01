@@ -23,6 +23,16 @@ import SaleDialog from "./SaleDialog";
 import { StakeInstance } from "../../../contracts/Stake";
 import CommonLoadingBtn from "../../Button/LoadingButton";
 import { handleHexEthValue, hexToNumber } from "../../../utils";
+import {
+  getInfo,
+  getResolverOwner,
+  getTokenIdOfName,
+} from "../../../contracts/SNS";
+import { useRouter } from "next/router";
+import { useDialog } from "../../../providers/ApproveDialog";
+import { allowance, ERC20Instance } from "../../../contracts/ERC20";
+import { contractAddress } from "../../../config/const";
+import { getChainId } from "../../../utils/web3";
 
 const TitleWrapper = styled(Box)(() => ({
   display: "flex",
@@ -99,11 +109,15 @@ const Details = ({ type }) => {
   const [releaseOpen, setReleaseOpen] = useState(false);
   const [transferOpen, setTransferOpen] = useState(false);
   const [saleOpen, setSaleOpen] = useState(false);
+
   const [btnLoading, setBtnLoading] = useState(false);
+  const [feeState, setFeeState] = useState(0);
+  const [feeAddress, setFeeAddress] = useState("");
 
   const [showDetails, setShowDetails] = useState(false);
 
   const [twitterStatus, setTwitterStatus] = useState(false);
+
   const [mintInp, setMintInp] = useState("");
   const [royaltiesInp, setRoyaltiesInp] = useState("");
 
@@ -111,11 +125,34 @@ const Details = ({ type }) => {
   const introduceList =
     type === "friend" ? ReleaseIntroduce.friend : ReleaseIntroduce.group;
 
+  const router = useRouter();
+  const keyName = router.query.name[0];
+
+  const { dialogDispatch } = useDialog();
+
+  const queryAllowance = useCallback(async () => {
+    // from address
+    const address = await getResolverOwner(keyName);
+    const chainId = getChainId();
+    // to address
+    const stakeAdd = contractAddress(chainId).stakeAddress;
+    const value = await allowance(feeAddress, address, stakeAdd);
+
+    return hexToNumber(value);
+  }, [keyName, feeAddress]);
+
   // pay mint NFT
-  const handlePayMint = useCallback(() => {
-    setShowDetails(true);
-    setReleaseOpen(false);
-  }, []);
+  const handlePayMint = useCallback(async () => {
+    // dialogDispatch({ type: "SET_VISIBLE", payload: true });
+
+    const value = await queryAllowance();
+    console.log("value:", value);
+
+    const tokenId = await getTokenIdOfName(keyName);
+    console.log("tokenId:", tokenId);
+    // setShowDetails(true);
+    // setReleaseOpen(false);
+  }, [keyName, dialogDispatch, queryAllowance]);
 
   const changeMintInp = (e) => {
     const value = e.target.value;
@@ -135,17 +172,23 @@ const Details = ({ type }) => {
     setBtnLoading(true);
 
     const stakeInstance = StakeInstance();
-    console.log("stakeInstance:", stakeInstance);
     try {
       const typeNumber = isFriend ? 1 : 2;
       const fee = await stakeInstance.getFee(typeNumber);
-      console.log("fee:", handleHexEthValue(fee[1]));
+      if (fee && fee.feeAmount && fee.keyAddress) {
+        setFeeState(handleHexEthValue(fee.feeAmount));
+        setFeeAddress(fee.keyAddress);
+      } else {
+        setBtnLoading(false);
+        return;
+      }
+      setBtnLoading(false);
+      setReleaseOpen(true);
+      console.log("fee:", fee);
     } catch (error) {
+      setBtnLoading(false);
       console.log("stakeGetFee:", error);
     }
-
-    setBtnLoading(false);
-    // setReleaseOpen(true);
   }, [isFriend]);
 
   return (
@@ -296,7 +339,7 @@ const Details = ({ type }) => {
             handlePayMint();
           }}
         >
-          Pay 100 Key
+          Pay {feeState} Key
         </Button>
       </CommonDialog>
 

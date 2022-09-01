@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import { WalletProvider } from "../providers/wallet";
 
 import { ToastContainer } from "react-toastify";
+import { ApproveDialogProvider } from "../providers/ApproveDialog";
 
 function MyApp({ Component, pageProps }) {
   const [isWin, setIsWin] = useState(false);
@@ -20,14 +21,16 @@ function MyApp({ Component, pageProps }) {
   if (isWin) {
     return (
       <Provider store={store}>
-        <WalletProvider>
-          <ThemeProvider theme={lightTheme}>
-            <ToastContainer />
-            <Layout>
-              <Component {...pageProps} />
-            </Layout>
-          </ThemeProvider>
-        </WalletProvider>
+        <ApproveDialogProvider>
+          <WalletProvider>
+            <ThemeProvider theme={lightTheme}>
+              <ToastContainer />
+              <Layout>
+                <Component {...pageProps} />
+              </Layout>
+            </ThemeProvider>
+          </WalletProvider>
+        </ApproveDialogProvider>
       </Provider>
     );
   } else {

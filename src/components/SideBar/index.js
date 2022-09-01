@@ -80,17 +80,18 @@ const SideBar = () => {
 
   const router = useRouter();
 
-  const { account, connecting } = useSelector((state) => {
+  const { account, connecting, snsName } = useSelector((state) => {
     return {
       account: state.walletInfo.account,
       connecting: state.walletInfo.connecting,
+      snsName: state.walletInfo.snsName,
     };
   });
 
   const handleHref = (name) => {
     if (name === "Profile") {
       if (account) {
-        return router.push(`/${name}/${account}`);
+        return router.push(`/${name}/${snsName}`);
       }
       ToastMention({ message: "未注册SNS域名", type: "warn" });
       return null;

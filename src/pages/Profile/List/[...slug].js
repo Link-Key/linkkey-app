@@ -11,6 +11,8 @@ import { memo, useState, useCallback } from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import { TypographyWrapper } from "../../../components/Styled";
 
+import SaleDialog from "../../../components/Profile/OperationCard/SaleDialog";
+
 const TitleWrapper = styled(Paper)(() => ({
   // display: "flex",
   // justifyContent: "space-between",
@@ -57,6 +59,7 @@ export async function getStaticProps({ params }) {
 
 const ProfileList = ({ type, name }) => {
   const [selectItem, setSelectItem] = useState("all");
+  const [saleOpen, setSaleOpen] = useState(false);
 
   console.log("type:", type);
   console.log("name:", name);
@@ -109,15 +112,13 @@ const ProfileList = ({ type, name }) => {
               <Button
                 variant="outlined"
                 onClick={() => {
-                  setBuyOpen(true);
+                  setSaleOpen(true);
                 }}
               >
                 Sale
               </Button>
             ) : (
-              <Button variant="outlined" disabled>
-                on offer
-              </Button>
+              "-"
             )}
           </>
         );
@@ -167,6 +168,15 @@ const ProfileList = ({ type, name }) => {
           />
         </Box>
       </Paper>
+
+      <SaleDialog
+        open={saleOpen}
+        title="Sale"
+        contractAdd="0x5435e8bb74d7ba8f4a76287dc0e75e203d87647e"
+        onClose={() => {
+          setSaleOpen(false);
+        }}
+      />
     </Stack>
   );
 };

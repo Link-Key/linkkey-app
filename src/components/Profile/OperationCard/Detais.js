@@ -30,6 +30,7 @@ import { allowance, approve } from "../../../contracts/ERC20";
 import { contractAddress } from "../../../config/const";
 import { getChainId } from "../../../utils/web3";
 import { useSelector } from "react-redux";
+import CreateGroupDialog from "./CreateGroupDialog";
 
 const TitleWrapper = styled(Box)(() => ({
   display: "flex",
@@ -106,7 +107,7 @@ const Details = ({ type }) => {
   const [infoOpen, setInfoOpen] = useState(false);
   const [releaseOpen, setReleaseOpen] = useState(false);
   const [transferOpen, setTransferOpen] = useState(false);
-  const [saleOpen, setSaleOpen] = useState(false);
+  const [createGroupOpen, setCreateGroupOpen] = useState(false);
   // show nft details
   const [showDetails, setShowDetails] = useState(true);
   const [btnLoading, setBtnLoading] = useState(false);
@@ -299,12 +300,15 @@ const Details = ({ type }) => {
                 Transfer
               </Button>
               <Button
+                sx={{
+                  display: isFriend ? "none" : "block",
+                }}
                 variant="outlined"
                 onClick={() => {
-                  setSaleOpen(true);
+                  setCreateGroupOpen(true);
                 }}
               >
-                Sale
+                Create Group
               </Button>
             </Stack>
           </ReleaseDetailsWrapper>
@@ -452,12 +456,12 @@ const Details = ({ type }) => {
           setTransferOpen(false);
         }}
       />
-      <SaleDialog
-        open={saleOpen}
-        title="Sale"
+      <CreateGroupDialog
+        open={createGroupOpen}
+        title="Create Group"
         contractAdd="0x5435e8bb74d7ba8f4a76287dc0e75e203d87647e"
         onClose={() => {
-          setSaleOpen(false);
+          setCreateGroupOpen(false);
         }}
       />
     </Paper>

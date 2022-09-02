@@ -19,6 +19,7 @@ import OperationCard from "../../components/Profile/OperationCard";
 import FriendAndGroupCard from "../../components/Profile/FriendAndGroupCard";
 import DIDCardDialog from "../../components/DIDCardDialog";
 import { useRouter } from "next/router";
+import { getLastTokenId } from "../../contracts/NFT";
 
 const CardInfoWrapper = styled(Card)(() => ({
   display: "flex",
@@ -57,7 +58,9 @@ export async function getStaticProps({ params }) {
 const testfunction = async () => {
   // const fee = await getFee(1);
   // console.log('fee', fee)
-  stakeNFT(1, 1);
+  // stakeNFT(1, 1);
+  const tokenId = await getLastTokenId("0x6495885a76038875812C6cF534ED0627763FdA33", "0xB3eF1C9718F3EAFaeb6fd7Ac63E8f43493101Ded")
+  console.log('tokenId', tokenId)
 };
 
 const Profile = () => {

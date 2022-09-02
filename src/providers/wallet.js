@@ -166,6 +166,10 @@ const WalletProvider = ({ children }) => {
         type: "success",
       });
     }
+
+    // TODO XMTP Client initial
+
+
     closeLoading();
 
     const chainId = eth.networkVersion;

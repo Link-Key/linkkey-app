@@ -55,6 +55,25 @@ const getTotal = async (NFTAddress) => {
   return total;
 };
 
+const getLastTokenId = async (NFTAddress, owner) => {
+  const total = await NFTInstance(NFTAddress).totalSupply();
+  const stemp = 50;
+  const times = total / stemp;
+  let tokenId;
+  for (let index = 0; index < times; index++) {
+    const startIndex = index * stemp + 1;
+    const endIndex = (index + 1) * stemp + 1;
+    const tokenIds = await NFTInstance(NFTAddress).tokensOfOwnerIn(owner, startIndex, endIndex);
+    console.log('tokenIds', tokenIds)
+    if (tokenIds.length != 0) {
+      tokenId = tokenIds[0];
+      return tokenId;
+    }
+  }
+  return 0;
+};
+
+
 export {
   safeMint, // 铸造 1.getFloorPrices 2.ERC20 allance => approve,3.this
   transferFrom, //转赠
@@ -64,4 +83,5 @@ export {
   getFloorPrices, // 地板价
   balanceOf, // 拥有数量
   getTotal, // 总铸造数量
+  getLastTokenId //获取地址拥有的一个tokenId
 };

@@ -13,12 +13,10 @@ import PageTitleWrapper from "../../components/PageTitleWrapper/PageTitleWrapper
 import MarketItem from "../../components/Market/MarketItem";
 
 const MarketWrapper = styled(Box)(() => ({
-  display: "flex",
+  display: "grid",
   justifyContent: "center",
-  gap: "30px",
-  flexWrap: "wrap",
-  // borderTop: "1px solid #ddd",
-  // marginTop: "20px",
+  gridTemplateColumns: "repeat(auto-fill,minmax(190px,1fr))",
+  gridGap: "20px 20px",
   padding: "20px 0",
 }));
 

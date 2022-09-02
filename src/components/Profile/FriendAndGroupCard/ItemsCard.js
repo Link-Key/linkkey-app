@@ -10,8 +10,10 @@ import {
   Typography,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
+import { useRouter } from "next/router";
 
 import { memo, useCallback, useState } from "react";
+import { useSelector } from "react-redux";
 
 const TitleWrapper = styled(Box)(() => ({
   display: "flex",
@@ -53,6 +55,12 @@ const ItemsCard = ({ type }) => {
   const isFriend = type === "friend" ? true : false;
   const [selectItem, setSelectItem] = useState("all");
 
+  const { snsName } = useSelector((state) => ({
+    snsName: state.walletInfo.snsName,
+  }));
+
+  const router = useRouter();
+
   const handleSelectChange = useCallback((e) => {
     setSelectItem(e.target.value);
   }, []);
@@ -84,7 +92,14 @@ const ItemsCard = ({ type }) => {
             <Typography>Vitalik.key</Typography>
           </Box>
         ))}
-        <Button variant="outlined">Show more</Button>
+        <Button
+          variant="outlined"
+          onClick={() => {
+            router.push(`/Profile/List/${isFriend ? 0 : 1}/${snsName}`);
+          }}
+        >
+          Show more
+        </Button>
       </CardContentWrapper>
     </Card>
   );

@@ -32,8 +32,34 @@ const SelectWrapper = styled(Select)(() => ({
   },
 }));
 
-const ProfileList = () => {
+export async function getStaticPaths() {
+  return {
+    fallback: "blocking",
+    paths: [
+      {
+        params: {
+          slug: ["0", "1"],
+        },
+      },
+    ],
+  };
+}
+
+export async function getStaticProps({ params }) {
+  const { slug } = params;
+  return {
+    props: {
+      type: slug[0] ?? 1,
+      name: slug[1] ?? "",
+    },
+  };
+}
+
+const ProfileList = ({ type, name }) => {
   const [selectItem, setSelectItem] = useState("all");
+
+  console.log("type:", type);
+  console.log("name:", name);
 
   const handleSelectChange = useCallback((e) => {
     setSelectItem(e.target.value);
@@ -76,7 +102,6 @@ const ProfileList = () => {
       ...commonColumnsProps,
       renderCell: (params) => {
         const { row } = params;
-        console.log("row:", row);
 
         return (
           <>
@@ -115,7 +140,9 @@ const ProfileList = () => {
   return (
     <Stack spacing={3}>
       <TitleWrapper>
-        <TypographyWrapper>List</TypographyWrapper>
+        <TypographyWrapper>
+          {type === "0" ? "Friends List" : "Groups List"}
+        </TypographyWrapper>
       </TitleWrapper>
       <Paper
         sx={{

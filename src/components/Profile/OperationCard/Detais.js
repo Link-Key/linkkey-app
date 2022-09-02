@@ -171,6 +171,7 @@ const Details = ({ type }) => {
     }
   }, [feeAddress, feeState, queryAllowance, stakeAdd]);
 
+  // todo query balance
   const mintNFT = useCallback(async () => {
     clearInterval(window.timer);
     dialogDispatch({ type: "ADD_STEP" });

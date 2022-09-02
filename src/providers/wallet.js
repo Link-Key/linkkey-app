@@ -5,6 +5,8 @@ import ToastMention from "../components/ToastMessage";
 import { chainsInfo } from "../config/const";
 import { SNSInstance, getInfo } from "../contracts/SNS";
 import store from "../store";
+import { Client } from "@xmtp/xmtp-js";
+import { getAccount } from "../utils/web3";
 
 const WalletInfoContent = createContext();
 
@@ -70,7 +72,6 @@ const WalletProvider = ({ children }) => {
     [dispatch]
   );
 
-  // 切换至polygon链
   const switchChainToPolygon = useCallback(async () => {
     try {
       await ethereum.request({
@@ -101,10 +102,9 @@ const WalletProvider = ({ children }) => {
     }
   }, []);
 
-  // 监听钱包的链及账户变化
+  // Listening to wallet chain and account changes
   const subscribeFn = useCallback(() => {
     const eth = window.ethereum;
-    // Contract
     // Subscribe to accounts change
     eth.on("accountsChanged", async (accounts) => {
       startLoading();
@@ -127,10 +127,15 @@ const WalletProvider = ({ children }) => {
         });
       }
     });
+
+    eth.on("disconnect", (error) => {
+      console.log("disconnect:", error);
+    });
   }, [dispatch, getSNSName, startLoading, closeLoading]);
 
   const connectWallet = useCallback(async () => {
     const eth = window.ethereum;
+    //judge wallet installed
     if (typeof eth == "undefined") {
       ToastMention({
         message: (
@@ -147,12 +152,18 @@ const WalletProvider = ({ children }) => {
 
     startLoading();
 
-    const accounts = await eth.request({ method: "eth_requestAccounts" });
-    console.log("accounts:", accounts);
+    // connect wallet
+    let accounts = [];
+    try {
+      accounts = await eth.request({ method: "eth_requestAccounts" });
+    } catch (error) {
+      console.log("connectWalletErr:", error);
+    }
     if (accounts && accounts[0]) {
-      // 监听账户与链的变化
+      // subscribe wallet change status
       subscribeFn();
 
+      // set account to store
       store.dispatch({
         type: "SET_ACCOUNTS",
         value: accounts[0],
@@ -186,6 +197,20 @@ const WalletProvider = ({ children }) => {
       getSNSName(account);
     }
   }, [getSNSName, account, startLoading, closeLoading]);
+
+  useEffect(() => {
+    const isConnected = window.ethereum.isConnected();
+    getAccount().then((acc) => {
+      // set account to store
+
+      if (acc && acc[0] && !isConnected) {
+        store.dispatch({
+          type: "SET_ACCOUNTS",
+          value: acc,
+        });
+      }
+    });
+  }, []);
 
   return (
     <WalletInfoContent.Provider

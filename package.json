@@ -21,6 +21,7 @@
     "@mui/x-data-grid": "^5.16.0",
     "@reduxjs/toolkit": "^1.8.4",
     "@svgr/webpack": "^6.3.1",
+    "@xmtp/xmtp-js": "^6.0.2",
     "animate.css": "^4.1.1",
     "bignumber.js": "^9.1.0",
     "ethers": "^5.7.0",

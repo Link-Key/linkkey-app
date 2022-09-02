@@ -25,6 +25,7 @@ export const getSigner = async () => {
         return signer;
       } catch (e) {
         requested = true;
+        console.log("getSignerErr:", e);
         return provider;
       }
     } else {
@@ -35,21 +36,15 @@ export const getSigner = async () => {
 
 export const getAccount = async () => {
   try {
-    const account = await getAccount();
+    const signInfo = await getSigner();
+    const account = await signInfo.getAddress();
     if (parseInt(account, 16) !== 0) {
       return account;
-    } else if (window.ethereum) {
-      try {
-        const accounts = await window.ethereum.enable();
-        return accounts[0];
-      } catch (error) {
-        console.warn("Did not allow app to access dapp browser");
-        throw error;
-      }
     } else {
       return [];
     }
   } catch (e) {
+    console.log("getAccountErr:", e);
     return [];
   }
 };
@@ -57,8 +52,5 @@ export const getAccount = async () => {
 export const getChainId = () => {
   const eth = window.ethereum;
   const chainId = eth.networkVersion;
-  return chainId
+  return chainId;
 };
-
-
-

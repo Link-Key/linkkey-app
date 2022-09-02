@@ -1,4 +1,4 @@
-import { Contract, ethers } from "ethers";
+import { Contract } from "ethers";
 import { chainsInfo, contractAddress } from "../../config/const";
 import { getProvider, getSigner, getChainId } from "../../utils/web3";
 import ERC20ContractABI from "./ERC20.json";

@@ -55,10 +55,10 @@ const CreateGroupDialog = ({ open, title, contractAdd, onClose }) => {
           <EllipsisAddress account={contractAdd} />
         </Items>
         <TypographyBox aria-label="Transfer" sx={{ gap: "5px" }}>
-          <Typography>Price: 10KEY</Typography>
+          <Typography>Group Name:</Typography>
           <InputBase
             value={groupNameInp || ""}
-            placeholder="Please input number"
+            placeholder="Input group name"
             onChange={handleChangeGrpNameInp}
           />
         </TypographyBox>

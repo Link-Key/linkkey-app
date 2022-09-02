@@ -21,16 +21,16 @@ function MyApp({ Component, pageProps }) {
   if (isWin) {
     return (
       <Provider store={store}>
-        <ApproveDialogProvider>
-          <WalletProvider>
+        <WalletProvider>
+          <ApproveDialogProvider>
             <ThemeProvider theme={lightTheme}>
               <ToastContainer />
               <Layout>
                 <Component {...pageProps} />
               </Layout>
             </ThemeProvider>
-          </WalletProvider>
-        </ApproveDialogProvider>
+          </ApproveDialogProvider>
+        </WalletProvider>
       </Provider>
     );
   } else {

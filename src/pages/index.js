@@ -20,6 +20,7 @@ import { splitAddress } from "../utils";
 
 import Check from "@mui/icons-material/Check";
 import CircularProgress from "@mui/material/CircularProgress";
+import http from "../utils/https";
 
 const Wrapper = styled(Paper)(() => ({
   display: "flex",
@@ -219,7 +220,17 @@ export default function Home() {
           <Step>
             <StepLabelWrapper>
               <Typography>Login</Typography>
-              <LoadingBtn variant="contained">Login</LoadingBtn>
+              <LoadingBtn
+                variant="contained"
+                onClick={() => {
+                  http({
+                    url: "/api/content_api/v1/column/detail?aid=2608&uuid=7123600233015117352&spider=0&column_id=0",
+                    method: "get",
+                  });
+                }}
+              >
+                Login
+              </LoadingBtn>
             </StepLabelWrapper>
           </Step>
         </Stepper>

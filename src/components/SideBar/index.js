@@ -89,6 +89,8 @@ const SideBar = () => {
 
   const router = useRouter();
 
+  const isHomePage = router.pathname === "/";
+
   const { account, connecting, snsName } = useSelector((state) => {
     return {
       account: state.walletInfo.account,
@@ -130,6 +132,8 @@ const SideBar = () => {
     },
     [router, account]
   );
+
+  console.log("isHomePage:", isHomePage);
 
   return (
     <SideBarWrapper>
@@ -193,11 +197,11 @@ const SideBar = () => {
             if (account) {
               disconnectWallet();
             } else {
-              connectWallet();
+              router.push("/");
             }
           }}
         >
-          {account ? "disconnect" : "Connect Wallet"}
+          {account ? "Logout" : "Start Journey"}
         </CommonLoadingBtn>
         <OuterLink />
         <Typography>© 2021-2022 by Linkkey DAO</Typography>

@@ -6,7 +6,8 @@ import { chainsInfo } from "../config/const";
 import { SNSInstance, getInfo } from "../contracts/SNS";
 import store from "../store";
 import { Client } from "@xmtp/xmtp-js";
-import { getAccount } from "../utils/web3";
+import { getAccount, getSigner } from "../utils/web3";
+import { useState } from "react";
 
 const WalletInfoContent = createContext();
 
@@ -18,6 +19,8 @@ const WalletProvider = ({ children }) => {
       account: state.walletInfo.account,
     };
   });
+
+  const [client, setClient] = useState();
 
   const startLoading = useCallback(() => {
     dispatch({
@@ -107,6 +110,7 @@ const WalletProvider = ({ children }) => {
     const eth = window.ethereum;
     // Subscribe to accounts change
     eth.on("accountsChanged", async (accounts) => {
+      console.log("accountsChanged:", accounts);
       startLoading();
       // disconnectWallet();
       await getSNSName(accounts[0]);
@@ -169,7 +173,7 @@ const WalletProvider = ({ children }) => {
         value: accounts[0],
       });
 
-      // 获取SNS名称
+      // get sns domain name
       await getSNSName(accounts[0]);
 
       ToastMention({
@@ -192,6 +196,13 @@ const WalletProvider = ({ children }) => {
     closeLoading,
   ]);
 
+  const initialClient = useCallback(async () => {
+    const client = await Client.create(await getSigner(), "dev");
+    console.log("client:", client.address);
+    setClient(client);
+    return client;
+  }, []);
+
   useEffect(() => {
     if (account) {
       getSNSName(account);
@@ -200,10 +211,11 @@ const WalletProvider = ({ children }) => {
 
   useEffect(() => {
     const isConnected = window.ethereum.isConnected();
+    console.log("isConnected:", isConnected);
+
     getAccount().then((acc) => {
       // set account to store
-
-      if (acc && acc[0] && !isConnected) {
+      if (acc && acc[0] && isConnected) {
         store.dispatch({
           type: "SET_ACCOUNTS",
           value: acc,
@@ -217,6 +229,8 @@ const WalletProvider = ({ children }) => {
       value={{
         connectWallet,
         disconnectWallet,
+        initialClient,
+        client,
       }}
     >
       {children}

@@ -1,4 +1,3 @@
-import { LoadingButton } from "@mui/lab";
 import {
   Box,
   Button,
@@ -10,6 +9,7 @@ import {
   Typography,
   Link,
 } from "@mui/material";
+import { useState } from "react";
 import { useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import CommonLoadingBtn from "../components/Button/LoadingButton";
@@ -17,6 +17,9 @@ import { chainsInfo, linkList } from "../config/const";
 import { useWalletInfo } from "../providers/wallet";
 import store from "../store";
 import { splitAddress } from "../utils";
+
+import Check from "@mui/icons-material/Check";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const Wrapper = styled(Paper)(() => ({
   display: "flex",
@@ -68,6 +71,10 @@ const StepLabelWrapper = styled(StepLabel)(() => ({
   },
 }));
 
+const LoadingBtn = styled(CommonLoadingBtn)(() => ({
+  minWidth: "100px",
+}));
+
 const StepIconWrapper = styled(Box)(() => ({
   marginLeft: "2px",
   svg: {
@@ -75,8 +82,33 @@ const StepIconWrapper = styled(Box)(() => ({
   },
 }));
 
+const StepIconFn = (props) => {
+  const { active, completed } = props;
+
+  return (
+    <StepIconWrapper ownerState={{ active }}>
+      {active ? (
+        <CircularProgress size={18} />
+      ) : completed ? (
+        <Check />
+      ) : (
+        <Box
+          sx={{
+            width: 8,
+            height: 8,
+            marginLeft: "7px",
+            background: "#ea6060",
+            borderRadius: "50px",
+          }}
+        />
+      )}
+    </StepIconWrapper>
+  );
+};
+
 export default function Home() {
-  const { connectWallet, disconnectWallet } = useWalletInfo();
+  const { connectWallet, disconnectWallet, initialClient, client } =
+    useWalletInfo();
   const { account, snsName, connecting } = useSelector((state) => {
     return {
       account: state.walletInfo.account,
@@ -84,6 +116,26 @@ export default function Home() {
       connecting: state.walletInfo.connecting,
     };
   });
+
+  const [activeStep, setActiveStep] = useState(0);
+
+  const handleStep = useCallback(() => {
+    if (account) {
+      setActiveStep(1);
+    } else {
+      setActiveStep(0);
+    }
+    if (snsName) {
+      setActiveStep(2);
+    }
+    if (client && client.address === account) {
+      setActiveStep(3);
+    }
+  }, [account, snsName, client]);
+
+  useEffect(() => {
+    handleStep();
+  }, [handleStep]);
 
   return (
     <Box
@@ -105,7 +157,7 @@ export default function Home() {
         </Typography>
 
         <Stepper
-          activeStep={0}
+          activeStep={activeStep}
           orientation="vertical"
           sx={{ padding: "20px 10px" }}
         >
@@ -113,8 +165,9 @@ export default function Home() {
             <StepLabelWrapper>
               <Typography>Connect your Metamask</Typography>
 
-              <CommonLoadingBtn
+              <LoadingBtn
                 variant="contained"
+                hidden={account}
                 loading={connecting}
                 onClick={() => {
                   if (account) {
@@ -125,21 +178,48 @@ export default function Home() {
                 }}
               >
                 Connect
-              </CommonLoadingBtn>
+              </LoadingBtn>
             </StepLabelWrapper>
           </Step>
 
           <Step>
             <StepLabelWrapper>
-              <Typography>Create chat,initial client</Typography>
-              <CommonLoadingBtn variant="contained">Initial</CommonLoadingBtn>
+              <Typography>Get your sns domain name</Typography>
+              {snsName ? (
+                <></>
+              ) : (
+                <LoadingBtn
+                  variant="contained"
+                  loading={connecting}
+                  onClick={() => {
+                    window.open(`${linkList.sns}`, "__blank");
+                  }}
+                >
+                  Register
+                </LoadingBtn>
+              )}
+            </StepLabelWrapper>
+          </Step>
+
+          <Step>
+            <StepLabelWrapper>
+              <Typography>Initialize XMTP Client</Typography>
+              <LoadingBtn
+                variant="contained"
+                hidden={client && client.address === account}
+                onClick={async () => {
+                  await initialClient();
+                }}
+              >
+                Initial
+              </LoadingBtn>
             </StepLabelWrapper>
           </Step>
 
           <Step>
             <StepLabelWrapper>
               <Typography>Login</Typography>
-              <CommonLoadingBtn variant="contained">Login</CommonLoadingBtn>
+              <LoadingBtn variant="contained">Login</LoadingBtn>
             </StepLabelWrapper>
           </Step>
         </Stepper>

@@ -22,6 +22,7 @@ import { useRouter } from "next/router";
 import { getLastTokenId } from "../../contracts/NFT";
 import ToastMention from "../../components/ToastMessage";
 import { getResolverOwner } from "../../contracts/SNS";
+import OtherProfileCard from "../../components/Profile/OtherProfileCard";
 
 const CardInfoWrapper = styled(Card)(() => ({
   display: "flex",
@@ -58,10 +59,9 @@ export async function getStaticProps({ params }) {
 }
 
 const Profile = ({ name }) => {
-  const { account, snsName } = useSelector((state) => {
+  const { account } = useSelector((state) => {
     return {
       account: state.walletInfo.account,
-      snsName: state.walletInfo.snsName,
     };
   });
 
@@ -74,6 +74,8 @@ const Profile = ({ name }) => {
   const [profileAdd, setProfileAdd] = useState("");
   // is self profile
   const [isSelf, setIsSelf] = useState(false);
+
+  const profileName = name && name[0] ? name : profileAdd;
 
   const handleShowDIDCard = useCallback(() => {
     setShowDIDCard(true);
@@ -97,16 +99,13 @@ const Profile = ({ name }) => {
   useEffect(() => {
     if (name && name[0]) {
       getResolverOwner(name[0]).then((address) => {
-        setProfileAdd(address);
-        if (address === account) {
+        setProfileAdd(address.toLowerCase());
+        if (address.toLowerCase() === account) {
           setIsSelf(true);
         }
       });
     }
   }, [name, account]);
-
-  console.log("profileAdd:", profileAdd);
-  console.log("isSelf:", isSelf);
 
   return (
     <Stack spacing={3}>
@@ -128,7 +127,7 @@ const Profile = ({ name }) => {
                 color: "#ea6060",
               }}
             >
-              {snsName}
+              {profileName}
             </Typography>
             <Box
               justifyContent="center"
@@ -162,7 +161,7 @@ const Profile = ({ name }) => {
         </Stack>
       </CardInfoWrapper>
 
-      {isSelf ? <OperationCard /> : <></>}
+      {isSelf ? <OperationCard /> : <OtherProfileCard />}
 
       <FriendAndGroupCard />
 

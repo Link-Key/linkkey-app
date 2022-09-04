@@ -9,7 +9,7 @@ import {
   styled,
   Typography,
 } from "@mui/material";
-import { memo, useCallback, useState } from "react";
+import { memo, useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import EllipsisAddress from "../../components/EllipsisAddress";
 import OuterLink from "../../components/SideBar/OuterLink";
@@ -20,6 +20,7 @@ import FriendAndGroupCard from "../../components/Profile/FriendAndGroupCard";
 import DIDCardDialog from "../../components/DIDCardDialog";
 import { useRouter } from "next/router";
 import { getLastTokenId } from "../../contracts/NFT";
+import ToastMention from "../../components/ToastMessage";
 
 const CardInfoWrapper = styled(Card)(() => ({
   display: "flex",
@@ -59,11 +60,14 @@ const testfunction = async () => {
   // const fee = await getFee(1);
   // console.log('fee', fee)
   // stakeNFT(1, 1);
-  const tokenId = await getLastTokenId("0x6495885a76038875812C6cF534ED0627763FdA33", "0xB3eF1C9718F3EAFaeb6fd7Ac63E8f43493101Ded")
-  console.log('tokenId', tokenId)
+  const tokenId = await getLastTokenId(
+    "0x6495885a76038875812C6cF534ED0627763FdA33",
+    "0xB3eF1C9718F3EAFaeb6fd7Ac63E8f43493101Ded"
+  );
+  console.log("tokenId", tokenId);
 };
 
-const Profile = () => {
+const Profile = ({ name }) => {
   const { account, snsName } = useSelector((state) => {
     return {
       account: state.walletInfo.account,
@@ -80,6 +84,17 @@ const Profile = () => {
 
   const handleCloseDIDCard = useCallback(() => {
     setShowDIDCard(false);
+  }, []);
+
+  const hasPathParams = () => {
+    if (!name) {
+      router.push("/");
+      ToastMention({ message: "未注册SNS域名", type: "warn" });
+    }
+  };
+
+  useEffect(() => {
+    hasPathParams();
   }, []);
 
   return (

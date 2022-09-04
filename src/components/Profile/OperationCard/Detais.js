@@ -31,6 +31,7 @@ import { contractAddress } from "../../../config/const";
 import { getChainId } from "../../../utils/web3";
 import { useSelector } from "react-redux";
 import CreateGroupDialog from "./CreateGroupDialog";
+import { getLastTokenId, getTotal, NFTInstance } from "../../../contracts/NFT";
 
 const TitleWrapper = styled(Box)(() => ({
   display: "flex",
@@ -109,7 +110,7 @@ const Details = ({ type }) => {
   const [transferOpen, setTransferOpen] = useState(false);
   const [createGroupOpen, setCreateGroupOpen] = useState(false);
   // show nft details
-  const [showDetails, setShowDetails] = useState(false);
+  const [showDetails, setShowDetails] = useState(true);
   const [btnLoading, setBtnLoading] = useState(false);
   const [payBtnLoading, setPayBtnLoading] = useState(false);
   // min fee price
@@ -128,6 +129,10 @@ const Details = ({ type }) => {
   const introduceList =
     type === "friend" ? ReleaseIntroduce.friend : ReleaseIntroduce.group;
 
+  const contractAdd = isFriend
+    ? "0x6495885a76038875812C6cF534ED0627763FdA33"
+    : "0x156783D9c9FE93E64Cb334449Ffab3f8C84F9e2e";
+
   const { account } = useSelector((state) => ({
     account: state.walletInfo.account,
   }));
@@ -136,9 +141,23 @@ const Details = ({ type }) => {
   const stakeAdd = contractAddress(chainId).stakeAddress;
 
   const router = useRouter();
-  const keyName = router.query.name[0];
+  const keyName =
+    router && router.query && router.query.name && router.query.name[0]
+      ? router.query.name[0]
+      : "";
 
   const { dialogDispatch } = useDialog();
+
+  const handleOpenTransferDialog = useCallback(async () => {
+    // const nft = await NFTInstance(contractAdd);
+    // const total = await nft.totalSupply();
+    const tokenId = await getLastTokenId(contractAdd, account);
+    console.log("total:", total);
+
+    // if (tokenId) {
+    //   setTransferOpen(true);
+    // }
+  }, [contractAdd, account]);
 
   const queryAllowance = useCallback(async () => {
     try {
@@ -280,7 +299,7 @@ const Details = ({ type }) => {
           <ReleaseDetailsWrapper>
             <ReleaseDetailsItem>
               <Typography>Contract Address: </Typography>
-              <EllipsisAddress account="0x5435e8bb74d7ba8f4a76287dc0e75e203d87647e" />
+              <EllipsisAddress account={contractAdd} />
             </ReleaseDetailsItem>
             <Typography>Release Amount: 150</Typography>
             <Typography>Holding Amount: 50</Typography>
@@ -292,12 +311,7 @@ const Details = ({ type }) => {
               for listing operation
             </Typography>
             <Stack direction="row" justifyContent="center" spacing={2}>
-              <Button
-                variant="outlined"
-                onClick={() => {
-                  setTransferOpen(true);
-                }}
-              >
+              <Button variant="outlined" onClick={handleOpenTransferDialog}>
                 Transfer
               </Button>
               <Button
@@ -452,7 +466,7 @@ const Details = ({ type }) => {
       <TransferDialog
         open={transferOpen}
         title="Transfer"
-        contractAdd="0x5435e8bb74d7ba8f4a76287dc0e75e203d87647e"
+        contractAdd={contractAdd}
         onClose={() => {
           setTransferOpen(false);
         }}

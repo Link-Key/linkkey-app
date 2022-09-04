@@ -89,8 +89,6 @@ const SideBar = () => {
 
   const router = useRouter();
 
-  const isHomePage = router.pathname === "/";
-
   const { account, connecting, snsName } = useSelector((state) => {
     return {
       account: state.walletInfo.account,
@@ -132,8 +130,6 @@ const SideBar = () => {
     },
     [router, account]
   );
-
-  console.log("isHomePage:", isHomePage);
 
   return (
     <SideBarWrapper>

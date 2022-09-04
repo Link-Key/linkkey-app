@@ -37,14 +37,7 @@ const WalletProvider = ({ children }) => {
   }, [dispatch]);
 
   const disconnectWallet = useCallback(() => {
-    dispatch({
-      type: "SET_ACCOUNTS",
-      value: null,
-    });
-    dispatch({
-      type: "SET_SNS_NAME",
-      value: null,
-    });
+    dispatch({ type: "LOGOUT" });
   }, [dispatch]);
 
   const getSNSName = useCallback(
@@ -124,6 +117,7 @@ const WalletProvider = ({ children }) => {
 
     // Subscribe to chainId change
     eth.on("chainChanged", (chainId) => {
+      console.log("chianId:", chainId);
       if (chainId !== chainsInfo.chainIdHex) {
         dispatch({
           type: "SET_ACCOUNTS",
@@ -191,9 +185,9 @@ const WalletProvider = ({ children }) => {
   }, [
     subscribeFn,
     switchChainToPolygon,
-    getSNSName,
     startLoading,
     closeLoading,
+    getSNSName,
   ]);
 
   const initialClient = useCallback(async () => {
@@ -203,26 +197,30 @@ const WalletProvider = ({ children }) => {
     return client;
   }, []);
 
-  useEffect(() => {
-    if (account) {
-      getSNSName(account);
-    }
-  }, [getSNSName, account, startLoading, closeLoading]);
+  // useEffect(() => {
+  //   if (account) {
+  //     getSNSName(account);
+  //   }
+  // }, [getSNSName, account, startLoading, closeLoading]);
+
+  // useEffect(() => {
+  //   const isConnected = window.ethereum.isConnected();
+  //   console.log("isConnected:", isConnected);
+
+  //   getAccount().then((acc) => {
+  //     // set account to store
+  //     if (acc && acc[0] && isConnected) {
+  //       store.dispatch({
+  //         type: "SET_ACCOUNTS",
+  //         value: acc,
+  //       });
+  //     }
+  //   });
+  // }, []);
 
   useEffect(() => {
-    const isConnected = window.ethereum.isConnected();
-    console.log("isConnected:", isConnected);
-
-    getAccount().then((acc) => {
-      // set account to store
-      if (acc && acc[0] && isConnected) {
-        store.dispatch({
-          type: "SET_ACCOUNTS",
-          value: acc,
-        });
-      }
-    });
-  }, []);
+    subscribeFn();
+  }, [subscribeFn]);
 
   return (
     <WalletInfoContent.Provider

@@ -1,5 +1,7 @@
 import { Typography, InputBase, Box, styled, Button } from "@mui/material";
 import { memo, useCallback, useState } from "react";
+import { useSelector } from "react-redux";
+import { balanceOf } from "../../../contracts/NFT";
 import CommonDialog from "../../CommonDialog";
 import EllipsisAddress from "../../EllipsisAddress";
 
@@ -40,20 +42,33 @@ const TypographyBox = styled(Box)(() => ({
   },
 }));
 
-const TransferDialog = ({ open, title, contractAdd, onClose, onSuccess }) => {
-  const [tokenIdInp, setTokenIdInp] = useState("");
+const TransferDialog = ({
+  open,
+  title,
+  contractAdd,
+  tokenId,
+  onClose,
+  onSuccess,
+}) => {
+  const { account } = useSelector((state) => {
+    return {
+      account: state.walletInfo.account,
+    };
+  });
   const [receiverInp, setReceiverInp] = useState("");
 
-  const handleChangeMintInp = useCallback((e) => {
-    const value = e.target.value;
-    if (/^[0-9]*$/.test(value)) {
-      setTokenIdInp(value);
-    }
-  }, []);
+  console.log("transferToken:", tokenId);
 
   const handleChangeReceiverInp = useCallback((e) => {
     setReceiverInp(e.target.value);
   }, []);
+
+  const hasMintedNFT = useCallback(() => {}, []);
+
+  const handleTransferSubmit = useCallback(async () => {
+    const hasNFT = await balanceOf(contractAdd, receiverInp);
+    console.log("hasNFT:", hasNFT);
+  }, [contractAdd, receiverInp]);
 
   return (
     <CommonDialog open={open} title={title} onClose={onClose}>
@@ -62,14 +77,6 @@ const TransferDialog = ({ open, title, contractAdd, onClose, onSuccess }) => {
           <Typography>Contract Address: </Typography>
           <EllipsisAddress account={contractAdd} />
         </Items>
-        <TypographyBox aria-label="Transfer" sx={{ gap: "5px" }}>
-          <Typography>TokenID: </Typography>
-          <InputBase
-            value={tokenIdInp || ""}
-            placeholder="Please input number"
-            onChange={handleChangeMintInp}
-          />
-        </TypographyBox>
 
         <TypographyBox aria-label="Transfer" sx={{ gap: "5px" }}>
           <Typography>Receiver: </Typography>
@@ -84,6 +91,7 @@ const TransferDialog = ({ open, title, contractAdd, onClose, onSuccess }) => {
           sx={{
             margin: "5px auto",
           }}
+          onClick={handleTransferSubmit}
         >
           Submit
         </Button>

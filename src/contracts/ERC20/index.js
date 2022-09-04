@@ -9,6 +9,7 @@ export const ERC20Instance = (erc20Address) => {
   return ERC20;
 };
 
+// get key price
 const getBalance = async (erc20Address, owner) => {
   const balance = await ERC20Instance(erc20Address).balanceOf(owner);
   return balance;

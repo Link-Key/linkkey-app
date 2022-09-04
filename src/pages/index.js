@@ -164,7 +164,11 @@ export default function Home() {
         >
           <Step>
             <StepLabelWrapper>
-              <Typography>Connect your Metamask</Typography>
+              <Typography>
+                {account
+                  ? `Connected ${splitAddress(account)}`
+                  : "Connect Metamask"}
+              </Typography>
 
               <LoadingBtn
                 variant="contained"
@@ -187,7 +191,9 @@ export default function Home() {
             <StepLabelWrapper>
               <Typography>Get your sns domain name</Typography>
               {snsName ? (
-                <></>
+                <LoadingBtn variant="contained" loading={connecting}>
+                  Query
+                </LoadingBtn>
               ) : (
                 <LoadingBtn
                   variant="contained"

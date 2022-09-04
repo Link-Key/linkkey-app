@@ -124,6 +124,7 @@ const Details = ({ type }) => {
   const [twitterStatus, setTwitterStatus] = useState(false);
   const [mintInp, setMintInp] = useState("");
   const [royaltiesInp, setRoyaltiesInp] = useState("");
+  const [transferTokenId, setTransferTokenId] = useState(0);
 
   const isFriend = type === "friend" ? true : false;
   const introduceList =
@@ -149,14 +150,20 @@ const Details = ({ type }) => {
   const { dialogDispatch } = useDialog();
 
   const handleOpenTransferDialog = useCallback(async () => {
-    // const nft = await NFTInstance(contractAdd);
-    // const total = await nft.totalSupply();
-    const tokenId = await getLastTokenId(contractAdd, account);
-    console.log("total:", total);
+    setBtnLoading(true);
+    const nft = await NFTInstance(contractAdd);
+    const total = await nft.totalSupply();
+    const tokenIdHex = await getLastTokenId(contractAdd, account);
+    const tokenId = hexToNumber(tokenIdHex);
+    console.log("tokenIdHex:", tokenIdHex);
+    console.log("tokenId:", tokenId);
 
-    // if (tokenId) {
-    //   setTransferOpen(true);
-    // }
+    if (tokenId) {
+      setTransferTokenId(tokenId);
+      setTransferOpen(true);
+    }
+
+    setBtnLoading(false);
   }, [contractAdd, account]);
 
   const queryAllowance = useCallback(async () => {
@@ -199,6 +206,7 @@ const Details = ({ type }) => {
       console.log("tokenId:", tokenId);
       const mintType = isFriend ? 1 : 2;
       await stakeNFT(tokenId, mintType);
+      // call backend interface
       setShowDetails(true);
       dialogDispatch({ type: "ADD_STEP" });
       dialogDispatch({ type: "CLOSE_DIALOG" });
@@ -311,9 +319,13 @@ const Details = ({ type }) => {
               for listing operation
             </Typography>
             <Stack direction="row" justifyContent="center" spacing={2}>
-              <Button variant="outlined" onClick={handleOpenTransferDialog}>
+              <CommonLoadingBtn
+                loading={btnLoading}
+                variant="outlined"
+                onClick={handleOpenTransferDialog}
+              >
                 Transfer
-              </Button>
+              </CommonLoadingBtn>
               <Button
                 sx={{
                   display: isFriend ? "none" : "block",
@@ -467,6 +479,7 @@ const Details = ({ type }) => {
         open={transferOpen}
         title="Transfer"
         contractAdd={contractAdd}
+        tokenId={transferTokenId}
         onClose={() => {
           setTransferOpen(false);
         }}

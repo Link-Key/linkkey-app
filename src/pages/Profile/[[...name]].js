@@ -21,6 +21,7 @@ import DIDCardDialog from "../../components/DIDCardDialog";
 import { useRouter } from "next/router";
 import { getLastTokenId } from "../../contracts/NFT";
 import ToastMention from "../../components/ToastMessage";
+import { getResolverOwner } from "../../contracts/SNS";
 
 const CardInfoWrapper = styled(Card)(() => ({
   display: "flex",
@@ -56,17 +57,6 @@ export async function getStaticProps({ params }) {
   };
 }
 
-const testfunction = async () => {
-  // const fee = await getFee(1);
-  // console.log('fee', fee)
-  // stakeNFT(1, 1);
-  const tokenId = await getLastTokenId(
-    "0x6495885a76038875812C6cF534ED0627763FdA33",
-    "0xB3eF1C9718F3EAFaeb6fd7Ac63E8f43493101Ded"
-  );
-  console.log("tokenId", tokenId);
-};
-
 const Profile = ({ name }) => {
   const { account, snsName } = useSelector((state) => {
     return {
@@ -74,9 +64,16 @@ const Profile = ({ name }) => {
       snsName: state.walletInfo.snsName,
     };
   });
+
   const router = useRouter();
 
+  console.log("name:", name);
+
   const [showDIDCard, setShowDIDCard] = useState(false);
+  // profile address
+  const [profileAdd, setProfileAdd] = useState("");
+  // is self profile
+  const [isSelf, setIsSelf] = useState(false);
 
   const handleShowDIDCard = useCallback(() => {
     setShowDIDCard(true);
@@ -96,6 +93,20 @@ const Profile = ({ name }) => {
   useEffect(() => {
     hasPathParams();
   }, []);
+
+  useEffect(() => {
+    if (name && name[0]) {
+      getResolverOwner(name[0]).then((address) => {
+        setProfileAdd(address);
+        if (address === account) {
+          setIsSelf(true);
+        }
+      });
+    }
+  }, [name, account]);
+
+  console.log("profileAdd:", profileAdd);
+  console.log("isSelf:", isSelf);
 
   return (
     <Stack spacing={3}>
@@ -127,7 +138,7 @@ const Profile = ({ name }) => {
                 padding: "2px 0",
               }}
             >
-              <EllipsisAddress account={account} />
+              <EllipsisAddress account={profileAdd} />
             </Box>
             <OuterLink sx={{ justifyContent: "flex-start" }} />
             <Typography>description</Typography>
@@ -151,7 +162,7 @@ const Profile = ({ name }) => {
         </Stack>
       </CardInfoWrapper>
 
-      <OperationCard />
+      {isSelf ? <OperationCard /> : <></>}
 
       <FriendAndGroupCard />
 

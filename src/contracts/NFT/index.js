@@ -73,6 +73,11 @@ const getLastTokenId = async (NFTAddress, owner) => {
   return 0;
 };
 
+const getOwner = async (NFTAddress) => {
+  const owner = await NFTInstance(NFTAddress).owner();
+  return owner;
+};
+
 
 export {
   safeMint, // 铸造 1.getFloorPrices 2.ERC20 allance => approve,3.this
@@ -83,5 +88,6 @@ export {
   getFloorPrices, // 地板价
   balanceOf, // 拥有数量
   getTotal, // 总铸造数量
-  getLastTokenId //获取地址拥有的一个tokenId
+  getLastTokenId, //获取地址拥有的一个tokenId
+  getOwner//获取NFT的
 };

@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { formatEther, parseEther } from "ethers/lib/utils";
+import { formatEther, parseEther, formatUnits } from "ethers/lib/utils";
 import { useSelector } from "react-redux";
 import { contractAddress } from "../config/const";
 import { getBalance } from "../contracts/ERC20";
@@ -43,9 +43,9 @@ export const getKeyBalance = async (owner) => {
     console.log("keyAddress:", keyAddress);
     console.log("owner:", owner);
     const balance = await getBalance(keyAddress, owner);
-    const weiBalance = handleWeiValue(balance);
-    console.log("weiBalance:", weiBalance);
-    console.log("balance:", handleHexEthValue(weiBalance));
+    // const weiBalance = handleWeiValue(balance);
+    console.log("balance:", formatUnits(balance, "wei"));
+    console.log("balance:", handleHexEthValue(hexToNumber(balance)));
     return handleHexEthValue(weiBalance);
   } catch (error) {
     console.log("getKeyBalanceErr:", error);

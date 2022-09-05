@@ -152,7 +152,7 @@ const Details = ({ type }) => {
       ? router.query.name[0]
       : "";
 
-  const { dialogDispatch } = useDialog();
+  const { dialogDispatch, state } = useDialog();
 
   const handleOpenTransferDialog = useCallback(async () => {
     setBtnLoading(true);
@@ -222,7 +222,8 @@ const Details = ({ type }) => {
 
   // pay mint NFT
   const handlePayMint = useCallback(async () => {
-    setPayBtnLoading(true);
+    // setPayBtnLoading(true);
+    dialogDispatch({ type: "SET_LOADING", payload: true });
     const approveStatus = await callApprove();
     console.log("approveStatus:", approveStatus);
     if (approveStatus === "unApprove") {
@@ -244,7 +245,8 @@ const Details = ({ type }) => {
     }
 
     setReleaseOpen(false);
-    setPayBtnLoading(false);
+    dialogDispatch({ type: "SET_LOADING", payload: false });
+    // setPayBtnLoading(false);
   }, [callApprove, queryAllowance, dialogDispatch, mintNFT]);
 
   const changeMintInp = (e) => {
@@ -441,7 +443,7 @@ const Details = ({ type }) => {
           </ReleaseData>
         </DialogContent>
         <CommonLoadingBtn
-          loading={payBtnLoading}
+          loading={state.loading}
           variant="contained"
           sx={{
             margin: "0 auto",

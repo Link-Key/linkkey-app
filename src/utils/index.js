@@ -26,21 +26,17 @@ export const handleHexEthValue = (value) => {
 };
 
 export const handleWeiValue = (value) => {
-  let number = value;
+  let number = value.toString();
   if (value && value._hex) {
     number = hexToNumber(value).toString();
   }
-  return Number(parseEther(number));
+  return Number(parseEther(number).toString());
 };
 
 export const getKeyBalance = async (owner) => {
   const keyAddress = contractAddress(chainId.toString()).keyAddress;
-
-  console.log("balanceChainId:", chainId);
-  console.log("keyAddress:", keyAddress);
   try {
     const balance = await getBalance(keyAddress, owner);
-    console.log("balance:", handleHexEthValue(balance));
     return handleHexEthValue(balance);
   } catch (error) {
     console.log("getKeyBalanceErr:", error);

@@ -1,5 +1,6 @@
 import { Box, Button, Paper, Typography, styled, Stack } from "@mui/material";
-import { memo, useState } from "react";
+import { memo, useCallback, useState } from "react";
+import { getFloorPrices } from "../../../contracts/NFT";
 import CommonLoadingBtn from "../../Button/LoadingButton";
 import MintOtherDialog from "./MintOtherDialog";
 
@@ -30,6 +31,15 @@ const OtherDetails = ({ type }) => {
 
   const [mintOpen, setMintOpen] = useState(false);
 
+  const handleOpenMintNFTDialog = useCallback(async () => {
+    setMintOpen(true);
+
+    const price = await getFloorPrices(
+      "0x6495885a76038875812C6cF534ED0627763FdA33"
+    );
+    console.log("price:", price);
+  }, []);
+
   return (
     <Paper>
       <TitleWrapper>
@@ -46,9 +56,7 @@ const OtherDetails = ({ type }) => {
         <Stack direction="row" justifyContent="center" spacing={2}>
           <CommonLoadingBtn
             variant="outlined"
-            onClick={() => {
-              setMintOpen(true);
-            }}
+            onClick={handleOpenMintNFTDialog}
           >
             {isFriend ? "Mint His Friend-NFT" : "Mint His Group-NFT"}
           </CommonLoadingBtn>

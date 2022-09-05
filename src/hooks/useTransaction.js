@@ -1,7 +1,7 @@
 import { memo, useCallback } from "react";
 import { allowance, approve } from "../contracts/ERC20";
 import { useDialog } from "../providers/ApproveDialog";
-import { handleWeiValue, hexToNumber } from "../utils";
+import { BNformatToWei, ethFormatToWei, hexToNumber } from "../utils";
 
 const useTransaction = ({ coinAddress, from, to, price, executeFn }) => {
   const { dialogDispatch } = useDialog();
@@ -18,16 +18,12 @@ const useTransaction = ({ coinAddress, from, to, price, executeFn }) => {
 
   const callApprove = useCallback(async () => {
     const value = await queryAllowance();
-    console.log("approveFee:", handleWeiValue(price).toFixed(0));
+    console.log("approveFee:", ethFormatToWei(price));
     try {
       if (value >= price) {
         return "approve";
       } else {
-        const resp = await approve(
-          coinAddress,
-          to,
-          handleWeiValue(price).toFixed(0)
-        );
+        const resp = await approve(coinAddress, to, ethFormatToWei(price));
         console.log("approveResp:", resp);
         return "unApprove";
       }

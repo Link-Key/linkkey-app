@@ -38,8 +38,12 @@ const MintOtherDialog = ({
     if (keyBalance > price) {
       try {
         await safeMint(to);
+        dialogDispatch({ type: "ADD_STEP" });
+        dialogDispatch({ type: "CLOSE_DIALOG" });
       } catch (error) {
+        dialogDispatch({ type: "CLOSE_DIALOG" });
         console.log("safeMintErr:", error);
+        ToastMention({ message: "contract error", type: "error" });
       }
     } else {
       dialogDispatch({ type: "CLOSE_DIALOG" });

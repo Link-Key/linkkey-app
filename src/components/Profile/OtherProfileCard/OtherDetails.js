@@ -11,12 +11,7 @@ import { useEffect } from "react";
 import { memo, useCallback, useState } from "react";
 import { useSelector } from "react-redux";
 import { getFloorPrices, getTotal } from "../../../contracts/NFT";
-import {
-  getKeyAddress,
-  handleHexEthValue,
-  handleWeiValue,
-  hexToNumber,
-} from "../../../utils";
+import { getKeyAddress, weiFormatToEth, hexToNumber } from "../../../utils";
 import CommonLoadingBtn from "../../Button/LoadingButton";
 import MintOtherDialog from "./MintOtherDialog";
 
@@ -75,7 +70,7 @@ const OtherDetails = ({ type }) => {
   const getFloorPrice = useCallback(async () => {
     try {
       const priceHex = await getFloorPrices(contractAdd);
-      setFloorPrice(handleHexEthValue(priceHex));
+      setFloorPrice(weiFormatToEth(priceHex));
     } catch (error) {
       console.log("getFloorPriceErr:", error);
     }

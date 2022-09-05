@@ -17,7 +17,7 @@ export const hexToNumber = (value) => {
   return parseInt(value._hex, 16);
 };
 
-export const handleHexEthValue = (value) => {
+export const weiFormatToEth = (value) => {
   let number = value.toString();
   if (value && value._hex) {
     number = hexToNumber(value).toString();
@@ -25,12 +25,15 @@ export const handleHexEthValue = (value) => {
   return Number(formatEther(number));
 };
 
-export const handleWeiValue = (value) => {
-  let number = value.toString();
-  if (value && value._hex) {
-    number = hexToNumber(value).toString();
+export const ethFormatToWei = (value) => {
+  if (typeof value === "string") {
+    return parseEther(value);
   }
-  return Number(parseEther(number).toString());
+  return parseEther(value.toString());
+};
+
+export const BNformatToWei = (value) => {
+  return formatUnits(value, "wei");
 };
 
 export const getKeyAddress = () => {
@@ -40,13 +43,9 @@ export const getKeyAddress = () => {
 export const getKeyBalance = async (owner) => {
   const keyAddress = getKeyAddress();
   try {
-    console.log("keyAddress:", keyAddress);
-    console.log("owner:", owner);
     const balance = await getBalance(keyAddress, owner);
-    // const weiBalance = handleWeiValue(balance);
-    console.log("balance:", formatUnits(balance, "wei"));
-    console.log("balance:", handleHexEthValue(hexToNumber(balance)));
-    return handleHexEthValue(weiBalance);
+    const weiBalance = BNformatToWei(balance);
+    return weiFormatToEth(weiBalance);
   } catch (error) {
     console.log("getKeyBalanceErr:", error);
   }

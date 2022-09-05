@@ -24,9 +24,10 @@ import { StakeInstance, stakeNFT } from "../../../contracts/Stake";
 import CommonLoadingBtn from "../../Button/LoadingButton";
 import {
   getKeyBalance,
-  handleHexEthValue,
-  handleWeiValue,
+  weiFormatToEth,
+  BNformatToWei,
   hexToNumber,
+  ethFormatToWei,
 } from "../../../utils";
 import { getResolverOwner, getTokenIdOfName } from "../../../contracts/SNS";
 import { useRouter } from "next/router";
@@ -183,7 +184,7 @@ const Details = ({ type }) => {
 
   const callApprove = useCallback(async () => {
     const value = await queryAllowance();
-    console.log("approveFee:", handleWeiValue(feeState).toFixed(0));
+    console.log("approveFee:", ethFormatToWei(feeState));
     try {
       if (value >= feeState) {
         return "approve";
@@ -191,7 +192,7 @@ const Details = ({ type }) => {
         const resp = await approve(
           feeAddress,
           stakeAdd,
-          handleWeiValue(feeState).toFixed(0)
+          ethFormatToWei(feeState)
         );
         console.log("approveResp:", resp);
         return "unApprove";
@@ -206,19 +207,27 @@ const Details = ({ type }) => {
   const mintNFT = useCallback(async () => {
     clearInterval(window.timer);
     dialogDispatch({ type: "ADD_STEP" });
-    try {
-      const tokenId = await getTokenIdOfName(keyName);
-      console.log("tokenId:", tokenId);
-      const mintType = isFriend ? 1 : 2;
-      await stakeNFT(tokenId, mintType);
-      // call backend interface
-      setShowDetails(true);
-      dialogDispatch({ type: "ADD_STEP" });
+
+    const keyBalance = await getKeyBalance(account);
+    console.log("keyBalance:", keyBalance);
+    console.log("feeState:", feeState);
+    if (keyBalance > feeState) {
+      try {
+        const tokenId = await getTokenIdOfName(keyName);
+        console.log("tokenId:", tokenId);
+        const mintType = isFriend ? 1 : 2;
+        await stakeNFT(tokenId, mintType);
+        // call backend interface
+        setShowDetails(true);
+        dialogDispatch({ type: "ADD_STEP" });
+        dialogDispatch({ type: "CLOSE_DIALOG" });
+      } catch (error) {
+        console.log("mintNFTErr:", error);
+      }
+    } else {
       dialogDispatch({ type: "CLOSE_DIALOG" });
-    } catch (error) {
-      console.log("mintNFTErr:", error);
     }
-  }, [isFriend, dialogDispatch, keyName]);
+  }, [isFriend, dialogDispatch, keyName, account, feeState]);
 
   // pay mint NFT
   const handlePayMint = useCallback(async () => {
@@ -266,14 +275,12 @@ const Details = ({ type }) => {
   const handleReleaseDialogOpen = useCallback(async () => {
     setBtnLoading(true);
 
-    await getKeyBalance(account);
-
     const stakeInstance = StakeInstance();
     try {
       const typeNumber = isFriend ? 1 : 2;
       const fee = await stakeInstance.getFee(typeNumber);
       if (fee && fee.feeAmount && fee.keyAddress) {
-        setFeeState(handleHexEthValue(fee.feeAmount));
+        setFeeState(weiFormatToEth(fee.feeAmount));
         setFeeAddress(fee.keyAddress);
       } else {
         setBtnLoading(false);
@@ -285,7 +292,7 @@ const Details = ({ type }) => {
       setBtnLoading(false);
       console.log("stakeGetFee:", error);
     }
-  }, [isFriend, account]);
+  }, [isFriend]);
 
   useEffect(() => {
     if (keyName) {

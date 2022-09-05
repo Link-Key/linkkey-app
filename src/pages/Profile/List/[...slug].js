@@ -78,7 +78,49 @@ const ProfileList = ({ type, name }) => {
     align: "center",
   };
 
-  const columns = [
+  const friendColumns = [
+    {
+      field: "domain",
+      headerName: "Domain",
+      width: 90,
+      ...commonColumnsProps,
+    },
+    {
+      field: "relation",
+      headerName: "Relation",
+      width: 150,
+      ...commonColumnsProps,
+    },
+    {
+      field: "action",
+      headerName: "Action",
+      type: "number",
+      width: 110,
+      ...commonColumnsProps,
+      renderCell: (params) => {
+        const { row } = params;
+
+        return (
+          <>
+            {row.relation === "owner" ? (
+              <Button
+                variant="outlined"
+                onClick={() => {
+                  setSaleOpen(true);
+                }}
+              >
+                Sale
+              </Button>
+            ) : (
+              "-"
+            )}
+          </>
+        );
+      },
+    },
+  ];
+
+  const groupColumns = [
     {
       field: "id",
       headerName: "Group ID",
@@ -127,15 +169,69 @@ const ProfileList = ({ type, name }) => {
   ];
 
   const rows = [
-    { id: 1, groupName: "Snow", relation: "owner", price: 35 },
-    { id: 2, groupName: "Lannister", relation: "member", price: 42 },
-    { id: 3, groupName: "Lannister", relation: "owner", price: 45 },
-    { id: 4, groupName: "Stark", relation: "member", price: 16 },
-    { id: 5, groupName: "Targaryen", relation: "owner", price: null },
-    { id: 6, groupName: "Melisandre", relation: "member", price: 150 },
-    { id: 7, groupName: "Clifford", relation: "owner", price: 44 },
-    { id: 8, groupName: "Frances", relation: "member", price: 36 },
-    { id: 9, groupName: "Roxie", relation: "owner", price: 65 },
+    {
+      id: 1,
+      domain: "liujuncheng.key",
+      groupName: "Snow",
+      relation: "owner",
+      price: 35,
+    },
+    {
+      id: 2,
+      domain: "dsdsds.key",
+      groupName: "Lannister",
+      relation: "member",
+      price: 42,
+    },
+    {
+      id: 3,
+      domain: "liujuncheng.key",
+      groupName: "Lannister",
+      relation: "owner",
+      price: 45,
+    },
+    {
+      id: 4,
+      domain: "dsdsds.key",
+      groupName: "Stark",
+      relation: "member",
+      price: 16,
+    },
+    {
+      id: 5,
+      domain: "liujuncheng.key",
+      groupName: "Targaryen",
+      relation: "owner",
+      price: null,
+    },
+    {
+      id: 6,
+      domain: "dsdsds.key",
+      groupName: "Melisandre",
+      relation: "member",
+      price: 150,
+    },
+    {
+      id: 7,
+      domain: "liujuncheng.key",
+      groupName: "Clifford",
+      relation: "owner",
+      price: 44,
+    },
+    {
+      id: 8,
+      domain: "dsdsds.key",
+      groupName: "Frances",
+      relation: "member",
+      price: 36,
+    },
+    {
+      id: 9,
+      domain: "liujuncheng.key",
+      groupName: "Roxie",
+      relation: "owner",
+      price: 65,
+    },
   ];
 
   return (
@@ -160,10 +256,9 @@ const ProfileList = ({ type, name }) => {
         <Box sx={{ height: "72vh", width: "100%" }}>
           <DataGrid
             rows={rows}
-            columns={columns}
+            columns={type === "0" ? friendColumns : groupColumns}
             pageSize={20}
             disableSelectionOnClick={true}
-            // rowsPerPageOptions={[5]}
             experimentalFeatures={{ newEditingApi: true }}
           />
         </Box>

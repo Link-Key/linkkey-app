@@ -13,7 +13,7 @@ const Wrapper = styled(Box)(() => ({
   },
 }));
 
-const MintOtherDialog = ({ open, title, onClose }) => {
+const MintOtherDialog = ({ open, title, onClose, isFriend }) => {
   return (
     <CommonDialog open={open} title={title} onClose={onClose}>
       <DialogContent>
@@ -26,8 +26,10 @@ const MintOtherDialog = ({ open, title, onClose }) => {
               color: "#777",
             }}
           >
-            NOTE: After minted his Friend-NFT, you will automatically become his
-            friend
+            {isFriend
+              ? `NOTE: After minted his Friend-NFT, you will automatically become his
+            friend`
+              : `Note: Group-NFT must be verified by twitter before it can be release, and your sns domain name will be locked into a pledge contract`}
           </Typography>
         </Wrapper>
       </DialogContent>

@@ -1,5 +1,11 @@
 import BigNumber from "bignumber.js";
 import { formatEther, parseEther } from "ethers/lib/utils";
+import { useSelector } from "react-redux";
+import { contractAddress } from "../config/const";
+import { getBalance } from "../contracts/ERC20";
+import store from "../store/index";
+
+const { chainId } = store.getState().walletInfo;
 
 export function splitAddress(address, start = 11, end = -4) {
   return (
@@ -16,7 +22,7 @@ export const handleHexEthValue = (value) => {
   if (value && value._hex) {
     number = hexToNumber(value).toString();
   }
-  return Number(formatEther(number)).toFixed(0);
+  return Number(formatEther(number));
 };
 
 export const handleWeiValue = (value) => {
@@ -24,5 +30,19 @@ export const handleWeiValue = (value) => {
   if (value && value._hex) {
     number = hexToNumber(value).toString();
   }
-  return Number(parseEther(number)).toFixed(0);
+  return Number(parseEther(number));
+};
+
+export const getKeyBalance = async (owner) => {
+  const keyAddress = contractAddress(chainId.toString()).keyAddress;
+
+  console.log("balanceChainId:", chainId);
+  console.log("keyAddress:", keyAddress);
+  try {
+    const balance = await getBalance(keyAddress, owner);
+    console.log("balance:", handleHexEthValue(balance));
+    return handleHexEthValue(balance);
+  } catch (error) {
+    console.log("getKeyBalanceErr:", error);
+  }
 };

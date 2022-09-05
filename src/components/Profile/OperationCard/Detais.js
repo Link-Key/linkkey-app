@@ -22,7 +22,12 @@ import TransferDialog from "./TransferDialog";
 import SaleDialog from "./SaleDialog";
 import { StakeInstance, stakeNFT } from "../../../contracts/Stake";
 import CommonLoadingBtn from "../../Button/LoadingButton";
-import { handleHexEthValue, handleWeiValue, hexToNumber } from "../../../utils";
+import {
+  getKeyBalance,
+  handleHexEthValue,
+  handleWeiValue,
+  hexToNumber,
+} from "../../../utils";
 import { getResolverOwner, getTokenIdOfName } from "../../../contracts/SNS";
 import { useRouter } from "next/router";
 import { useDialog } from "../../../providers/ApproveDialog";
@@ -178,7 +183,7 @@ const Details = ({ type }) => {
 
   const callApprove = useCallback(async () => {
     const value = await queryAllowance();
-    console.log("approveFee:", handleWeiValue(feeState));
+    console.log("approveFee:", handleWeiValue(feeState).toFixed(0));
     try {
       if (value >= feeState) {
         return "approve";
@@ -186,7 +191,7 @@ const Details = ({ type }) => {
         const resp = await approve(
           feeAddress,
           stakeAdd,
-          handleWeiValue(feeState)
+          handleWeiValue(feeState).toFixed(0)
         );
         console.log("approveResp:", resp);
         return "unApprove";
@@ -259,6 +264,8 @@ const Details = ({ type }) => {
   const handleReleaseDialogOpen = useCallback(async () => {
     setBtnLoading(true);
 
+    await getKeyBalance(account);
+
     const stakeInstance = StakeInstance();
     try {
       const typeNumber = isFriend ? 1 : 2;
@@ -276,7 +283,7 @@ const Details = ({ type }) => {
       setBtnLoading(false);
       console.log("stakeGetFee:", error);
     }
-  }, [isFriend]);
+  }, [isFriend, account]);
 
   useEffect(() => {
     if (keyName) {
@@ -424,9 +431,12 @@ const Details = ({ type }) => {
                 color: "#777",
               }}
             >
+              {isFriend
+                ? `
               Note:Friend-NFT must be verified by twitter before it can be
               release,and your sns domain name will be locked into a pledge
-              contract
+              contract`
+                : "Note: Group-NFT must be verified by twitter before it can be release, and your sns domain name will be locked into a pledge contract"}
             </Typography>
           </ReleaseData>
         </DialogContent>

@@ -60,6 +60,7 @@ const OtherDetails = ({ type }) => {
       <MintOtherDialog
         open={mintOpen}
         title={isFriend ? "Release Friend-NFT" : "Release Group-NFT"}
+        isFriend={isFriend}
         onClose={() => {
           setMintOpen(false);
         }}

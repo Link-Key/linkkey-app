@@ -1,7 +1,12 @@
 import { Box, DialogContent, styled, Typography } from "@mui/material";
-import { memo } from "react";
+import { memo, useCallback } from "react";
+import { safeMint } from "../../../contracts/NFT";
+import useTransaction from "../../../hooks/useTransaction";
+import { useDialog } from "../../../providers/ApproveDialog";
+import { getKeyBalance } from "../../../utils";
 import CommonLoadingBtn from "../../Button/LoadingButton";
 import CommonDialog from "../../CommonDialog";
+import ToastMention from "../../ToastMessage";
 
 const Wrapper = styled(Box)(() => ({
   display: "flex",
@@ -13,12 +18,53 @@ const Wrapper = styled(Box)(() => ({
   },
 }));
 
-const MintOtherDialog = ({ open, title, onClose, isFriend }) => {
+const MintOtherDialog = ({
+  open,
+  title,
+  onClose,
+  isFriend,
+  coinAddress,
+  from,
+  to,
+  price,
+}) => {
+  const { state, dialogDispatch } = useDialog();
+
+  const mintNFT = useCallback(async () => {
+    console.log("from:", from);
+    const keyBalance = await getKeyBalance(from);
+    console.log("keyBalance:", keyBalance);
+    console.log("price:", price);
+    if (keyBalance > price) {
+      try {
+        await safeMint(to);
+      } catch (error) {
+        console.log("safeMintErr:", error);
+      }
+    } else {
+      dialogDispatch({ type: "CLOSE_DIALOG" });
+      ToastMention({ message: "Key is not enough!", type: "warn" });
+    }
+  }, [to, from, price, dialogDispatch]);
+
+  const { handlePayMint } = useTransaction({
+    coinAddress,
+    from,
+    to,
+    price,
+    executeFn: mintNFT,
+  });
+
+  const handlePayMintFn = useCallback(async () => {
+    await handlePayMint();
+    onClose();
+  }, [handlePayMint, onClose]);
+
   return (
     <CommonDialog open={open} title={title} onClose={onClose}>
       <DialogContent>
         <Wrapper>
-          <Typography>Price: 50 KEY</Typography>
+          <Typography>{`Price: ${price} KEY`}</Typography>
           <Typography>Mint quantity: 1</Typography>
 
           <Typography
@@ -35,12 +81,14 @@ const MintOtherDialog = ({ open, title, onClose, isFriend }) => {
       </DialogContent>
 
       <CommonLoadingBtn
+        loading={state.loading}
         variant="contained"
         sx={{
           margin: "0 auto",
         }}
+        onClick={handlePayMintFn}
       >
-        Pay 50 Key
+        {`Pay ${price} Key`}
       </CommonLoadingBtn>
     </CommonDialog>
   );

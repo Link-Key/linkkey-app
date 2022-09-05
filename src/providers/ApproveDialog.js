@@ -19,7 +19,7 @@ const reducer = (state, action) => {
     case "OPEN_DIALOG":
       return { ...state, open: true };
     case "CLOSE_DIALOG":
-      return { ...state, open: false, step: 0 };
+      return { ...state, open: false, step: 0, loading: false };
   }
 };
 

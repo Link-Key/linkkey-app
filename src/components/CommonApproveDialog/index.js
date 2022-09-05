@@ -78,7 +78,7 @@ const CommonApproveDialog = () => {
   const { state, dialogDispatch } = useDialog();
 
   const handleCancelBtn = useCallback(() => {
-    clearInterval(window.timer);
+    clearInterval(window.approveTimer);
     dialogDispatch({ type: "CLOSE_DIALOG" });
   }, [dialogDispatch]);
 

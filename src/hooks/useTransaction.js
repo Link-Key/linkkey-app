@@ -1,28 +1,32 @@
 import { memo, useCallback } from "react";
-import { hexToNumber } from "../utils";
+import { allowance, approve } from "../contracts/ERC20";
+import { useDialog } from "../providers/ApproveDialog";
+import { handleWeiValue, hexToNumber } from "../utils";
 
-const useTransaction = ({ contractAdd, from, to, feeState }) => {
+const useTransaction = ({ coinAddress, from, to, price, executeFn }) => {
+  const { dialogDispatch } = useDialog();
+
   const queryAllowance = useCallback(async () => {
     try {
-      const value = await allowance(contractAdd, from, to);
+      const value = await allowance(coinAddress, from, to);
       return hexToNumber(value);
     } catch (error) {
       console.log("allowanceError:", error);
       return 0;
     }
-  }, [contractAdd, from, to]);
+  }, [coinAddress, from, to]);
 
   const callApprove = useCallback(async () => {
     const value = await queryAllowance();
-    console.log("approveFee:", handleWeiValue(feeState).toFixed(0));
+    console.log("approveFee:", handleWeiValue(price).toFixed(0));
     try {
-      if (value >= feeState) {
+      if (value >= price) {
         return "approve";
       } else {
         const resp = await approve(
-          contractAdd,
+          coinAddress,
           to,
-          handleWeiValue(feeState).toFixed(0)
+          handleWeiValue(price).toFixed(0)
         );
         console.log("approveResp:", resp);
         return "unApprove";
@@ -31,9 +35,41 @@ const useTransaction = ({ contractAdd, from, to, feeState }) => {
       console.log("callApproveErr:", error);
       return false;
     }
-  }, [contractAdd, feeState, queryAllowance, to]);
+  }, [coinAddress, price, queryAllowance, to]);
 
-  return { queryAllowance };
+  const handleExecuteFn = useCallback(async () => {
+    clearInterval(window.approveTimer);
+    dialogDispatch({ type: "ADD_STEP" });
+    await executeFn();
+  }, [dialogDispatch, executeFn]);
+
+  // pay mint NFT
+  const handlePayMint = useCallback(async () => {
+    dialogDispatch({ type: "SET_LOADING", payload: true });
+    const approveStatus = await callApprove();
+    console.log("approveStatus:", approveStatus);
+    if (approveStatus === "unApprove") {
+      dialogDispatch({ type: "OPEN_DIALOG" });
+      setTimeout(() => {
+        window.approveTimer = setInterval(async () => {
+          const allowancePrice = await queryAllowance();
+          console.log("allowancePrice:", allowancePrice);
+          if (allowancePrice > 0) {
+            await handleExecuteFn();
+          }
+        }, 1000);
+      }, 0);
+    }
+
+    if (approveStatus === "approve") {
+      dialogDispatch({ type: "OPEN_DIALOG" });
+      await handleExecuteFn();
+    }
+
+    dialogDispatch({ type: "SET_LOADING", payload: false });
+  }, [callApprove, queryAllowance, dialogDispatch, handleExecuteFn]);
+
+  return { queryAllowance, callApprove, handlePayMint };
 };
 
-export default memo(useTransaction);
+export default useTransaction;

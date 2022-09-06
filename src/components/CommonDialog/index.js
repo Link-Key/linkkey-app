@@ -30,7 +30,6 @@ const BaseDialog = styled(Dialog)(() => ({
 }));
 
 const CommonDialog = ({ open, onClose, title, children }) => {
-  console.log("close:", onClose);
   return (
     <BaseDialog open={open}>
       <DialogTitle>

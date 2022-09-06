@@ -100,14 +100,18 @@ const SideBar = () => {
 
   const handleHref = ({ name, type }) => {
     if (type === "menu") {
-      if (name === "Profile") {
-        if (account) {
+      if (account) {
+        if (name === "Profile") {
           return router.push(`/${name}/${snsName}`);
         }
+        if (name === "Chat") {
+          return router.push(`/${name}/Friend`);
+        }
+        return router.push(`/${name}`);
+      } else {
         ToastMention({ message: "未注册SNS域名", type: "warn" });
         return null;
       }
-      return router.push(`/${name}`);
     } else {
       return window.open(type, "__blank");
     }

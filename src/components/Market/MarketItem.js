@@ -64,7 +64,7 @@ const MarketItem = ({ type }) => {
       </Stack>
 
       <MarketDialog
-        title={type === 0 ? "Become Friend" : "Join Group"}
+        type={type}
         open={marketItemOpen}
         onClose={handleCloseDialog}
       />

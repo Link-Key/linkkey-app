@@ -196,7 +196,6 @@ const WalletProvider = ({ children }) => {
 
   const initialClient = useCallback(async () => {
     const client = await Client.create(await getSigner(), "dev");
-    console.log("client:", client.address);
     setClient(client);
     return client;
   }, []);

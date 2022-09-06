@@ -189,11 +189,11 @@ export default function Home() {
 
           <Step>
             <StepLabelWrapper>
-              <Typography>Get your sns domain name</Typography>
+              <Typography>
+                {snsName ? `Hi, ${snsName} ~` : "Get your sns domain name"}
+              </Typography>
               {snsName ? (
-                <LoadingBtn variant="contained" loading={connecting}>
-                  Query
-                </LoadingBtn>
+                <></>
               ) : (
                 <LoadingBtn
                   variant="contained"

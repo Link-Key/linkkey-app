@@ -3,17 +3,14 @@ import { useRouter } from "next/router";
 import { memo } from "react";
 import CommonDialog from "../CommonDialog";
 
-const MarketDialog = ({ open, title, onClose }) => {
+const MarketDialog = ({ open, onClose, type }) => {
   const router = useRouter();
 
   return (
     <CommonDialog
       open={open}
-      title={title}
-      onClose={() => {
-        console.log("close");
-        onClose();
-      }}
+      title={type === 0 ? "Become Friend" : "Join Group"}
+      onClose={onClose}
       sx={{ width: "400px" }}
     >
       <Stack direction="column" spacing={2}>
@@ -41,8 +38,11 @@ const MarketDialog = ({ open, title, onClose }) => {
             fontWeight: 500,
           }}
         >
+          {type
+            ? `
           Note:Your Friend-NFT is still not listed,please click button below for
-          listing operation
+          listing operation`
+            : `Note: buy a Group-NFT, you will automatically join the Group chat. You can buy it in the above two ways`}
         </Typography>
       </Stack>
     </CommonDialog>

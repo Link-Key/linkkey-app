@@ -12,6 +12,7 @@ import { memo, useState } from "react";
 import CommonTabs from "../../components/CommonTabs";
 import SearchIcon from "@mui/icons-material/Search";
 import GroupAddIcon from "@mui/icons-material/GroupAdd";
+import AddChatDialog from "../../components/Chat/AddChatDialog";
 
 const ChatHeader = styled(Paper)(() => ({
   display: "flex",
@@ -43,14 +44,15 @@ const RightBox = styled(Box)(() => ({
   borderLeft: "1px solid #ddd",
 }));
 
-const tabList = ["Friend", "Group"];
-
 const Chat = () => {
   const [tabValue, setTabValue] = useState(0);
+  const [addOpen, setAddOpen] = useState(false);
 
   const handleChangeTabs = useCallback((e, newValue) => {
     setTabValue(newValue);
   }, []);
+
+  const tabList = ["Friend", <div key="group">Group</div>];
 
   return (
     <Stack direction="column" spacing={2}>
@@ -72,7 +74,11 @@ const Chat = () => {
               </IconButton>
             }
           />
-          <IconButton>
+          <IconButton
+            onClick={() => {
+              setAddOpen(true);
+            }}
+          >
             <GroupAddIcon />
           </IconButton>
         </Stack>
@@ -86,6 +92,14 @@ const Chat = () => {
           <RightBox>xs=8</RightBox>
         </GridWrapper>
       </Grid>
+
+      <AddChatDialog
+        open={addOpen}
+        type={tabValue}
+        onClose={() => {
+          setAddOpen(false);
+        }}
+      />
     </Stack>
   );
 };

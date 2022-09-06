@@ -20,19 +20,24 @@ import EllipsisAddress from "../../EllipsisAddress";
 import CommonDialog from "../../CommonDialog";
 import TransferDialog from "./TransferDialog";
 import SaleDialog from "./SaleDialog";
-import { StakeInstance } from "../../../contracts/Stake";
+import { StakeInstance, stakeNFT } from "../../../contracts/Stake";
 import CommonLoadingBtn from "../../Button/LoadingButton";
-import { handleHexEthValue, hexToNumber } from "../../../utils";
 import {
-  getInfo,
-  getResolverOwner,
-  getTokenIdOfName,
-} from "../../../contracts/SNS";
+  getKeyBalance,
+  weiFormatToEth,
+  BNformatToWei,
+  hexToNumber,
+  ethFormatToWei,
+} from "../../../utils";
+import { getResolverOwner, getTokenIdOfName } from "../../../contracts/SNS";
 import { useRouter } from "next/router";
 import { useDialog } from "../../../providers/ApproveDialog";
-import { allowance, ERC20Instance } from "../../../contracts/ERC20";
+import { allowance, approve } from "../../../contracts/ERC20";
 import { contractAddress } from "../../../config/const";
 import { getChainId } from "../../../utils/web3";
+import { useSelector } from "react-redux";
+import CreateGroupDialog from "./CreateGroupDialog";
+import { getLastTokenId, getTotal, NFTInstance } from "../../../contracts/NFT";
 
 const TitleWrapper = styled(Box)(() => ({
   display: "flex",
@@ -105,54 +110,153 @@ const ReleaseIntroduce = {
 };
 
 const Details = ({ type }) => {
+  // dialog switch
   const [infoOpen, setInfoOpen] = useState(false);
   const [releaseOpen, setReleaseOpen] = useState(false);
   const [transferOpen, setTransferOpen] = useState(false);
-  const [saleOpen, setSaleOpen] = useState(false);
-
-  const [btnLoading, setBtnLoading] = useState(false);
-  const [feeState, setFeeState] = useState(0);
-  const [feeAddress, setFeeAddress] = useState("");
-
+  const [createGroupOpen, setCreateGroupOpen] = useState(false);
+  // show nft details
   const [showDetails, setShowDetails] = useState(false);
-
+  const [btnLoading, setBtnLoading] = useState(false);
+  const [payBtnLoading, setPayBtnLoading] = useState(false);
+  // min fee price
+  const [feeState, setFeeState] = useState(0);
+  // fee of erc20 address
+  const [feeAddress, setFeeAddress] = useState("");
+  // profile address
+  const [profileAdd, setProfileAdd] = useState("");
+  // is self profile
+  const [isSelf, setIsSelf] = useState(false);
   const [twitterStatus, setTwitterStatus] = useState(false);
-
   const [mintInp, setMintInp] = useState("");
   const [royaltiesInp, setRoyaltiesInp] = useState("");
+  const [transferTokenId, setTransferTokenId] = useState(0);
 
   const isFriend = type === "friend" ? true : false;
   const introduceList =
     type === "friend" ? ReleaseIntroduce.friend : ReleaseIntroduce.group;
 
-  const router = useRouter();
-  const keyName = router.query.name[0];
+  const contractAdd = isFriend
+    ? "0x6495885a76038875812C6cF534ED0627763FdA33"
+    : "0x156783D9c9FE93E64Cb334449Ffab3f8C84F9e2e";
 
-  const { dialogDispatch } = useDialog();
+  const { account } = useSelector((state) => ({
+    account: state.walletInfo.account,
+  }));
+  const chainId = getChainId();
+  // to address
+  const stakeAdd = contractAddress(chainId).stakeAddress;
+
+  const router = useRouter();
+  const keyName =
+    router && router.query && router.query.name && router.query.name[0]
+      ? router.query.name[0]
+      : "";
+
+  const { dialogDispatch, state } = useDialog();
+
+  const handleOpenTransferDialog = useCallback(async () => {
+    setBtnLoading(true);
+    const nft = await NFTInstance(contractAdd);
+    const total = await nft.totalSupply();
+    const tokenIdHex = await getLastTokenId(contractAdd, account);
+    const tokenId = hexToNumber(tokenIdHex);
+    console.log("tokenIdHex:", tokenIdHex);
+    console.log("tokenId:", tokenId);
+
+    if (tokenId) {
+      setTransferTokenId(tokenId);
+      setTransferOpen(true);
+    }
+
+    setBtnLoading(false);
+  }, [contractAdd, account]);
 
   const queryAllowance = useCallback(async () => {
-    // from address
-    const address = await getResolverOwner(keyName);
-    const chainId = getChainId();
-    // to address
-    const stakeAdd = contractAddress(chainId).stakeAddress;
-    const value = await allowance(feeAddress, address, stakeAdd);
+    try {
+      const value = await allowance(feeAddress, profileAdd, stakeAdd);
+      return hexToNumber(value);
+    } catch (error) {
+      console.log("allowanceError:", error);
+      return 0;
+    }
+  }, [feeAddress, profileAdd, stakeAdd]);
 
-    return hexToNumber(value);
-  }, [keyName, feeAddress]);
+  const callApprove = useCallback(async () => {
+    const value = await queryAllowance();
+    console.log("approveFee:", ethFormatToWei(feeState));
+    try {
+      if (value >= feeState) {
+        return "approve";
+      } else {
+        const resp = await approve(
+          feeAddress,
+          stakeAdd,
+          ethFormatToWei(feeState)
+        );
+        console.log("approveResp:", resp);
+        return "unApprove";
+      }
+    } catch (error) {
+      console.log("callApproveErr:", error);
+      return false;
+    }
+  }, [feeAddress, feeState, queryAllowance, stakeAdd]);
+
+  // todo query balance
+  const mintNFT = useCallback(async () => {
+    clearInterval(window.timer);
+    dialogDispatch({ type: "ADD_STEP" });
+
+    const keyBalance = await getKeyBalance(account);
+    console.log("keyBalance:", keyBalance);
+    console.log("feeState:", feeState);
+    if (keyBalance > feeState) {
+      try {
+        const tokenId = await getTokenIdOfName(keyName);
+        console.log("tokenId:", tokenId);
+        const mintType = isFriend ? 1 : 2;
+        await stakeNFT(tokenId, mintType);
+        // call backend interface
+        setShowDetails(true);
+        dialogDispatch({ type: "ADD_STEP" });
+        dialogDispatch({ type: "CLOSE_DIALOG" });
+      } catch (error) {
+        console.log("mintNFTErr:", error);
+      }
+    } else {
+      dialogDispatch({ type: "CLOSE_DIALOG" });
+    }
+  }, [isFriend, dialogDispatch, keyName, account, feeState]);
 
   // pay mint NFT
   const handlePayMint = useCallback(async () => {
-    // dialogDispatch({ type: "SET_VISIBLE", payload: true });
+    // setPayBtnLoading(true);
+    dialogDispatch({ type: "SET_LOADING", payload: true });
+    const approveStatus = await callApprove();
+    console.log("approveStatus:", approveStatus);
+    if (approveStatus === "unApprove") {
+      dialogDispatch({ type: "OPEN_DIALOG" });
+      setTimeout(() => {
+        window.timer = setInterval(async () => {
+          const allowancePrice = await queryAllowance();
+          console.log("allowancePrice:", allowancePrice);
+          if (allowancePrice > 0) {
+            await mintNFT();
+          }
+        }, 1000);
+      }, 0);
+    }
 
-    const value = await queryAllowance();
-    console.log("value:", value);
+    if (approveStatus === "approve") {
+      dialogDispatch({ type: "OPEN_DIALOG" });
+      await mintNFT();
+    }
 
-    const tokenId = await getTokenIdOfName(keyName);
-    console.log("tokenId:", tokenId);
-    // setShowDetails(true);
-    // setReleaseOpen(false);
-  }, [keyName, dialogDispatch, queryAllowance]);
+    setReleaseOpen(false);
+    dialogDispatch({ type: "SET_LOADING", payload: false });
+    // setPayBtnLoading(false);
+  }, [callApprove, queryAllowance, dialogDispatch, mintNFT]);
 
   const changeMintInp = (e) => {
     const value = e.target.value;
@@ -176,7 +280,7 @@ const Details = ({ type }) => {
       const typeNumber = isFriend ? 1 : 2;
       const fee = await stakeInstance.getFee(typeNumber);
       if (fee && fee.feeAmount && fee.keyAddress) {
-        setFeeState(handleHexEthValue(fee.feeAmount));
+        setFeeState(weiFormatToEth(fee.feeAmount));
         setFeeAddress(fee.keyAddress);
       } else {
         setBtnLoading(false);
@@ -184,17 +288,27 @@ const Details = ({ type }) => {
       }
       setBtnLoading(false);
       setReleaseOpen(true);
-      console.log("fee:", fee);
     } catch (error) {
       setBtnLoading(false);
       console.log("stakeGetFee:", error);
     }
   }, [isFriend]);
 
+  useEffect(() => {
+    if (keyName) {
+      getResolverOwner(keyName).then((address) => {
+        setProfileAdd(address);
+        if (address === account) {
+          setIsSelf(true);
+        }
+      });
+    }
+  }, [keyName, account]);
+
   return (
     <Paper>
       <TitleWrapper>
-        <Typography variant="subtitle1" sx={{}}>
+        <Typography variant="subtitle1">
           {isFriend ? "Friend-NFT details" : "Group-NFT details"}
         </Typography>
         {!isFriend && showDetails ? (
@@ -209,7 +323,7 @@ const Details = ({ type }) => {
           <ReleaseDetailsWrapper>
             <ReleaseDetailsItem>
               <Typography>Contract Address: </Typography>
-              <EllipsisAddress account="0x5435e8bb74d7ba8f4a76287dc0e75e203d87647e" />
+              <EllipsisAddress account={contractAdd} />
             </ReleaseDetailsItem>
             <Typography>Release Amount: 150</Typography>
             <Typography>Holding Amount: 50</Typography>
@@ -221,21 +335,23 @@ const Details = ({ type }) => {
               for listing operation
             </Typography>
             <Stack direction="row" justifyContent="center" spacing={2}>
-              <Button
+              <CommonLoadingBtn
+                loading={btnLoading}
                 variant="outlined"
-                onClick={() => {
-                  setTransferOpen(true);
-                }}
+                onClick={handleOpenTransferDialog}
               >
                 Transfer
-              </Button>
+              </CommonLoadingBtn>
               <Button
+                sx={{
+                  display: isFriend ? "none" : "block",
+                }}
                 variant="outlined"
                 onClick={() => {
-                  setSaleOpen(true);
+                  setCreateGroupOpen(true);
                 }}
               >
-                Sale
+                Create Group
               </Button>
             </Stack>
           </ReleaseDetailsWrapper>
@@ -324,13 +440,17 @@ const Details = ({ type }) => {
                 color: "#777",
               }}
             >
+              {isFriend
+                ? `
               Note:Friend-NFT must be verified by twitter before it can be
               release,and your sns domain name will be locked into a pledge
-              contract
+              contract`
+                : "Note: Group-NFT must be verified by twitter before it can be release, and your sns domain name will be locked into a pledge contract"}
             </Typography>
           </ReleaseData>
         </DialogContent>
-        <Button
+        <CommonLoadingBtn
+          loading={state.loading}
           variant="contained"
           sx={{
             margin: "0 auto",
@@ -340,7 +460,7 @@ const Details = ({ type }) => {
           }}
         >
           Pay {feeState} Key
-        </Button>
+        </CommonLoadingBtn>
       </CommonDialog>
 
       {/* Info modal */}
@@ -377,17 +497,18 @@ const Details = ({ type }) => {
       <TransferDialog
         open={transferOpen}
         title="Transfer"
-        contractAdd="0x5435e8bb74d7ba8f4a76287dc0e75e203d87647e"
+        contractAdd={contractAdd}
+        tokenId={transferTokenId}
         onClose={() => {
           setTransferOpen(false);
         }}
       />
-      <SaleDialog
-        open={saleOpen}
-        title="Sale"
+      <CreateGroupDialog
+        open={createGroupOpen}
+        title="Create Group"
         contractAdd="0x5435e8bb74d7ba8f4a76287dc0e75e203d87647e"
         onClose={() => {
-          setSaleOpen(false);
+          setCreateGroupOpen(false);
         }}
       />
     </Paper>

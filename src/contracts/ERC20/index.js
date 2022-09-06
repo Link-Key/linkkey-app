@@ -1,4 +1,4 @@
-import { Contract, ethers } from "ethers";
+import { Contract } from "ethers";
 import { chainsInfo, contractAddress } from "../../config/const";
 import { getProvider, getSigner, getChainId } from "../../utils/web3";
 import ERC20ContractABI from "./ERC20.json";
@@ -9,6 +9,7 @@ export const ERC20Instance = (erc20Address) => {
   return ERC20;
 };
 
+// get key price
 const getBalance = async (erc20Address, owner) => {
   const balance = await ERC20Instance(erc20Address).balanceOf(owner);
   return balance;

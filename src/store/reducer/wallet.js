@@ -17,6 +17,8 @@ const WalletReducer = (state = initialWalletState, action) => {
       return { ...state, snsName: action.value };
     case "WALLET_LOADING":
       return { ...state, connecting: action.value };
+    case "LOGOUT":
+      return { ...state, account: null, snsName: null };
     default:
       return state;
   }

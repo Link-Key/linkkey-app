@@ -1,7 +1,12 @@
 import { Typography, InputBase, Box, styled, Button } from "@mui/material";
 import { memo, useCallback, useState } from "react";
+import { useSelector } from "react-redux";
+import { balanceOf, getOwner, transferFrom } from "../../../contracts/NFT";
+import { hexToNumber } from "../../../utils";
+import CommonLoadingBtn from "../../Button/LoadingButton";
 import CommonDialog from "../../CommonDialog";
 import EllipsisAddress from "../../EllipsisAddress";
+import ToastMention from "../../ToastMessage";
 
 const Wrapper = styled(Box)(() => ({
   display: "flex",
@@ -40,20 +45,50 @@ const TypographyBox = styled(Box)(() => ({
   },
 }));
 
-const TransferDialog = ({ open, title, contractAdd, onClose, onSuccess }) => {
-  const [tokenIdInp, setTokenIdInp] = useState("");
+const TransferDialog = ({ open, title, contractAdd, tokenId, onClose }) => {
+  const { account } = useSelector((state) => {
+    return {
+      account: state.walletInfo.account,
+    };
+  });
   const [receiverInp, setReceiverInp] = useState("");
+  const [btnLoading, setBtnLoading] = useState(false);
 
-  const handleChangeMintInp = useCallback((e) => {
-    const value = e.target.value;
-    if (/^[0-9]*$/.test(value)) {
-      setTokenIdInp(value);
-    }
-  }, []);
+  console.log("transferToken:", tokenId);
 
   const handleChangeReceiverInp = useCallback((e) => {
     setReceiverInp(e.target.value);
   }, []);
+
+  // judge your hold this nft.nft owners can transfer,other can't transfer
+  const judgeTransferNFT = useCallback(async () => {
+    const NFTOwnerAdd = await getOwner(contractAdd);
+    console.log("NFTOwnerAdd:", NFTOwnerAdd);
+
+    if (NFTOwnerAdd === receiverInp) {
+      return true;
+    } else {
+      const balanceHex = await balanceOf(contractAdd, receiverInp);
+      console.log("balanceHex:", balanceHex);
+      return hexToNumber(balanceHex) === 0 ? true : false;
+    }
+  }, [contractAdd, receiverInp]);
+
+  const handleTransferSubmit = useCallback(async () => {
+    setBtnLoading(true);
+    const isTransfer = await judgeTransferNFT();
+    console.log("isTransfer:", isTransfer);
+    if (isTransfer) {
+      try {
+        await transferFrom(contractAdd, account, receiverInp, tokenId);
+        ToastMention({ message: "Transfer success!", type: "success" });
+      } catch (error) {
+        console.log("transferErr:", error);
+      }
+      onClose();
+      setBtnLoading(false);
+    }
+  }, [judgeTransferNFT, account, contractAdd, receiverInp, tokenId, onClose]);
 
   return (
     <CommonDialog open={open} title={title} onClose={onClose}>
@@ -62,14 +97,6 @@ const TransferDialog = ({ open, title, contractAdd, onClose, onSuccess }) => {
           <Typography>Contract Address: </Typography>
           <EllipsisAddress account={contractAdd} />
         </Items>
-        <TypographyBox aria-label="Transfer" sx={{ gap: "5px" }}>
-          <Typography>TokenID: </Typography>
-          <InputBase
-            value={tokenIdInp || ""}
-            placeholder="Please input number"
-            onChange={handleChangeMintInp}
-          />
-        </TypographyBox>
 
         <TypographyBox aria-label="Transfer" sx={{ gap: "5px" }}>
           <Typography>Receiver: </Typography>
@@ -79,14 +106,16 @@ const TransferDialog = ({ open, title, contractAdd, onClose, onSuccess }) => {
             onChange={handleChangeReceiverInp}
           />
         </TypographyBox>
-        <Button
+        <CommonLoadingBtn
+          loading={btnLoading}
           variant="contained"
           sx={{
             margin: "5px auto",
           }}
+          onClick={handleTransferSubmit}
         >
           Submit
-        </Button>
+        </CommonLoadingBtn>
       </Wrapper>
     </CommonDialog>
   );

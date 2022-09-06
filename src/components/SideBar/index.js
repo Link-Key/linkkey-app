@@ -15,6 +15,7 @@ import LinkkeyLogo from "../../assets/images/LinkkeyLogo.png";
 import OuterLink from "./OuterLink";
 import InsertEmoticonIcon from "@mui/icons-material/InsertEmoticon";
 import DescriptionRoundedIcon from "@mui/icons-material/DescriptionRounded";
+import StoreIcon from "@mui/icons-material/Store";
 import HelpCenterIcon from "@mui/icons-material/HelpCenter";
 import { useWalletInfo } from "../../providers/wallet";
 import { useSelector } from "react-redux";
@@ -63,14 +64,22 @@ const SideListItem = styled(ListItemButton)((props) => ({
 const menuList = [
   {
     name: "Profile",
+    type: "menu",
     icon: <InsertEmoticonIcon />,
   },
   {
+    name: "Market",
+    type: "menu",
+    icon: <StoreIcon />,
+  },
+  {
     name: "Docs",
+    type: "https://docs.linkkey.tech",
     icon: <DescriptionRoundedIcon />,
   },
   {
     name: "FAQ",
+    type: "https://sns.chat/",
     icon: <HelpCenterIcon />,
   },
 ];
@@ -88,15 +97,19 @@ const SideBar = () => {
     };
   });
 
-  const handleHref = (name) => {
-    if (name === "Profile") {
-      if (account) {
-        return router.push(`/${name}/${snsName}`);
+  const handleHref = ({ name, type }) => {
+    if (type === "menu") {
+      if (name === "Profile") {
+        if (account) {
+          return router.push(`/${name}/${snsName}`);
+        }
+        ToastMention({ message: "未注册SNS域名", type: "warn" });
+        return null;
       }
-      ToastMention({ message: "未注册SNS域名", type: "warn" });
-      return null;
+      return router.push(`/${name}`);
+    } else {
+      return window.open(type, "__blank");
     }
-    return router.push(`/${name}`);
   };
 
   const handleListActive = useCallback(
@@ -153,7 +166,7 @@ const SideBar = () => {
               key={index}
               active={handleListActive(item)}
               onClick={() => {
-                handleHref(item.name);
+                handleHref({ name: item.name, type: item.type });
               }}
             >
               <ListItemIcon>{item.icon}</ListItemIcon>
@@ -180,11 +193,11 @@ const SideBar = () => {
             if (account) {
               disconnectWallet();
             } else {
-              connectWallet();
+              router.push("/");
             }
           }}
         >
-          {account ? "disconnect" : "Connect Wallet"}
+          {account ? "Logout" : "Start Journey"}
         </CommonLoadingBtn>
         <OuterLink />
         <Typography>© 2021-2022 by Linkkey DAO</Typography>

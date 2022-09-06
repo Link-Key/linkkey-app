@@ -9,7 +9,7 @@ import {
   styled,
   Typography,
 } from "@mui/material";
-import { memo, useCallback, useState } from "react";
+import { memo, useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import EllipsisAddress from "../../components/EllipsisAddress";
 import OuterLink from "../../components/SideBar/OuterLink";
@@ -19,6 +19,10 @@ import OperationCard from "../../components/Profile/OperationCard";
 import FriendAndGroupCard from "../../components/Profile/FriendAndGroupCard";
 import DIDCardDialog from "../../components/DIDCardDialog";
 import { useRouter } from "next/router";
+import { getLastTokenId } from "../../contracts/NFT";
+import ToastMention from "../../components/ToastMessage";
+import { getResolverOwner } from "../../contracts/SNS";
+import OtherProfileCard from "../../components/Profile/OtherProfileCard";
 
 const CardInfoWrapper = styled(Card)(() => ({
   display: "flex",
@@ -54,22 +58,24 @@ export async function getStaticProps({ params }) {
   };
 }
 
-const testfunction = async () => {
-  // const fee = await getFee(1);
-  // console.log('fee', fee)
-  stakeNFT(1, 1);
-};
-
-const Profile = () => {
-  const { account, snsName } = useSelector((state) => {
+const Profile = ({ name }) => {
+  const { account } = useSelector((state) => {
     return {
       account: state.walletInfo.account,
-      snsName: state.walletInfo.snsName,
     };
   });
+
   const router = useRouter();
 
+  console.log("name:", name);
+
   const [showDIDCard, setShowDIDCard] = useState(false);
+  // profile address
+  const [profileAdd, setProfileAdd] = useState("");
+  // is self profile
+  const [isSelf, setIsSelf] = useState(false);
+
+  const profileName = name && name[0] ? name : profileAdd;
 
   const handleShowDIDCard = useCallback(() => {
     setShowDIDCard(true);
@@ -78,6 +84,28 @@ const Profile = () => {
   const handleCloseDIDCard = useCallback(() => {
     setShowDIDCard(false);
   }, []);
+
+  const hasPathParams = () => {
+    if (!name) {
+      router.push("/");
+      ToastMention({ message: "未注册SNS域名", type: "warn" });
+    }
+  };
+
+  useEffect(() => {
+    hasPathParams();
+  }, []);
+
+  useEffect(() => {
+    if (name && name[0]) {
+      getResolverOwner(name[0]).then((address) => {
+        setProfileAdd(address.toLowerCase());
+        if (address.toLowerCase() === account) {
+          setIsSelf(true);
+        }
+      });
+    }
+  }, [name, account]);
 
   return (
     <Stack spacing={3}>
@@ -99,7 +127,7 @@ const Profile = () => {
                 color: "#ea6060",
               }}
             >
-              {snsName}
+              {profileName}
             </Typography>
             <Box
               justifyContent="center"
@@ -109,7 +137,7 @@ const Profile = () => {
                 padding: "2px 0",
               }}
             >
-              <EllipsisAddress account={account} />
+              <EllipsisAddress account={profileAdd} />
             </Box>
             <OuterLink sx={{ justifyContent: "flex-start" }} />
             <Typography>description</Typography>
@@ -133,7 +161,7 @@ const Profile = () => {
         </Stack>
       </CardInfoWrapper>
 
-      <OperationCard />
+      {isSelf ? <OperationCard /> : <OtherProfileCard />}
 
       <FriendAndGroupCard />
 

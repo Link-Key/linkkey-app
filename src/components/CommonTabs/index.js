@@ -22,6 +22,8 @@ export const TabsBlackAndBorderWrapper = styled(Box)({
 });
 
 const CommonTabs = ({ tabValue, handleChange, tabList }) => {
+  console.log("tabValue:", tabValue);
+
   const handleTabList = () => {
     return tabList.map((item, index) => (
       <Tab

@@ -190,7 +190,7 @@ export default function Home() {
           <Step>
             <StepLabelWrapper>
               <Typography>
-                {snsName ? `Hi,${snsName}~` : "Get your sns domain name"}
+                {snsName ? `Hi, ${snsName} ~` : "Get your sns domain name"}
               </Typography>
               {snsName ? (
                 <></>

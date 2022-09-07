@@ -22,6 +22,7 @@ import Check from "@mui/icons-material/Check";
 import CircularProgress from "@mui/material/CircularProgress";
 import http from "../utils/https";
 import { login, queryAccountInfo } from "../api";
+import { getSigner } from "../utils/web3";
 
 const Wrapper = styled(Paper)(() => ({
   display: "flex",
@@ -120,6 +121,23 @@ export default function Home() {
   });
 
   const [activeStep, setActiveStep] = useState(0);
+
+  const handleLoginToken = useCallback(async () => {
+    const singer = await getSigner();
+    console.log("singer:", singer);
+    try {
+      const signInfo = await singer.signMessage(snsName);
+      console.log("signInfo:", signInfo);
+      const reqParams = {
+        address: account,
+        message: snsName,
+        signature: signInfo,
+      };
+      const resp = await login(reqParams);
+    } catch (error) {
+      console.log("error:", signInfo);
+    }
+  }, [account, snsName]);
 
   const handleStep = useCallback(() => {
     if (account) {
@@ -227,13 +245,7 @@ export default function Home() {
           <Step>
             <StepLabelWrapper>
               <Typography>Login</Typography>
-              <LoadingBtn
-                variant="contained"
-                onClick={async () => {
-                  const resp = await login();
-                  console.log("resp:", resp);
-                }}
-              >
+              <LoadingBtn variant="contained" onClick={handleLoginToken}>
                 Login
               </LoadingBtn>
             </StepLabelWrapper>

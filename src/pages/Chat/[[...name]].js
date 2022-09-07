@@ -14,6 +14,8 @@ import {
   ListItemButton,
   Avatar,
   ListItemText,
+  MenuItem,
+  Select,
 } from "@mui/material";
 import { useCallback } from "react";
 import { memo, useState } from "react";
@@ -23,6 +25,8 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 import GroupAddIcon from "@mui/icons-material/GroupAdd";
 import AddChatDialog from "../../components/Chat/AddChatDialog";
+import { CollectionsBookmarkOutlined } from "@mui/icons-material";
+import { useRouter } from "next/router";
 
 const ChatHeader = styled(Paper)(() => ({
   display: "flex",
@@ -54,49 +58,63 @@ const RightBox = styled(Box)(() => ({
   borderLeft: "1px solid #ddd",
 }));
 
-const AccordionWrapper = styled(Accordion)(() => ({
-  padding: "0",
+// const AccordionWrapper = styled(Accordion)(() => ({
+//   padding: "0",
 
-  ":before": {
-    height: 0,
-  },
+//   ":before": {
+//     height: 0,
+//   },
 
-  "& .MuiAccordionSummary-root": {
-    padding: "0 12px",
-    minHeight: "unset",
+//   "& .MuiAccordionSummary-root": {
+//     padding: "0 12px",
+//     minHeight: "unset",
 
-    borderBottom: "1px solid #ddd",
-  },
+//     borderBottom: "1px solid #ddd",
+//   },
 
-  "& .MuiAccordionSummary-root .Mui-expanded": {
-    margin: "12px 0px",
-  },
+//   "& .MuiAccordionSummary-root .Mui-expanded": {
+//     margin: "12px 0px",
+//   },
 
-  "& .MuiAccordionDetails-root": {
-    padding: "0",
-  },
+//   "& .MuiAccordionDetails-root": {
+//     padding: "0",
+//   },
 
-  "& .MuiListItemButton-root": {
-    gap: "10px",
-  },
-}));
+//   "& .MuiListItemButton-root": {
+//     gap: "10px",
+//   },
+// }));
 
 const RelationListWrapper = styled(Box)(() => ({
-  marginTop: "20px",
-
+  height: "100%",
+  overflowY: "auto",
   ".MuiTypography-subtitle1": {
-    fontSize: "14px",
-    padding: "0 12px",
+    padding: "16px 20px",
+    fontSize: "15px",
+    fontWeight: 500,
   },
 }));
 
 const RelationList = styled(List)(() => ({
-  height: "40vh",
-  overflowY: "auto",
   padding: "0",
   ".MuiListItemButton-root": {
     padding: "8px 16px",
     gap: "10px",
+  },
+}));
+
+const SelectWrapper = styled(Select)(() => ({
+  border: "1px solid #9a9a9a",
+  borderRadius: "12px",
+  margin: "10px",
+  textAlign: "right",
+  ".MuiOutlinedInput-notchedOutline": {
+    border: "none",
+  },
+
+  ".MuiSelect-select": {
+    padding: "0px",
+    borderRadius: "12px",
   },
 }));
 
@@ -106,7 +124,7 @@ export async function getStaticPaths() {
     paths: [
       {
         params: {
-          name: ["Friend", "Group"],
+          name: ["", ""],
         },
       },
     ],
@@ -115,22 +133,39 @@ export async function getStaticPaths() {
 
 export async function getStaticProps({ params }) {
   const { name } = params;
-  console.log("params:", params);
   return {
     props: {
-      type: name === "friend" ? 0 : 1,
+      // ...params,
+      type: name[0] === "friend" ? 0 : 1,
     },
   };
 }
 
 const Chat = ({ type }) => {
   const [tabValue, setTabValue] = useState(type);
+  const [selectItem, setSelectItem] = useState("all");
   const [addOpen, setAddOpen] = useState(false);
 
-  console.log("ty0pe:", type);
+  const isFriend = tabValue === 0 ? true : false;
 
-  const handleChangeTabs = useCallback((e, newValue) => {
-    setTabValue(newValue);
+  const router = useRouter();
+
+  const handleChangeTabs = useCallback(
+    (e, newValue) => {
+      setTabValue(newValue);
+      if (newValue === 0) {
+        console.log("newValue:", newValue);
+        router.push(`/Chat/Friend`);
+      }
+      if (newValue === 1) {
+        router.push(`/Chat/Group`);
+      }
+    },
+    [router]
+  );
+
+  const handleSelectChange = useCallback((e) => {
+    setSelectItem(e.target.value);
   }, []);
 
   const tabList = ["Friend", "Group"];
@@ -168,7 +203,7 @@ const Chat = ({ type }) => {
       <Grid container>
         <GridWrapper item>
           <LeftBox>
-            <AccordionWrapper defaultExpanded={true}>
+            {/* <AccordionWrapper defaultExpanded={true}>
               <AccordionSummary
                 expandIcon={<ExpandMoreIcon />}
                 aria-controls="panel2a-content"
@@ -176,7 +211,7 @@ const Chat = ({ type }) => {
               >
                 <Typography>Message</Typography>
               </AccordionSummary>
-              <AccordionDetails sx={{ height: "30vh", overflowY: "auto" }}>
+              <AccordionDetails sx={{ overflowY: "auto" }}>
                 <List component="nav">
                   {[0, 1, 2, 3].map((item) => (
                     <ListItemButton key={item}>
@@ -189,14 +224,22 @@ const Chat = ({ type }) => {
                   ))}
                 </List>
               </AccordionDetails>
-            </AccordionWrapper>
+            </AccordionWrapper> */}
 
             <RelationListWrapper>
-              <Stack p={0}>
-                <Typography variant="subtitle1">Friend</Typography>
+              <Stack direction="row" p={0} justifyContent="space-between">
+                <Typography variant="subtitle1">
+                  {isFriend ? "Friend" : "Group"}
+                </Typography>
+
+                <SelectWrapper value={selectItem} onChange={handleSelectChange}>
+                  <MenuItem value="all">All</MenuItem>
+                  <MenuItem value="my">My</MenuItem>
+                  <MenuItem value="his">His</MenuItem>
+                </SelectWrapper>
               </Stack>
               <RelationList component="nav">
-                {[0, 1, 2, 3, , 4, 5, 6].map((item) => (
+                {[0, 1, 2, 3, , 4, 5, 6, 7, 8, 9, 10, 11].map((item) => (
                   <ListItemButton key={item}>
                     <Avatar />
                     <ListItemText

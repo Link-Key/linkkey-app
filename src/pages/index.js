@@ -112,6 +112,8 @@ const StepIconFn = (props) => {
 export default function Home() {
   const { connectWallet, disconnectWallet, initialClient, client } =
     useWalletInfo();
+
+  const dispatch = useDispatch();
   const { account, snsName, connecting } = useSelector((state) => {
     return {
       account: state.walletInfo.account,
@@ -134,10 +136,14 @@ export default function Home() {
         signature: signInfo,
       };
       const resp = await login(reqParams);
+      console.log(resp, "resp");
+      // if (resp && resp.code === 200 && resp.data.token) {
+      //   dispatch({ type: "USER_INFO", value: resp.data });
+      // }
     } catch (error) {
-      console.log("error:", signInfo);
+      console.log("signInfoErr:", error);
     }
-  }, [account, snsName]);
+  }, [account, snsName, dispatch]);
 
   const handleStep = useCallback(() => {
     if (account) {

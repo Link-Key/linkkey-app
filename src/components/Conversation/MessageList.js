@@ -1,4 +1,5 @@
 import { Box, Stack, styled, Typography } from "@mui/material";
+import { useCallback } from "react";
 import { memo, useEffect } from "react";
 import { useSelector } from "react-redux";
 import CommonAvatar from "../Common/CommonAvatar";
@@ -22,12 +23,25 @@ const NameAndTime = styled(Stack)(() => ({
   },
 }));
 
-const MessageList = ({ messages, recipientName, recipientAdd }) => {
-  const { account } = useSelector((state) => ({
+const MessageList = ({ messages, recipientName }) => {
+  const { account, snsName } = useSelector((state) => ({
     account: state.walletInfo.account,
+    snsName: state.walletInfo.snsName,
   }));
 
-  console.log("message:", messages);
+  console.log("recipientName:", recipientName);
+  console.log("snsName:", snsName);
+
+  const handleDisplayName = useCallback(
+    (address) => {
+      if (address.toLowerCase() === account.toLowerCase()) {
+        return snsName;
+      }
+      return recipientName;
+    },
+    [account, snsName]
+  );
+
   return (
     <MessageListWrapper>
       {messages.map((item, index) => (
@@ -37,10 +51,13 @@ const MessageList = ({ messages, recipientName, recipientAdd }) => {
           spacing={2}
           key={index}
         >
-          <CommonAvatar account={recipientAdd} />
+          <CommonAvatar account={item.senderAddress} />
           <Stack p={0}>
             <NameAndTime p={0}>
-              <Typography variant="title">{recipientName}</Typography>
+              {item.senderAddress === account}
+              <Typography variant="title">
+                {handleDisplayName(item.senderAddress)}
+              </Typography>
             </NameAndTime>
             <Typography>{item.content}</Typography>
           </Stack>

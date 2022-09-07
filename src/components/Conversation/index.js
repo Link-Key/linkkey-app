@@ -85,6 +85,8 @@ const Conversation = ({ name, recipientAdd }) => {
     startClient();
   }, [startClient]);
 
+  console.log("chatList:", chatList);
+
   return (
     <Stack
       direction="column"
@@ -100,7 +102,7 @@ const Conversation = ({ name, recipientAdd }) => {
         </Box>
       </ConversationHeader>
 
-      <MessageList messages={chatList} />
+      <MessageList messages={chatList} recipientName={name} />
 
       <Box
         sx={{

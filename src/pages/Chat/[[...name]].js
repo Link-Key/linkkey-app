@@ -281,7 +281,7 @@ const Chat = ({ type }) => {
           <RightBox>
             <Conversation
               name={conversation.name}
-              account={conversation.address}
+              recipientAdd={conversation.address}
             />
             {/* <ul>
               {chatList.map((item) => (

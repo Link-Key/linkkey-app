@@ -26,7 +26,7 @@ const ConversationHeader = styled(Stack)(() => ({
   },
 }));
 
-const Conversation = ({ name, account }) => {
+const Conversation = ({ name, recipientAdd }) => {
   const [sendInp, setSendInp] = useState("");
   const [chatList, setChatList] = useState([]);
   const [conversations, setConversations] = useState(null);
@@ -42,28 +42,27 @@ const Conversation = ({ name, account }) => {
   const { client } = useWalletInfo();
 
   const startClient = useCallback(async () => {
-    if (client) {
+    if (client && recipientAdd) {
       const newConversation = await client.conversations.newConversation(
-        "0x9F1C13F59392fA9B0E1cCDD2386eCc9B2048DED2"
+        recipientAdd
       );
       setConversations(newConversation);
       const m = await newConversation.messages();
       setChatList([...m]);
-      listenChatList();
     }
-  }, [client, listenChatList]);
+  }, [client, recipientAdd]);
 
   const listenChatList = useCallback(async () => {
+    console.log("here listen", conversations);
     if (!conversations) return;
-    for await (const message of await conversations.streamMessages()) {
-      if (message.senderAddress === account) {
-        // This message was sent from me
-        console.log(message, "in the message");
-        setChatList((v) => [...v, { ...message }]);
-        continue;
-      }
+    const stream = await conversations.streamMessages();
+    for await (const message of stream) {
+      console.log(message, "in the message");
+      setChatList((v) => [...v, { ...message }]);
+      continue;
+      // }
     }
-  }, [conversations, account]);
+  }, [conversations]);
 
   const sendMessages = useCallback(
     (msg) => {
@@ -77,12 +76,14 @@ const Conversation = ({ name, account }) => {
   );
 
   useEffect(() => {
+    if (conversations) {
+      listenChatList();
+    }
+  }, [conversations, listenChatList]);
+
+  useEffect(() => {
     startClient();
   }, [startClient]);
-
-  // const handleSend = useCallback(() => {
-  //   const list = messages.push({ content: sendInp });
-  // }, [sendInp]);
 
   return (
     <Stack
@@ -95,7 +96,7 @@ const Conversation = ({ name, account }) => {
         <Avatar />
         <Box>
           <Typography variant="title">{name}</Typography>
-          <EllipsisAddress account={account} />
+          <EllipsisAddress account={recipientAdd} />
         </Box>
       </ConversationHeader>
 
@@ -115,7 +116,7 @@ const Conversation = ({ name, account }) => {
             <IconButton
               sx={{ borderRadius: "12px" }}
               disabled={sendInp.length === 0}
-              onClick={sendMessages(sendInp)}
+              onClick={sendMessages.bind(this, sendInp)}
             >
               <SendIcon />
             </IconButton>

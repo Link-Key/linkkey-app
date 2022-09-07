@@ -91,7 +91,7 @@ const RelationListWrapper = styled(Box)(() => ({
 }));
 
 const RelationList = styled(List)(() => ({
-  height: "100%",
+  height: "40vh",
   overflowY: "auto",
   padding: "0",
   ".MuiListItemButton-root": {
@@ -167,7 +167,7 @@ const Chat = ({ type }) => {
 
       <Grid container>
         <GridWrapper item>
-          <LeftBox sx={{ overflowY: "auto" }}>
+          <LeftBox>
             <AccordionWrapper defaultExpanded={true}>
               <AccordionSummary
                 expandIcon={<ExpandMoreIcon />}
@@ -176,7 +176,7 @@ const Chat = ({ type }) => {
               >
                 <Typography>Message</Typography>
               </AccordionSummary>
-              <AccordionDetails>
+              <AccordionDetails sx={{ height: "30vh", overflowY: "auto" }}>
                 <List component="nav">
                   {[0, 1, 2, 3].map((item) => (
                     <ListItemButton key={item}>

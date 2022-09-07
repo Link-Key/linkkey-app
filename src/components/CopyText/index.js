@@ -2,6 +2,7 @@ import { Box } from "@mui/material";
 import { memo } from "react";
 import CopyToClipboard from "react-copy-to-clipboard";
 import CopySvg from "../../assets/icons/common/copy.svg";
+import ToastMention from "../ToastMessage";
 
 const CopyText = ({ text, children }) => {
   return (
@@ -12,7 +13,12 @@ const CopyText = ({ text, children }) => {
       }}
     >
       {children}
-      <CopyToClipboard text={text}>
+      <CopyToClipboard
+        text={text}
+        onCopy={() => {
+          ToastMention({ message: "Copied", type: "success" });
+        }}
+      >
         <CopySvg
           style={{
             marginLeft: "5px",

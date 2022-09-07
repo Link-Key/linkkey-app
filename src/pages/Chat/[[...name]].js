@@ -27,6 +27,8 @@ import GroupAddIcon from "@mui/icons-material/GroupAdd";
 import AddChatDialog from "../../components/Chat/AddChatDialog";
 import { CollectionsBookmarkOutlined } from "@mui/icons-material";
 import { useRouter } from "next/router";
+import { splitAddress } from "../../utils";
+import Conversation from "../../components/Conversation";
 
 const ChatHeader = styled(Paper)(() => ({
   display: "flex",
@@ -141,10 +143,26 @@ export async function getStaticProps({ params }) {
   };
 }
 
+const list = [
+  {
+    name: "liujuncheng.key",
+    address: "0x5435e8Bb74D7Ba8F4a76287Dc0E75e203D87647e",
+  },
+  {
+    name: "keibest.key",
+    address: "0xB59E953EAc1f887dBc17ba0A97bc6aD8b2759c69",
+  },
+  {
+    name: "dsdsds.key",
+    address: "0xB3eF1C9718F3EAFaeb6fd7Ac63E8f43493101Ded",
+  },
+];
+
 const Chat = ({ type }) => {
   const [tabValue, setTabValue] = useState(type);
   const [selectItem, setSelectItem] = useState("all");
   const [addOpen, setAddOpen] = useState(false);
+  const [conversation, setConversation] = useState({});
 
   const isFriend = tabValue === 0 ? true : false;
 
@@ -169,6 +187,8 @@ const Chat = ({ type }) => {
   }, []);
 
   const tabList = ["Friend", "Group"];
+
+  console.log("conversation:", conversation);
 
   return (
     <Stack direction="column" spacing={2}>
@@ -239,12 +259,17 @@ const Chat = ({ type }) => {
                 </SelectWrapper>
               </Stack>
               <RelationList component="nav">
-                {[0, 1, 2, 3, , 4, 5, 6, 7, 8, 9, 10, 11].map((item) => (
-                  <ListItemButton key={item}>
+                {list.map((item, index) => (
+                  <ListItemButton
+                    key={index}
+                    onClick={() => {
+                      setConversation({ ...item });
+                    }}
+                  >
                     <Avatar />
                     <ListItemText
-                      primary="liujuncheng.key"
-                      secondary="Jan 9, 2014"
+                      primary={item.name}
+                      secondary={splitAddress(item.address)}
                     />
                   </ListItemButton>
                 ))}
@@ -253,7 +278,12 @@ const Chat = ({ type }) => {
           </LeftBox>
         </GridWrapper>
         <GridWrapper item xs="auto">
-          <RightBox>xs=8</RightBox>
+          <RightBox>
+            <Conversation
+              name={conversation.name}
+              account={conversation.address}
+            />
+          </RightBox>
         </GridWrapper>
       </Grid>
 

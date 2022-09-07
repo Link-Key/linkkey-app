@@ -30,6 +30,7 @@ import { useRouter } from "next/router";
 import { useWalletInfo } from "../../providers/wallet";
 import { splitAddress } from "../../utils";
 import Conversation from "../../components/Conversation";
+import { useSelector } from "react-redux";
 
 const ChatHeader = styled(Paper)(() => ({
   display: "flex",
@@ -164,8 +165,6 @@ const Chat = ({ type }) => {
   const [selectItem, setSelectItem] = useState("all");
   const [addOpen, setAddOpen] = useState(false);
   const [conversation, setConversation] = useState({});
-  const [conversations, setConversations] = useState(null);
-  const [chatList, setChatList] = useState([]);
 
   const isFriend = tabValue === 0 ? true : false;
 
@@ -190,48 +189,6 @@ const Chat = ({ type }) => {
   }, []);
 
   const tabList = ["Friend", "Group"];
-
-  const { client } = useWalletInfo();
-
-  const startClient = useCallback(async () => {
-    if (client) {
-      const newConversation = await client.conversations.newConversation(
-        "0x9F1C13F59392fA9B0E1cCDD2386eCc9B2048DED2"
-      );
-      setConversations(newConversation);
-      const m = await newConversation.messages();
-      setChatList([...m]);
-      listenChatList();
-    }
-  }, [client, listenChatList]);
-
-  const listenChatList = useCallback(async () => {
-    if (!conversations) return;
-    for await (const message of await conversations.streamMessages()) {
-      if (message.senderAddress === xmtp.address) {
-        // This message was sent from me
-        console.log(message, "in the message");
-        setChatList((v) => [...v, { ...message }]);
-        continue;
-      }
-    }
-  }, [conversations]);
-
-  const sendMessages = useCallback(
-    (msg) => {
-      if (msg && conversations) {
-        console.log(msg, "send msg", conversations, conversations.send);
-        conversations.send(msg);
-      }
-    },
-    [conversations]
-  );
-
-  useEffect(() => {
-    startClient();
-  }, [startClient]);
-
-  console.log("conversation:", conversation);
 
   return (
     <Stack direction="column" spacing={2}>
@@ -302,12 +259,17 @@ const Chat = ({ type }) => {
                 </SelectWrapper>
               </Stack>
               <RelationList component="nav">
-                {[0, 1, 2, 3, , 4, 5, 6, 7, 8, 9, 10, 11].map((item) => (
-                  <ListItemButton key={item}>
+                {list.map((item, index) => (
+                  <ListItemButton
+                    key={index}
+                    onClick={() => {
+                      setConversation({ ...item });
+                    }}
+                  >
                     <Avatar />
                     <ListItemText
-                      primary="liujuncheng.key"
-                      secondary="Jan 9, 2014"
+                      primary={item.name}
+                      secondary={splitAddress(item.address)}
                     />
                   </ListItemButton>
                 ))}
@@ -317,7 +279,11 @@ const Chat = ({ type }) => {
         </GridWrapper>
         <GridWrapper item xs="auto">
           <RightBox>
-            <ul>
+            <Conversation
+              name={conversation.name}
+              account={conversation.address}
+            />
+            {/* <ul>
               {chatList.map((item) => (
                 <li key={item.id}>{item.content}</li>
               ))}
@@ -327,7 +293,7 @@ const Chat = ({ type }) => {
               style={{ cursor: "pointer" }}
             >
               send a message
-            </div>
+            </div> */}
           </RightBox>
         </GridWrapper>
       </Grid>

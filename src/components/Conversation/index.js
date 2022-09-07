@@ -12,6 +12,9 @@ import EllipsisAddress from "../EllipsisAddress";
 import SendIcon from "@mui/icons-material/Send";
 import MessageList from "./MessageList";
 import { useCallback } from "react";
+import { useSelector } from "react-redux";
+import { useEffect } from "react";
+import { useWalletInfo } from "../../providers/wallet";
 
 const ConversationHeader = styled(Stack)(() => ({
   borderBottom: "1px solid #ddd",
@@ -23,27 +26,63 @@ const ConversationHeader = styled(Stack)(() => ({
   },
 }));
 
-const messages = [
-  {
-    content: "111",
-    recipientAddress: "0xB3eF1C9718F3EAFaeb6fd7Ac63E8f43493101Ded",
-    senderAddress: "0x5435e8Bb74D7Ba8F4a76287Dc0E75e203D87647e",
-    sent: new Date(),
-  },
-];
-
 const Conversation = ({ name, account }) => {
   const [sendInp, setSendInp] = useState("");
+  const [chatList, setChatList] = useState([]);
+  const [conversations, setConversations] = useState(null);
 
-  const [messageList, setMessageList] = useState(messages);
+  // const { account } = useSelector((state) => ({
+  //   account: state.walletInfo.account,
+  // }));
 
   const handleChangeSendInp = useCallback((e) => {
     setSendInp(e.target.value);
   }, []);
 
-  const handleSend = useCallback(() => {
-    const list = messages.push({ content: sendInp });
-  }, [sendInp]);
+  const { client } = useWalletInfo();
+
+  const startClient = useCallback(async () => {
+    if (client) {
+      const newConversation = await client.conversations.newConversation(
+        "0x9F1C13F59392fA9B0E1cCDD2386eCc9B2048DED2"
+      );
+      setConversations(newConversation);
+      const m = await newConversation.messages();
+      setChatList([...m]);
+      listenChatList();
+    }
+  }, [client, listenChatList]);
+
+  const listenChatList = useCallback(async () => {
+    if (!conversations) return;
+    for await (const message of await conversations.streamMessages()) {
+      if (message.senderAddress === account) {
+        // This message was sent from me
+        console.log(message, "in the message");
+        setChatList((v) => [...v, { ...message }]);
+        continue;
+      }
+    }
+  }, [conversations, account]);
+
+  const sendMessages = useCallback(
+    (msg) => {
+      console.log("msg:", msg);
+      if (msg && conversations) {
+        console.log(msg, "send msg", conversations, conversations.send);
+        conversations.send(msg);
+      }
+    },
+    [conversations]
+  );
+
+  useEffect(() => {
+    startClient();
+  }, [startClient]);
+
+  // const handleSend = useCallback(() => {
+  //   const list = messages.push({ content: sendInp });
+  // }, [sendInp]);
 
   return (
     <Stack
@@ -60,7 +99,7 @@ const Conversation = ({ name, account }) => {
         </Box>
       </ConversationHeader>
 
-      <MessageList messages={messageList} />
+      <MessageList messages={chatList} />
 
       <Box
         sx={{
@@ -76,7 +115,7 @@ const Conversation = ({ name, account }) => {
             <IconButton
               sx={{ borderRadius: "12px" }}
               disabled={sendInp.length === 0}
-              onClick={handleSend}
+              onClick={sendMessages(sendInp)}
             >
               <SendIcon />
             </IconButton>

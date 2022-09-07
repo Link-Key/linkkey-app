@@ -233,8 +233,8 @@ const AreaInput = ({
         sx={{
           display: "flex",
           alignItems: "center",
-          width: 800,
-          height: 50,
+          width: { xs: "unset", md: 500, xl: 800 },
+          minHeight: 50,
           borderRadius: "12px",
           boxSizing: "border-box",
           marginTop: "20px",
@@ -244,7 +244,6 @@ const AreaInput = ({
       >
         <InputBase
           sx={{
-            // ml: 2,
             flex: 1,
             border: "none",
             fontWeight: 500,
@@ -333,7 +332,6 @@ const LinkInput = ({
         sx={{
           display: "flex",
           alignItems: "center",
-          width: 800,
           height: 50,
           border: "1px solid #9a9a9a",
           borderRadius: "12px",

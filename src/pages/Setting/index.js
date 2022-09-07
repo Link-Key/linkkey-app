@@ -54,13 +54,7 @@ const Setting = () => {
           // height: "95vh",
         }}
       >
-        <Stack
-          direction="column"
-          justifyContent="center"
-          // alignItems="center"
-          maxWidth="800px"
-          spacing={4}
-        >
+        <Stack direction="column" justifyContent="center" spacing={4}>
           <AvatarInput
             showRequired={false}
             label="Profile image"

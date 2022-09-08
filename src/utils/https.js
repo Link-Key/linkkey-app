@@ -14,6 +14,7 @@ const http = axios.create({
 http.interceptors.request.use(
   (config) => {
     if (store.getState().userInfo.token) {
+      console.log("config:", config.headers);
       config.headers.Authorization = `Bearer ${
         store.getState().userInfo.token
       }`;

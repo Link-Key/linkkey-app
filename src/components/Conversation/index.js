@@ -65,11 +65,14 @@ const Conversation = ({ name, recipientAdd }) => {
   }, [conversations]);
 
   const sendMessages = useCallback(
-    (msg) => {
+    async (msg) => {
       console.log("msg:", msg);
       if (msg && conversations) {
         console.log(msg, "send msg", conversations, conversations.send);
-        conversations.send(msg);
+        const resp = await conversations.send(msg);
+        if (resp && resp.id) {
+          setSendInp("");
+        }
       }
     },
     [conversations]
@@ -110,6 +113,7 @@ const Conversation = ({ name, recipientAdd }) => {
         }}
       >
         <InputBase
+          value={sendInp}
           sx={{
             width: "100%",
             pr: 0,

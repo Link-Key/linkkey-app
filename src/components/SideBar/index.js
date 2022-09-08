@@ -15,11 +15,11 @@ import LinkkeyLogo from "../../assets/images/LinkkeyLogo.png";
 import OuterLink from "./OuterLink";
 import InsertEmoticonIcon from "@mui/icons-material/InsertEmoticon";
 import DescriptionRoundedIcon from "@mui/icons-material/DescriptionRounded";
+import SmsIcon from "@mui/icons-material/Sms";
 import StoreIcon from "@mui/icons-material/Store";
 import HelpCenterIcon from "@mui/icons-material/HelpCenter";
 import { useWalletInfo } from "../../providers/wallet";
 import { useSelector } from "react-redux";
-import { splitAddress } from "../../utils";
 import CommonLoadingBtn from "../Button/LoadingButton";
 import { useRouter } from "next/router";
 import { useCallback } from "react";
@@ -67,6 +67,7 @@ const menuList = [
     type: "menu",
     icon: <InsertEmoticonIcon />,
   },
+  { name: "Chat", type: "menu", icon: <SmsIcon /> },
   {
     name: "Market",
     type: "menu",
@@ -99,14 +100,18 @@ const SideBar = () => {
 
   const handleHref = ({ name, type }) => {
     if (type === "menu") {
-      if (name === "Profile") {
-        if (account) {
+      if (account) {
+        if (name === "Profile") {
           return router.push(`/${name}/${snsName}`);
         }
+        if (name === "Chat") {
+          return router.push(`/${name}/Friend`);
+        }
+        return router.push(`/${name}`);
+      } else {
         ToastMention({ message: "未注册SNS域名", type: "warn" });
         return null;
       }
-      return router.push(`/${name}`);
     } else {
       return window.open(type, "__blank");
     }

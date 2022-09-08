@@ -51,14 +51,12 @@ const WalletProvider = ({ children }) => {
           });
           return;
         }
-
         dispatch({
           type: "SET_SNS_NAME",
           value: null,
         });
         return;
       } catch (error) {
-        console.log("getSNSNameError:", error);
         dispatch({
           type: "SET_SNS_NAME",
           value: null,
@@ -199,6 +197,12 @@ const WalletProvider = ({ children }) => {
     setClient(client);
     return client;
   }, []);
+
+  useEffect(() => {
+    if (!client) {
+      initialClient();
+    }
+  }, [initialClient, client]);
 
   // useEffect(() => {
   //   if (account) {

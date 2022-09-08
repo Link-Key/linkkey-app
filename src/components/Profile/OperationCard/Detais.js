@@ -38,6 +38,7 @@ import { getChainId } from "../../../utils/web3";
 import { useSelector } from "react-redux";
 import CreateGroupDialog from "./CreateGroupDialog";
 import { getLastTokenId, getTotal, NFTInstance } from "../../../contracts/NFT";
+import { issueNFT } from "../../../api";
 
 const TitleWrapper = styled(Box)(() => ({
   display: "flex",
@@ -218,6 +219,14 @@ const Details = ({ type }) => {
         const mintType = isFriend ? 1 : 2;
         await stakeNFT(tokenId, mintType);
         // call backend interface
+        const reqParams = {
+          address: account,
+          mintAmount: mintInp === "" ? 0 : Number(mintInp),
+          royalty: royaltiesInp === "" ? 0 : royaltiesInp,
+          type: mintType
+        };
+        const resp = await issueNFT(reqParams);
+
         setShowDetails(true);
         dialogDispatch({ type: "ADD_STEP" });
         dialogDispatch({ type: "CLOSE_DIALOG" });

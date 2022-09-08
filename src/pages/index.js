@@ -21,6 +21,8 @@ import { splitAddress } from "../utils";
 import Check from "@mui/icons-material/Check";
 import CircularProgress from "@mui/material/CircularProgress";
 import http from "../utils/https";
+import { login, queryAccountInfo } from "../api";
+import { getSigner } from "../utils/web3";
 
 const Wrapper = styled(Paper)(() => ({
   display: "flex",
@@ -110,6 +112,8 @@ const StepIconFn = (props) => {
 export default function Home() {
   const { connectWallet, disconnectWallet, initialClient, client } =
     useWalletInfo();
+
+  const dispatch = useDispatch();
   const { account, snsName, connecting } = useSelector((state) => {
     return {
       account: state.walletInfo.account,
@@ -119,6 +123,27 @@ export default function Home() {
   });
 
   const [activeStep, setActiveStep] = useState(0);
+
+  const handleLoginToken = useCallback(async () => {
+    const singer = await getSigner();
+    console.log("singer:", singer);
+    try {
+      const signInfo = await singer.signMessage(snsName);
+      console.log("signInfo:", signInfo);
+      const reqParams = {
+        address: account,
+        message: snsName,
+        signature: signInfo,
+      };
+      const resp = await login(reqParams);
+      console.log(resp, "resp");
+      // if (resp && resp.code === 200 && resp.data.token) {
+      //   dispatch({ type: "USER_INFO", value: resp.data });
+      // }
+    } catch (error) {
+      console.log("signInfoErr:", error);
+    }
+  }, [account, snsName, dispatch]);
 
   const handleStep = useCallback(() => {
     if (account) {
@@ -226,15 +251,7 @@ export default function Home() {
           <Step>
             <StepLabelWrapper>
               <Typography>Login</Typography>
-              <LoadingBtn
-                variant="contained"
-                onClick={() => {
-                  http({
-                    url: "/api/content_api/v1/column/detail?aid=2608&uuid=7123600233015117352&spider=0&column_id=0",
-                    method: "get",
-                  });
-                }}
-              >
+              <LoadingBtn variant="contained" onClick={handleLoginToken}>
                 Login
               </LoadingBtn>
             </StepLabelWrapper>

@@ -50,3 +50,12 @@ export const getKeyBalance = async (owner) => {
     console.log("getKeyBalanceErr:", error);
   }
 };
+
+export const formatTime = (d) =>
+  d
+    ? d.toLocaleTimeString(undefined, {
+        hour12: true,
+        hour: "numeric",
+        minute: "2-digit",
+      })
+    : "";

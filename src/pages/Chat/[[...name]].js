@@ -158,6 +158,10 @@ const list = [
     name: "dsdsds.key",
     address: "0xB3eF1C9718F3EAFaeb6fd7Ac63E8f43493101Ded",
   },
+  {
+    name: "bowen.key",
+    address: "0xAf5d1fEA5Ae2656DDcd6CdB37471236B5C5Dcc17",
+  },
 ];
 
 const Chat = ({ type }) => {

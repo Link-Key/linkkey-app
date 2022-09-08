@@ -88,7 +88,7 @@ const Profile = ({ name }) => {
   const hasPathParams = () => {
     if (!name) {
       router.push("/");
-      ToastMention({ message: "未注册SNS域名", type: "warn" });
+      ToastMention({ message: "Unregistered SNS domain name", type: "warn" });
     }
   };
 

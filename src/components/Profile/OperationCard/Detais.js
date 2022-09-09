@@ -40,6 +40,7 @@ import CreateGroupDialog from "./CreateGroupDialog";
 import { getLastTokenId, getTotal, NFTInstance } from "../../../contracts/NFT";
 import { issueNFT } from "../../../api";
 import useTransaction from "../../../hooks/useTransaction";
+import InfoDialog from "./InfoDialog";
 
 const TitleWrapper = styled(Box)(() => ({
   display: "flex",
@@ -96,21 +97,6 @@ const TypographyBox = styled(Box)(() => ({
   },
 }));
 
-const ReleaseIntroduce = {
-  friend: [
-    "1. Twitter verification is required to release friend-NFT and only eligible Twitter accounts can be released",
-    "2. friend-NFT can be released by paying the release service fee",
-    "3. friend-NFT is fixed at 150 nft, all of which can be sold to the public",
-    "4. When releasing friend-NFT, a flat floor price is currently set to avoid pricing reasonableness",
-  ],
-  group: [
-    "1. Twitter verification is required to release group-NFT and only eligible Twitter accounts can be released",
-    "2. group-NFT can be released by paying the release service fee",
-    "3. group-NFT is fixed at 1500 nft, all of which can be sold to the public",
-    "4. When releasing group-NFT, a flat floor price is currently set to avoid pricing reasonableness",
-  ],
-};
-
 const Details = ({ type }) => {
   // dialog switch
   const [infoOpen, setInfoOpen] = useState(false);
@@ -134,8 +120,6 @@ const Details = ({ type }) => {
   const [transferTokenId, setTransferTokenId] = useState(0);
 
   const isFriend = type === "friend" ? true : false;
-  const introduceList =
-    type === "friend" ? ReleaseIntroduce.friend : ReleaseIntroduce.group;
 
   const contractAdd = isFriend
     ? "0x6495885a76038875812C6cF534ED0627763FdA33"
@@ -412,35 +396,14 @@ const Details = ({ type }) => {
       </CommonDialog>
 
       {/* Info modal */}
-      <CommonDialog
+      <InfoDialog
         open={infoOpen}
         title="Release Introduce"
+        type={isFriend}
         onClose={() => {
           setInfoOpen(false);
         }}
-      >
-        <DialogContent>
-          <Stack direction="column" spacing={3}>
-            {introduceList &&
-              introduceList.map((item, index) => (
-                <Typography key={index} sx={{ fontWeight: 500 }}>
-                  {item}
-                </Typography>
-              ))}
-          </Stack>
-        </DialogContent>
-        <Button
-          variant="contained"
-          sx={{
-            margin: "0 auto",
-          }}
-          onClick={() => {
-            setInfoOpen(false);
-          }}
-        >
-          OK
-        </Button>
-      </CommonDialog>
+      />
 
       <TransferDialog
         open={transferOpen}

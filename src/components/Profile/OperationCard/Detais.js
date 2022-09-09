@@ -117,7 +117,7 @@ const Details = ({ type }) => {
   const [transferOpen, setTransferOpen] = useState(false);
   const [createGroupOpen, setCreateGroupOpen] = useState(false);
   // show nft details
-  const [showDetails, setShowDetails] = useState(true);
+  const [showDetails, setShowDetails] = useState(false);
   const [btnLoading, setBtnLoading] = useState(false);
   const [payBtnLoading, setPayBtnLoading] = useState(false);
   // min fee price

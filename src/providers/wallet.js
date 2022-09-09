@@ -174,8 +174,6 @@ const WalletProvider = ({ children }) => {
       });
     }
 
-    // TODO XMTP Client initial
-
 
     closeLoading();
 

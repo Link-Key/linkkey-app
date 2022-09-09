@@ -11,7 +11,7 @@ import CloseIcon from "@mui/icons-material/Close";
 
 const BaseDialog = styled(Dialog)(() => ({
   "& .MuiDialog-paper": {
-    borderRadius: 40,
+    borderRadius: 20,
     width: "600px",
     "& .MuiDialogTitle-root": {
       display: "flex",

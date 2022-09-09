@@ -16,7 +16,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 
 const BaseDialog = styled(Dialog)(() => ({
   "& .MuiDialog-paper": {
-    borderRadius: 40,
+    borderRadius: 20,
     width: "300px",
     "& .MuiDialogTitle-root": {
       display: "flex",

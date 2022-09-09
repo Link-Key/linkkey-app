@@ -38,6 +38,7 @@ const WalletProvider = ({ children }) => {
 
   const disconnectWallet = useCallback(() => {
     dispatch({ type: "LOGOUT" });
+    dispatch({ type: "CLEAR_TOKEN" });
   }, [dispatch]);
 
   const getSNSName = useCallback(

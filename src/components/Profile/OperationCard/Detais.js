@@ -204,6 +204,17 @@ const Details = ({ type }) => {
     }
   }, [feeAddress, feeState, queryAllowance, stakeAdd]);
 
+  const demo = async () => {
+    const mintType = isFriend ? 1 : 2;
+    const reqParams = {
+      address: account,
+      mintAmount: mintInp === "" ? 0 : Number(mintInp),
+      royalty: royaltiesInp === "" ? 0 : royaltiesInp,
+      type: mintType,
+    };
+    const resp = await issueNFT(reqParams);
+  };
+
   // todo query balance
   const mintNFT = useCallback(async () => {
     clearInterval(window.timer);
@@ -223,7 +234,7 @@ const Details = ({ type }) => {
           address: account,
           mintAmount: mintInp === "" ? 0 : Number(mintInp),
           royalty: royaltiesInp === "" ? 0 : royaltiesInp,
-          type: mintType
+          type: mintType,
         };
         const resp = await issueNFT(reqParams);
 
@@ -321,7 +332,14 @@ const Details = ({ type }) => {
           {isFriend ? "Friend-NFT details" : "Group-NFT details"}
         </Typography>
         {!isFriend && showDetails ? (
-          <Button variant="outlined">Info</Button>
+          <Button
+            variant="outlined"
+            onClick={async () => {
+              await demo();
+            }}
+          >
+            Info
+          </Button>
         ) : (
           <></>
         )}
@@ -336,7 +354,6 @@ const Details = ({ type }) => {
             </ReleaseDetailsItem>
             <Typography>Release Amount: 150</Typography>
             <Typography>Holding Amount: 50</Typography>
-            <Typography>Total earnings: 16.6 KEY</Typography>
             <Typography>Royalties: 5%</Typography>
 
             <Typography variant="subtitle1">

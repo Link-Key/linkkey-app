@@ -13,6 +13,8 @@ const UserReducer = (state = initialUserState, action) => {
       return { ...state, ...action.value };
     case "SET_USER_TOKEN":
       return { ...state, token: action.value };
+    case "CLEAR_TOKEN":
+      return { ...state, token: null };
     default:
       return state;
   }

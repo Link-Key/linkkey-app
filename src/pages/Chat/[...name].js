@@ -124,11 +124,11 @@ const SelectWrapper = styled(Select)(() => ({
 
 export async function getStaticPaths() {
   return {
-    fallback: "blocking",
+    fallback: false,
     paths: [
       {
         params: {
-          name: ["", ""],
+          name: ["Friend"],
         },
       },
     ],
@@ -139,8 +139,8 @@ export async function getStaticProps({ params }) {
   const { name } = params;
   return {
     props: {
-      // ...params,
-      type: name[0] === "friend" ? 0 : 1,
+      ...params,
+      type: name[0] === "Friend" || "friend" ? 0 : 1,
     },
   };
 }
@@ -171,6 +171,8 @@ const Chat = ({ type }) => {
   const [conversation, setConversation] = useState({});
 
   const isFriend = tabValue === 0 ? true : false;
+
+  console.log("type:", type);
 
   const router = useRouter();
 

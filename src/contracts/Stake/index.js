@@ -31,8 +31,14 @@ const unstakeNFT = async (followNFT, groupNFT) => {
   await Stake.unstakeNFT(followNFT, groupNFT);
 };
 
+const getIsIssueNFT = async (owner, createType) => {
+  const isIssue = await StakeInstance().getIsIssueNFT(owner, createType);
+  return isIssue;
+};
+
 export {
   getFee, //质押费用，
   stakeNFT, //质押 1.getFee 2.ERC20 allance => approve,3.this
   unstakeNFT, // 解质押 1.NFT balanceOf == 150｜｜1500
+  getIsIssueNFT //是否发行NFT 没有掉后端接口
 };

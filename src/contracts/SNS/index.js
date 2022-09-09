@@ -11,17 +11,29 @@ export const SNSInstance = () => {
   return SNS;
 };
 
-export const getInfo = async (addr_, name_, tokenId_) => {
+const getInfo = async (addr_, name_, tokenId_) => {
   const info = await SNSInstance().getInfo(addr_, name_, tokenId_);
   return info;
 };
 
-export const getTokenIdOfName = async (name) => {
+const getTokenIdOfName = async (name) => {
   const info = await SNSInstance().getInfo(emptyAddress, name, 0);
   return info.tokenIdOfName;
 };
 
-export const getResolverOwner = async (name) => {
+const getResolverOwner = async (name) => {
   const info = await SNSInstance().getInfo(emptyAddress, name, 0);
   return info.resolverOwner;
+};
+
+const getStake = async (tokenId_) => {
+  const isStake = await SNSInstance().getStake(tokenId_);
+  return isStake;
+};
+
+export {
+  getInfo,
+  getTokenIdOfName,
+  getResolverOwner,
+  getStake //是否质押
 };

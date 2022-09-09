@@ -137,9 +137,9 @@ export default function Home() {
       };
       const resp = await login(reqParams);
       console.log(resp, "resp");
-      // if (resp && resp.code === 200 && resp.data.token) {
-      //   dispatch({ type: "USER_INFO", value: resp.data });
-      // }
+      if (resp && resp.code === 200 && resp.data.token) {
+        dispatch({ type: "USER_INFO", value: resp.data });
+      }
     } catch (error) {
       console.log("signInfoErr:", error);
     }

@@ -40,5 +40,17 @@ export {
   getFee, //质押费用，
   stakeNFT, //质押 1.getFee 2.ERC20 allance => approve,3.this
   unstakeNFT, // 解质押 1.NFT balanceOf == 150｜｜1500
-  getIsIssueNFT //是否发行NFT 没有掉后端接口
+  getIsIssueNFT, //是否发行NFT 没有掉后端接口
 };
+
+/**
+ * 1: 进入页面之前调取getIsIssueNFT，查询是否已发行
+ * 2.1:已发行，调取已发行的数据进行展示
+ * 2.2:未发行，调取getStake判断snsNFT是否已经质押
+ * 2.3：已经质押，提示等待
+ * 2.4：未质押，继续流程
+ * 3.erc20 allowance
+ * 4.approve
+ * 5.stakeNFT
+ * 6.轮询是否已经发行成功
+ */

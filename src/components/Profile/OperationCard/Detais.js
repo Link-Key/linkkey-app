@@ -117,7 +117,7 @@ const Details = ({ type }) => {
   const [transferOpen, setTransferOpen] = useState(false);
   const [createGroupOpen, setCreateGroupOpen] = useState(false);
   // show nft details
-  const [showDetails, setShowDetails] = useState(false);
+  const [showDetails, setShowDetails] = useState(true);
   const [btnLoading, setBtnLoading] = useState(false);
   const [payBtnLoading, setPayBtnLoading] = useState(false);
   // min fee price
@@ -223,7 +223,7 @@ const Details = ({ type }) => {
           address: account,
           mintAmount: mintInp === "" ? 0 : Number(mintInp),
           royalty: royaltiesInp === "" ? 0 : royaltiesInp,
-          type: mintType
+          type: mintType,
         };
         const resp = await issueNFT(reqParams);
 

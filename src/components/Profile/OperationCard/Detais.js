@@ -20,25 +20,23 @@ import EllipsisAddress from "../../EllipsisAddress";
 import CommonDialog from "../../CommonDialog";
 import TransferDialog from "./TransferDialog";
 import SaleDialog from "./SaleDialog";
-import { StakeInstance, stakeNFT } from "../../../contracts/Stake";
-import CommonLoadingBtn from "../../Button/LoadingButton";
 import {
-  getKeyBalance,
-  weiFormatToEth,
-  BNformatToWei,
-  hexToNumber,
-  ethFormatToWei,
-} from "../../../utils";
+  getIsIssueNFT,
+  StakeInstance,
+  stakeNFT,
+} from "../../../contracts/Stake";
+import CommonLoadingBtn from "../../Button/LoadingButton";
+import { getKeyBalance, weiFormatToEth, hexToNumber } from "../../../utils";
 import { getResolverOwner, getTokenIdOfName } from "../../../contracts/SNS";
 import { useRouter } from "next/router";
 import { useDialog } from "../../../providers/ApproveDialog";
-import { allowance, approve } from "../../../contracts/ERC20";
+
 import { contractAddress } from "../../../config/const";
 import { getChainId } from "../../../utils/web3";
 import { useSelector } from "react-redux";
 import CreateGroupDialog from "./CreateGroupDialog";
 import { getLastTokenId, getTotal, NFTInstance } from "../../../contracts/NFT";
-import { issueNFT } from "../../../api";
+import { issueNFT, myContracts } from "../../../api";
 import useTransaction from "../../../hooks/useTransaction";
 import InfoDialog from "./InfoDialog";
 
@@ -106,13 +104,15 @@ const Details = ({ type }) => {
   // show nft details
   const [showDetails, setShowDetails] = useState(false);
   const [btnLoading, setBtnLoading] = useState(false);
-  const [payBtnLoading, setPayBtnLoading] = useState(false);
+
   // min fee price
   const [feeState, setFeeState] = useState(0);
   // fee of erc20 address
   const [feeAddress, setFeeAddress] = useState("");
   // profile address
   const [profileAdd, setProfileAdd] = useState("");
+  // details info
+  const [detailsInfo, setDetailsInfo] = useState({});
 
   const [twitterStatus, setTwitterStatus] = useState(false);
   const [mintInp, setMintInp] = useState("");
@@ -120,6 +120,8 @@ const Details = ({ type }) => {
   const [transferTokenId, setTransferTokenId] = useState(0);
 
   const isFriend = type === "friend" ? true : false;
+  // friend:1 , group:2
+  const createType = isFriend ? 1 : 2;
 
   const contractAdd = isFriend
     ? "0x6495885a76038875812C6cF534ED0627763FdA33"
@@ -172,8 +174,8 @@ const Details = ({ type }) => {
   });
 
   // pay mint NFT
-  const handlePayMintDemo = useCallback(async () => {
-    await handlePayMint;
+  const handlePayMintFn = useCallback(async () => {
+    await handlePayMint();
     setReleaseOpen(false);
     dialogDispatch({ type: "SET_LOADING", payload: false });
   }, [handlePayMint, dialogDispatch]);
@@ -229,6 +231,45 @@ const Details = ({ type }) => {
     setBtnLoading(false);
   }, [contractAdd, account]);
 
+  const issueNFTFn = useCallback(async () => {
+    const reqParams = {
+      address: profileAdd,
+      mintAmount: mintInp === "" ? 0 : Number(mintInp),
+      royalty: royaltiesInp === "" ? 0 : royaltiesInp,
+      type: createType,
+    };
+    const resp = await issueNFT(reqParams);
+    console.log("resp:", resp);
+  }, [createType, mintInp, royaltiesInp, profileAdd]);
+
+  const isStakeNFT = useCallback(async () => {
+    try {
+      const isStake = await getIsIssueNFT(profileAdd, createType);
+      console.log("isStake:", isStake, "createType:", createType);
+    } catch (error) {
+      console.log("getIsIssueNFTErr:", error);
+    }
+  }, [isFriend, profileAdd]);
+
+  const getMyContractFn = useCallback(async () => {
+    const resp = await myContracts();
+    if (
+      (resp && resp.code === 200 && resp.data && resp.data.friendsContract) ||
+      resp.data.groupContract
+    ) {
+      if (isFriend && resp.data.friendsContract) {
+        setDetailsInfo(resp.data.friendsContract);
+      }
+      if (!isFriend && resp.data.groupContract) {
+        setDetailsInfo(resp.data.groupContract);
+      }
+    } else {
+      isStakeNFT();
+    }
+  }, [isFriend, isStakeNFT]);
+
+  console.log("detailsInfo:", detailsInfo);
+
   useEffect(() => {
     if (keyName) {
       getResolverOwner(keyName).then((address) => {
@@ -236,6 +277,10 @@ const Details = ({ type }) => {
       });
     }
   }, [keyName, account]);
+
+  useEffect(() => {
+    getMyContractFn();
+  }, [getMyContractFn]);
 
   return (
     <Paper>
@@ -387,8 +432,7 @@ const Details = ({ type }) => {
             margin: "0 auto",
           }}
           onClick={() => {
-            // handlePayMintFn();
-            handlePayMintDemo();
+            handlePayMintFn();
           }}
         >
           Pay {feeState} Key

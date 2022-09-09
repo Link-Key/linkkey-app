@@ -62,7 +62,8 @@ const MintOtherDialog = ({
   const handlePayMintFn = useCallback(async () => {
     await handlePayMint();
     onClose();
-  }, [handlePayMint, onClose]);
+    dialogDispatch({ type: "SET_LOADING", payload: false });
+  }, [handlePayMint, onClose, dialogDispatch]);
 
   return (
     <CommonDialog open={open} title={title} onClose={onClose}>

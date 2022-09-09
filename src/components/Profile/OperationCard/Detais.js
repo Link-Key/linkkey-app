@@ -39,6 +39,7 @@ import { useSelector } from "react-redux";
 import CreateGroupDialog from "./CreateGroupDialog";
 import { getLastTokenId, getTotal, NFTInstance } from "../../../contracts/NFT";
 import { issueNFT } from "../../../api";
+import useTransaction from "../../../hooks/useTransaction";
 
 const TitleWrapper = styled(Box)(() => ({
   display: "flex",
@@ -126,8 +127,7 @@ const Details = ({ type }) => {
   const [feeAddress, setFeeAddress] = useState("");
   // profile address
   const [profileAdd, setProfileAdd] = useState("");
-  // is self profile
-  const [isSelf, setIsSelf] = useState(false);
+
   const [twitterStatus, setTwitterStatus] = useState(false);
   const [mintInp, setMintInp] = useState("");
   const [royaltiesInp, setRoyaltiesInp] = useState("");
@@ -156,87 +156,17 @@ const Details = ({ type }) => {
 
   const { dialogDispatch, state } = useDialog();
 
-  const handleOpenTransferDialog = useCallback(async () => {
-    setBtnLoading(true);
-    const nft = await NFTInstance(contractAdd);
-    const total = await nft.totalSupply();
-    const tokenIdHex = await getLastTokenId(contractAdd, account);
-    const tokenId = hexToNumber(tokenIdHex);
-    console.log("tokenIdHex:", tokenIdHex);
-    console.log("tokenId:", tokenId);
-
-    if (tokenId) {
-      setTransferTokenId(tokenId);
-      setTransferOpen(true);
-    }
-
-    setBtnLoading(false);
-  }, [contractAdd, account]);
-
-  const queryAllowance = useCallback(async () => {
-    try {
-      const value = await allowance(feeAddress, profileAdd, stakeAdd);
-      return hexToNumber(value);
-    } catch (error) {
-      console.log("allowanceError:", error);
-      return 0;
-    }
-  }, [feeAddress, profileAdd, stakeAdd]);
-
-  const callApprove = useCallback(async () => {
-    const value = await queryAllowance();
-    console.log("approveFee:", ethFormatToWei(feeState));
-    try {
-      if (value >= feeState) {
-        return "approve";
-      } else {
-        const resp = await approve(
-          feeAddress,
-          stakeAdd,
-          ethFormatToWei(feeState)
-        );
-        console.log("approveResp:", resp);
-        return "unApprove";
-      }
-    } catch (error) {
-      console.log("callApproveErr:", error);
-      return false;
-    }
-  }, [feeAddress, feeState, queryAllowance, stakeAdd]);
-
-  const demo = async () => {
-    const mintType = isFriend ? 1 : 2;
-    const reqParams = {
-      address: account,
-      mintAmount: mintInp === "" ? 0 : Number(mintInp),
-      royalty: royaltiesInp === "" ? 0 : royaltiesInp,
-      type: mintType,
-    };
-    const resp = await issueNFT(reqParams);
-  };
-
   // todo query balance
   const mintNFT = useCallback(async () => {
     clearInterval(window.timer);
     dialogDispatch({ type: "ADD_STEP" });
 
     const keyBalance = await getKeyBalance(account);
-    console.log("keyBalance:", keyBalance);
-    console.log("feeState:", feeState);
     if (keyBalance > feeState) {
       try {
         const tokenId = await getTokenIdOfName(keyName);
-        console.log("tokenId:", tokenId);
         const mintType = isFriend ? 1 : 2;
         await stakeNFT(tokenId, mintType);
-        // call backend interface
-        const reqParams = {
-          address: account,
-          mintAmount: mintInp === "" ? 0 : Number(mintInp),
-          royalty: royaltiesInp === "" ? 0 : royaltiesInp,
-          type: mintType,
-        };
-        const resp = await issueNFT(reqParams);
 
         setShowDetails(true);
         dialogDispatch({ type: "ADD_STEP" });
@@ -249,34 +179,20 @@ const Details = ({ type }) => {
     }
   }, [isFriend, dialogDispatch, keyName, account, feeState]);
 
+  const { handlePayMint } = useTransaction({
+    coinAddress: feeAddress,
+    from: profileAdd,
+    to: stakeAdd,
+    price: feeState,
+    executeFn: mintNFT,
+  });
+
   // pay mint NFT
-  const handlePayMint = useCallback(async () => {
-    // setPayBtnLoading(true);
-    dialogDispatch({ type: "SET_LOADING", payload: true });
-    const approveStatus = await callApprove();
-    console.log("approveStatus:", approveStatus);
-    if (approveStatus === "unApprove") {
-      dialogDispatch({ type: "OPEN_DIALOG" });
-      setTimeout(() => {
-        window.timer = setInterval(async () => {
-          const allowancePrice = await queryAllowance();
-          console.log("allowancePrice:", allowancePrice);
-          if (allowancePrice > 0) {
-            await mintNFT();
-          }
-        }, 1000);
-      }, 0);
-    }
-
-    if (approveStatus === "approve") {
-      dialogDispatch({ type: "OPEN_DIALOG" });
-      await mintNFT();
-    }
-
+  const handlePayMintDemo = useCallback(async () => {
+    await handlePayMint;
     setReleaseOpen(false);
     dialogDispatch({ type: "SET_LOADING", payload: false });
-    // setPayBtnLoading(false);
-  }, [callApprove, queryAllowance, dialogDispatch, mintNFT]);
+  }, [handlePayMint, dialogDispatch]);
 
   const changeMintInp = (e) => {
     const value = e.target.value;
@@ -314,13 +230,25 @@ const Details = ({ type }) => {
     }
   }, [isFriend]);
 
+  const handleOpenTransferDialog = useCallback(async () => {
+    setBtnLoading(true);
+    const tokenIdHex = await getLastTokenId(contractAdd, account);
+    const tokenId = hexToNumber(tokenIdHex);
+    console.log("tokenIdHex:", tokenIdHex);
+    console.log("tokenId:", tokenId);
+
+    if (tokenId) {
+      setTransferTokenId(tokenId);
+      setTransferOpen(true);
+    }
+
+    setBtnLoading(false);
+  }, [contractAdd, account]);
+
   useEffect(() => {
     if (keyName) {
       getResolverOwner(keyName).then((address) => {
         setProfileAdd(address);
-        if (address === account) {
-          setIsSelf(true);
-        }
       });
     }
   }, [keyName, account]);
@@ -332,14 +260,7 @@ const Details = ({ type }) => {
           {isFriend ? "Friend-NFT details" : "Group-NFT details"}
         </Typography>
         {!isFriend && showDetails ? (
-          <Button
-            variant="outlined"
-            onClick={async () => {
-              await demo();
-            }}
-          >
-            Info
-          </Button>
+          <Button variant="outlined">Info</Button>
         ) : (
           <></>
         )}
@@ -482,7 +403,8 @@ const Details = ({ type }) => {
             margin: "0 auto",
           }}
           onClick={() => {
-            handlePayMint();
+            // handlePayMintFn();
+            handlePayMintDemo();
           }}
         >
           Pay {feeState} Key

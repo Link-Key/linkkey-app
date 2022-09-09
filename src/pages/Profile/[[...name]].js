@@ -72,6 +72,7 @@ const Profile = ({ name }) => {
   const [showDIDCard, setShowDIDCard] = useState(false);
   // profile address
   const [profileAdd, setProfileAdd] = useState("");
+
   // is self profile
   const [isSelf, setIsSelf] = useState(false);
 

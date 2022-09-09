@@ -61,8 +61,6 @@ const useTransaction = ({ coinAddress, from, to, price, executeFn }) => {
       dialogDispatch({ type: "OPEN_DIALOG" });
       await handleExecuteFn();
     }
-
-    dialogDispatch({ type: "SET_LOADING", payload: false });
   }, [callApprove, queryAllowance, dialogDispatch, handleExecuteFn]);
 
   return { queryAllowance, callApprove, handlePayMint };

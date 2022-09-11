@@ -15,14 +15,16 @@ import CommonLoadingBtn from "../../components/Button/LoadingButton";
 import { getTwitterDataWithOAuth2 } from "../../utils/oauth2";
 
 const Setting = () => {
-  const { snsName } = useSelector((state) => ({
+  const { snsName, description, avatar } = useSelector((state) => ({
     snsName: state.walletInfo.snsName,
+    description: state.userInfo.description,
+    avatar: state.userInfo.avatar,
   }));
 
   const [btnLoading, setBtnLoading] = useState(false);
 
   // user bio
-  const [bio, setBio] = useState("");
+  const [bio, setBio] = useState(description);
   // user twitter
   const [link, setLink] = useState("");
 
@@ -38,9 +40,7 @@ const Setting = () => {
 
   // avatar image upload
   // const [avatar, setAvatar] = useState("");
-  const [preViewAvatar, setPreViewAvatar] = useState(
-    "https://ik.imagekit.io/lensterimg/tr:n-avatar,tr:di-placeholder.webp/https://lens.infura-ipfs.io/ipfs/QmRuat6TeJGaossgVKjGgCofhQVeGWg7DMDkj6Re3jCQbR"
-  );
+  const [preViewAvatar, setPreViewAvatar] = useState(avatar);
   const handleUploadAvatarSuccess = (cid, inputRef, img) => {
     setPreViewAvatar(img);
     if (cid) {
@@ -71,8 +71,7 @@ const Setting = () => {
     try {
       const resp = await getResolverInfo(snsName);
       if (resp && resp.ipfsUrl && resp.description) {
-        console.log("getResolverInfo:", resp);
-        setPreViewAvatar(resp.description);
+        setPreViewAvatar(resp.ipfsUrl);
         setBio(resp.description);
       }
     } catch (error) {

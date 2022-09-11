@@ -6,6 +6,8 @@ const initialUserState = {
   twitterName: null,
   twitterStatus: false,
   clientAddress: null,
+  description: "",
+  avatar: "",
 };
 
 const UserReducer = (state = initialUserState, action) => {
@@ -18,6 +20,10 @@ const UserReducer = (state = initialUserState, action) => {
       return { ...state, token: action.value };
     case "CLEAR_USER_INFO":
       return { ...initialUserState };
+    case "SET_DES":
+      return { ...state, description: action.value };
+    case "SET_AVATAR":
+      return { ...state, avatar: action.value };
     default:
       return state;
   }

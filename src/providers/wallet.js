@@ -8,17 +8,12 @@ import store from "../store";
 import { Client } from "@xmtp/xmtp-js";
 import { getAccount, getSigner } from "../utils/web3";
 import { useState } from "react";
+import { getResolverInfo } from "../contracts/Resolver";
 
 const WalletInfoContent = createContext();
 
 const WalletProvider = ({ children }) => {
   const dispatch = useDispatch();
-
-  const { account } = useSelector((state) => {
-    return {
-      account: state.walletInfo.account,
-    };
-  });
 
   const [client, setClient] = useState();
 
@@ -50,18 +45,33 @@ const WalletProvider = ({ children }) => {
             type: "SET_SNS_NAME",
             value: info[2],
           });
-          return;
+          return info[2];
         }
         dispatch({
           type: "SET_SNS_NAME",
           value: null,
         });
-        return;
+        return "";
       } catch (error) {
         dispatch({
           type: "SET_SNS_NAME",
           value: null,
         });
+      }
+    },
+    [dispatch]
+  );
+
+  const getUserBasicInfo = useCallback(
+    async (name) => {
+      try {
+        const userInfo = await getResolverInfo(name);
+        if (userInfo && userInfo.ipfsUrl && userInfo.description) {
+          dispatch({ type: "SET_DES", value: userInfo.description });
+          dispatch({ type: "SET_AVATAR", value: userInfo.ipfsUrl });
+        }
+      } catch (error) {
+        console.log("userInfo:", error);
       }
     },
     [dispatch]
@@ -128,7 +138,7 @@ const WalletProvider = ({ children }) => {
     eth.on("disconnect", (error) => {
       console.log("disconnect:", error);
     });
-  }, [dispatch, getSNSName, startLoading, closeLoading]);
+  }, [dispatch, getSNSName, startLoading, closeLoading, disconnectWallet]);
 
   const connectWallet = useCallback(async () => {
     const eth = window.ethereum;
@@ -167,7 +177,12 @@ const WalletProvider = ({ children }) => {
       });
 
       // get sns domain name
-      await getSNSName(accounts[0]);
+      const name = await getSNSName(accounts[0]);
+
+      if (name) {
+        console.log("name:", name);
+        await getUserBasicInfo(name);
+      }
 
       ToastMention({
         message: "Connect wallet and sign in successfully.",
@@ -190,6 +205,7 @@ const WalletProvider = ({ children }) => {
     startLoading,
     closeLoading,
     getSNSName,
+    getUserBasicInfo,
   ]);
 
   const initialClient = useCallback(async () => {

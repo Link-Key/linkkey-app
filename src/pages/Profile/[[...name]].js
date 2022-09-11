@@ -59,9 +59,11 @@ export async function getStaticProps({ params }) {
 }
 
 const Profile = ({ name }) => {
-  const { account } = useSelector((state) => {
+  const { account, description, avatar } = useSelector((state) => {
     return {
       account: state.walletInfo.account,
+      description: state.userInfo.description,
+      avatar: state.userInfo.avatar,
     };
   });
 
@@ -111,6 +113,7 @@ const Profile = ({ name }) => {
       <CardInfoWrapper>
         <Stack direction="row" alignItems="flex-start" spacing={4}>
           <Avatar
+            src={avatar}
             sx={{
               width: "100px",
               height: "100px",
@@ -139,7 +142,7 @@ const Profile = ({ name }) => {
               <EllipsisAddress account={profileAdd} />
             </Box>
             <OuterLink sx={{ justifyContent: "flex-start" }} />
-            <Typography>description</Typography>
+            <Typography>{description}</Typography>
           </Stack>
         </Stack>
         <Stack

@@ -13,6 +13,9 @@ export const ResolverInstance = () => {
 
 const getResolverInfo = async (name_) => {
     const allProperties = await ResolverInstance().getAllProperties(name_);
+    if (allProperties === "") {
+        allProperties = "++++++++++++++"
+    }
     let arr = allProperties.split('+');
     return {
         ipfsUrl: arr[4],
@@ -22,6 +25,9 @@ const getResolverInfo = async (name_) => {
 
 const setResolverInfo = async (name_, ipfsUrl_, description_) => {
     const allProperties = await ResolverInstance().getAllProperties(name_);
+    if (allProperties === "") {
+        allProperties = "++++++++++++++"
+    }
     let arr = allProperties.split('+');
     if (ipfsUrl_ === arr[4] && description_ === arr[8]) {
         return

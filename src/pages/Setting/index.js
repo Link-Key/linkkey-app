@@ -9,13 +9,16 @@ import TwitterIcon from "../../assets/icons/common/twitter.svg";
 import { TypographyWrapper } from "../../components/Styled";
 import PageTitleWrapper from "../../components/PageTitleWrapper/PageTitleWrapper";
 import { useSelector } from "react-redux";
-import { getResolverInfo } from "../../contracts/Resolver";
+import { getResolverInfo, setResolverInfo } from "../../contracts/Resolver";
 import { useEffect } from "react";
+import CommonLoadingBtn from "../../components/Button/LoadingButton";
 
 const Setting = () => {
   const { snsName } = useSelector((state) => ({
     snsName: state.walletInfo.snsName,
   }));
+
+  const [btnLoading, setBtnLoading] = useState(false);
 
   // user bio
   const [bio, setBio] = useState("");
@@ -51,14 +54,26 @@ const Setting = () => {
     inputRef.current.value = "";
   }, []);
 
-  const handleSetting = useCallback(() => {
-    const reqParmas = {};
-  }, []);
+  const handleSetting = useCallback(async () => {
+    setBtnLoading(true);
+    console.log(snsName, preViewAvatar, bio);
+    try {
+      const resp = await setResolverInfo(snsName, preViewAvatar, bio);
+      console.log("setResolverInfo:", resp);
+    } catch (error) {
+      console.log("handleSettingErr:", error);
+    }
+    setBtnLoading(false);
+  }, [snsName, , preViewAvatar, bio]);
 
   const getSettingInfo = useCallback(async () => {
     try {
       const resp = await getResolverInfo(snsName);
-      console.log("getResolverInfo:", resp);
+      if (resp && resp.ipfsUrl && resp.description) {
+        console.log("getResolverInfo:", resp);
+        setPreViewAvatar(resp.description);
+        setBio(resp.description);
+      }
     } catch (error) {
       console.log("getSettingInfoErr:", error);
     }
@@ -114,12 +129,14 @@ const Setting = () => {
             onChange={handleLinkChange}
           />
 
-          <Button
+          <CommonLoadingBtn
+            loading={btnLoading}
             variant="contained"
             sx={{ margin: "20px 0", maxWidth: "200px", alignSelf: "center" }}
+            onClick={handleSetting}
           >
             Setting Profile
-          </Button>
+          </CommonLoadingBtn>
         </Stack>
       </Paper>
     </Stack>

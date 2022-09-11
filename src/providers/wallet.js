@@ -38,7 +38,7 @@ const WalletProvider = ({ children }) => {
 
   const disconnectWallet = useCallback(() => {
     dispatch({ type: "LOGOUT" });
-    dispatch({ type: "CLEAR_TOKEN" });
+    dispatch({ type: "CLEAR_USER_INFO" });
   }, [dispatch]);
 
   const getSNSName = useCallback(
@@ -104,7 +104,7 @@ const WalletProvider = ({ children }) => {
     eth.on("accountsChanged", async (accounts) => {
       console.log("accountsChanged:", accounts);
       startLoading();
-      // disconnectWallet();
+      disconnectWallet();
       await getSNSName(accounts[0]);
 
       dispatch({
@@ -194,36 +194,12 @@ const WalletProvider = ({ children }) => {
 
   const initialClient = useCallback(async () => {
     const client = await Client.create(await getSigner(), "dev");
-    setClient(client);
-    return client;
-  }, []);
-
-  useEffect(() => {
-    if (!client) {
-      initialClient();
+    if (client && client.address) {
+      dispatch({ type: "SET_CLIENT_ADD", value: client.address });
+      setClient(client);
     }
-  }, [initialClient, client]);
-
-  // useEffect(() => {
-  //   if (account) {
-  //     getSNSName(account);
-  //   }
-  // }, [getSNSName, account, startLoading, closeLoading]);
-
-  // useEffect(() => {
-  //   const isConnected = window.ethereum.isConnected();
-  //   console.log("isConnected:", isConnected);
-
-  //   getAccount().then((acc) => {
-  //     // set account to store
-  //     if (acc && acc[0] && isConnected) {
-  //       store.dispatch({
-  //         type: "SET_ACCOUNTS",
-  //         value: acc,
-  //       });
-  //     }
-  //   });
-  // }, []);
+    return client;
+  }, [dispatch]);
 
   useEffect(() => {
     subscribeFn();

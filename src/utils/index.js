@@ -7,11 +7,21 @@ import store from "../store/index";
 
 const { chainId } = store.getState().walletInfo;
 
-export function splitAddress(address, start = 11, end = -4) {
+export const compareAddress = (add1, add2) => {
+  console.log("add1:", add1);
+  console.log("add2:", add2);
+  if (add1 && add2 && add1.toLowerCase() === add2.toLowerCase()) {
+    return true;
+  } else {
+    return false;
+  }
+};
+
+export const splitAddress = (address, start = 11, end = -4) => {
   return (
     (address && address.slice(0, start) + "..." + address.slice(end)) || ""
   );
-}
+};
 
 export const hexToNumber = (value) => {
   return parseInt(value._hex, 16);

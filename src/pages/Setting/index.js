@@ -8,8 +8,30 @@ import {
 import TwitterIcon from "../../assets/icons/common/twitter.svg";
 import { TypographyWrapper } from "../../components/Styled";
 import PageTitleWrapper from "../../components/PageTitleWrapper/PageTitleWrapper";
+import { useSelector } from "react-redux";
+import { getDescription, getIpfsUrl } from "../../contracts/Resolver";
+import { useEffect } from "react";
 
 const Setting = () => {
+  const { snsName } = useSelector((state) => ({
+    snsName: state.walletInfo.snsName,
+  }));
+
+  // user bio
+  const [bio, setBio] = useState("");
+  // user twitter
+  const [link, setLink] = useState("");
+
+  const handleBioChange = useCallback((value) => {
+    if (value) {
+      setBio(value);
+    }
+  }, []);
+
+  const handleLinkChange = useCallback((value) => {
+    setLink(value);
+  }, []);
+
   // avatar image upload
   // const [avatar, setAvatar] = useState("");
   const [preViewAvatar, setPreViewAvatar] = useState("");
@@ -27,21 +49,36 @@ const Setting = () => {
     inputRef.current.value = "";
   }, []);
 
-  // user bio
-  const [bio, setBio] = useState("");
+  const handleSetting = useCallback(() => {
+    const reqParmas = {};
+  }, []);
 
-  const handleBioChange = useCallback((value) => {
-    if (value) {
-      setBio(value);
+  const getBio = useCallback(async () => {
+    try {
+      const resp = await getDescription(snsName);
+      console.log("getDescription:", resp);
+    } catch (error) {
+      console.log("getDescriptionErr:", error);
     }
-  }, []);
+  }, [snsName]);
 
-  // user twitter
-  const [link, setLink] = useState("");
+  const getAvatar = useCallback(async () => {
+    try {
+      const resp = await getIpfsUrl(snsName);
+      console.log("getIpfsUrl:", resp);
+    } catch (error) {
+      console.log("getAvatarErr:", error);
+    }
+  }, [snsName]);
 
-  const handleLinkChange = useCallback((value) => {
-    setLink(value);
-  }, []);
+  const initialSettingValue = useCallback(async () => {
+    await getBio();
+    await getAvatar();
+  }, [getBio, getAvatar]);
+
+  useEffect(() => {
+    initialSettingValue();
+  }, [initialSettingValue]);
 
   return (
     <Stack spacing={3}>
@@ -84,10 +121,14 @@ const Setting = () => {
             setValue={setLink}
             onChange={handleLinkChange}
           />
+
+          <Button
+            variant="contained"
+            sx={{ margin: "20px 0", maxWidth: "200px", alignSelf: "center" }}
+          >
+            Setting Profile
+          </Button>
         </Stack>
-        <Button variant="contained" sx={{ margin: "20px 0" }}>
-          Setting Profile
-        </Button>
       </Paper>
     </Stack>
   );

@@ -12,6 +12,7 @@ import { useSelector } from "react-redux";
 import { getResolverInfo, setResolverInfo } from "../../contracts/Resolver";
 import { useEffect } from "react";
 import CommonLoadingBtn from "../../components/Button/LoadingButton";
+import { getTwitterDataWithOAuth2 } from "../../utils/oauth2";
 
 const Setting = () => {
   const { snsName } = useSelector((state) => ({
@@ -137,6 +138,13 @@ const Setting = () => {
           >
             Setting Profile
           </CommonLoadingBtn>
+          <Button
+            onClick={() => {
+              getTwitterDataWithOAuth2();
+            }}
+          >
+            Twitter
+          </Button>
         </Stack>
       </Paper>
     </Stack>

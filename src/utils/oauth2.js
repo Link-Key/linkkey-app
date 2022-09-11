@@ -3,8 +3,8 @@ import store from "../Store";
 const twitterOAuth2URL = "https://twitter.com/i/oauth2/authorize?";
 export const params = {
   response_type: "code",
-  client_id: "WGZiaXk5dGczU3EyZFgwenAyWmg6MTpjaQ",
-  redirect_uri: "http://localhost:3000/Setting",
+  client_id: "RWN0S2Jwa0R0V0dVdkZEQ28tWFo6MTpjaQ",
+  redirect_uri: "https://app.linkkey.io/Profile",
   state: "state",
   code_challenge: store.getState().walletInfo.account,
   code_challenge_method: "plain",
@@ -28,6 +28,6 @@ function constructAuthorizeURL() {
   );
 }
 
-export function getTwitterDataWithOAuth2() {
+export const getTwitterDataWithOAuth2 = () => {
   window.location.href = constructAuthorizeURL();
-}
+};

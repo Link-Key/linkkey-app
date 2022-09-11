@@ -9,7 +9,7 @@ import TwitterIcon from "../../assets/icons/common/twitter.svg";
 import { TypographyWrapper } from "../../components/Styled";
 import PageTitleWrapper from "../../components/PageTitleWrapper/PageTitleWrapper";
 import { useSelector } from "react-redux";
-import { getDescription, getIpfsUrl } from "../../contracts/Resolver";
+import { getResolverInfo } from "../../contracts/Resolver";
 import { useEffect } from "react";
 
 const Setting = () => {
@@ -34,7 +34,9 @@ const Setting = () => {
 
   // avatar image upload
   // const [avatar, setAvatar] = useState("");
-  const [preViewAvatar, setPreViewAvatar] = useState("");
+  const [preViewAvatar, setPreViewAvatar] = useState(
+    "https://ik.imagekit.io/lensterimg/tr:n-avatar,tr:di-placeholder.webp/https://lens.infura-ipfs.io/ipfs/QmRuat6TeJGaossgVKjGgCofhQVeGWg7DMDkj6Re3jCQbR"
+  );
   const handleUploadAvatarSuccess = (cid, inputRef, img) => {
     setPreViewAvatar(img);
     if (cid) {
@@ -53,28 +55,18 @@ const Setting = () => {
     const reqParmas = {};
   }, []);
 
-  const getBio = useCallback(async () => {
+  const getSettingInfo = useCallback(async () => {
     try {
-      const resp = await getDescription(snsName);
-      console.log("getDescription:", resp);
+      const resp = await getResolverInfo(snsName);
+      console.log("getResolverInfo:", resp);
     } catch (error) {
-      console.log("getDescriptionErr:", error);
-    }
-  }, [snsName]);
-
-  const getAvatar = useCallback(async () => {
-    try {
-      const resp = await getIpfsUrl(snsName);
-      console.log("getIpfsUrl:", resp);
-    } catch (error) {
-      console.log("getAvatarErr:", error);
+      console.log("getSettingInfoErr:", error);
     }
   }, [snsName]);
 
   const initialSettingValue = useCallback(async () => {
-    await getBio();
-    await getAvatar();
-  }, [getBio, getAvatar]);
+    await getSettingInfo();
+  }, [getSettingInfo]);
 
   useEffect(() => {
     initialSettingValue();

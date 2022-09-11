@@ -9,6 +9,8 @@ import {
 } from "@mui/material";
 import { memo, useRef, useState, useCallback } from "react";
 import PlusSvg from "../../assets/icons/common/plus.svg";
+import { getTwitterDataWithOAuth2 } from "../../utils/oauth2";
+import CommonLoadingBtn from "../Button/LoadingButton";
 
 const AvatarInput = ({
   showRequired,
@@ -20,8 +22,6 @@ const AvatarInput = ({
 }) => {
   const inputRef = useRef(null);
   const [uploading, setUploading] = useState(false);
-
-  console.log("avatar:", avatar);
 
   const onFileChange = useCallback(
     async (event) => {
@@ -282,6 +282,7 @@ const LinkInput = ({
   placeholder,
   maxWords,
   onChange,
+  loading = false,
 }) => {
   const [maxReached, setMaxReached] = useState(false);
   const handleChange = (event) => {
@@ -309,7 +310,7 @@ const LinkInput = ({
           style={{
             fontWeight: 600,
             fontSize: "16px",
-            marginTop: "20px",
+            // marginTop: "20px",
           }}
         >
           {label + (showRequired ? "*" : "")}{" "}
@@ -366,7 +367,14 @@ const LinkInput = ({
             {value.length + "/" + maxWords}
           </Typography>
         )}
-        <Button>To verify</Button>
+        <CommonLoadingBtn
+          loading={loading}
+          onClick={() => {
+            getTwitterDataWithOAuth2();
+          }}
+        >
+          To verify
+        </CommonLoadingBtn>
       </Box>
     </Box>
   );

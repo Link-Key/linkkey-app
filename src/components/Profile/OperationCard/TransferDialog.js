@@ -54,8 +54,6 @@ const TransferDialog = ({ open, title, contractAdd, tokenId, onClose }) => {
   const [receiverInp, setReceiverInp] = useState("");
   const [btnLoading, setBtnLoading] = useState(false);
 
-  console.log("transferToken:", tokenId);
-
   const handleChangeReceiverInp = useCallback((e) => {
     setReceiverInp(e.target.value);
   }, []);

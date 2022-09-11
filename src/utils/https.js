@@ -1,4 +1,5 @@
 import axios from "axios";
+import Router from "next/router";
 import ToastMention from "../components/ToastMessage";
 import store from "../store";
 
@@ -11,10 +12,17 @@ const http = axios.create({
   // withCredentials: true,
 });
 
+const handleCode = (code, msg, errorUrl) => {
+  if (code === 10001) {
+    Router.push("/");
+    console.log("handleCodeMsg:", msg);
+    ToastMention({ message: msg, type: "error" });
+  }
+};
+
 http.interceptors.request.use(
   (config) => {
     if (store.getState().userInfo.token) {
-      console.log("config:", config.headers);
       config.headers.Authorization = `Bearer ${
         store.getState().userInfo.token
       }`;
@@ -29,8 +37,15 @@ http.interceptors.request.use(
 
 http.interceptors.response.use(
   (response) => {
-    const res = response.data;
-    return res;
+    const { data, config } = response;
+    const { code, msg: message } = data;
+
+    if (code === 10001) {
+      handleCode(code, message, config.url);
+
+      Promise.reject;
+    }
+    return data;
   },
   (error) => {
     ToastMention({

@@ -249,19 +249,21 @@ const Details = ({ type }) => {
     } catch (error) {
       console.log("getIsIssueNFTErr:", error);
     }
-  }, [isFriend, profileAdd]);
+  }, [profileAdd, createType]);
 
   const getMyContractFn = useCallback(async () => {
     const resp = await myContracts();
     if (
-      (resp && resp.code === 200 && resp.data && resp.data.friendsContract) ||
-      resp.data.groupContract
+      resp &&
+      resp.code === 200 &&
+      resp.data &&
+      (resp.data.friendsContract || resp.data.groupContract)
     ) {
-      if (isFriend && resp.data.friendsContract) {
-        setDetailsInfo(resp.data.friendsContract);
+      if (isFriend && resp.data && resp.data.friendsContract) {
+        // setDetailsInfo(resp.data.friendsContract);
       }
       if (!isFriend && resp.data.groupContract) {
-        setDetailsInfo(resp.data.groupContract);
+        // setDetailsInfo(resp.data.groupContract);
       }
     } else {
       isStakeNFT();
@@ -280,7 +282,7 @@ const Details = ({ type }) => {
 
   useEffect(() => {
     getMyContractFn();
-  }, [getMyContractFn]);
+  }, []);
 
   return (
     <Paper>

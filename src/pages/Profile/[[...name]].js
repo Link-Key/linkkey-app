@@ -67,8 +67,6 @@ const Profile = ({ name }) => {
 
   const router = useRouter();
 
-  console.log("name:", name);
-
   const [showDIDCard, setShowDIDCard] = useState(false);
   // profile address
   const [profileAdd, setProfileAdd] = useState("");

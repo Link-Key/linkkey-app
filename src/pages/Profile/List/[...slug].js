@@ -61,9 +61,6 @@ const ProfileList = ({ type, name }) => {
   const [selectItem, setSelectItem] = useState("all");
   const [saleOpen, setSaleOpen] = useState(false);
 
-  console.log("type:", type);
-  console.log("name:", name);
-
   const handleSelectChange = useCallback((e) => {
     setSelectItem(e.target.value);
   }, []);

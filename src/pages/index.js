@@ -159,9 +159,6 @@ export default function Home() {
     }
   }, [account, snsName, clientAddress, token]);
 
-  console.log("activeStep:", activeStep);
-  console.log("activieStatus:", activeStep < 3);
-
   useEffect(() => {
     handleStep();
   }, [handleStep]);

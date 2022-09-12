@@ -7,7 +7,7 @@ import {
 } from "../../components/Input/StyledInput";
 import TwitterIcon from "../../assets/icons/common/twitter.svg";
 import PageTitleWrapper from "../../components/PageTitleWrapper/PageTitleWrapper";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { getResolverInfo, setResolverInfo } from "../../contracts/Resolver";
 import { useEffect } from "react";
 import CommonLoadingBtn from "../../components/Button/LoadingButton";
@@ -21,6 +21,8 @@ const Setting = () => {
     description: state.userInfo.description,
     avatar: state.userInfo.avatar,
   }));
+
+  const dispatch = useDispatch();
 
   const code = new URLSearchParams(window.location.search).get("code");
 
@@ -61,15 +63,17 @@ const Setting = () => {
 
   const handleSetting = useCallback(async () => {
     setBtnLoading(true);
-    console.log(snsName, preViewAvatar, bio);
     try {
       await setResolverInfo(snsName, preViewAvatar, bio);
+
+      dispatch({ type: "SET_DES", value: bio });
+      dispatch({ type: "SET_AVATAR", value: preViewAvatar });
       ToastMention({ message: "Setting success", type: "success" });
     } catch (error) {
       console.log("handleSettingErr:", error);
     }
     setBtnLoading(false);
-  }, [snsName, , preViewAvatar, bio]);
+  }, [snsName, preViewAvatar, bio, dispatch]);
 
   const getSettingInfo = useCallback(async () => {
     try {

@@ -12,6 +12,7 @@ import { getResolverInfo, setResolverInfo } from "../../contracts/Resolver";
 import { useEffect } from "react";
 import CommonLoadingBtn from "../../components/Button/LoadingButton";
 import { bindTwitter } from "../../api";
+import ToastMention from "../../components/ToastMessage";
 
 const Setting = () => {
   const { snsName, description, avatar, account } = useSelector((state) => ({
@@ -44,11 +45,11 @@ const Setting = () => {
   // avatar image upload
   // const [avatar, setAvatar] = useState("");
   const [preViewAvatar, setPreViewAvatar] = useState(avatar);
-  const handleUploadAvatarSuccess = (cid, inputRef, img) => {
-    setPreViewAvatar(img);
+  const handleUploadAvatarSuccess = (cid, inputRef) => {
     if (cid) {
-      // setAvatar(cid);
-      setPreViewAvatar(img);
+      const avatarIPFS = `https://${cid}.ipfs.nftstorage.link/`;
+      console.log("avatarIPFS:", avatarIPFS);
+      setPreViewAvatar(avatarIPFS);
     }
     inputRef.current.value = "";
   };
@@ -62,8 +63,8 @@ const Setting = () => {
     setBtnLoading(true);
     console.log(snsName, preViewAvatar, bio);
     try {
-      const resp = await setResolverInfo(snsName, preViewAvatar, bio);
-      console.log("setResolverInfo:", resp);
+      await setResolverInfo(snsName, preViewAvatar, bio);
+      ToastMention({ message: "Setting success", type: "success" });
     } catch (error) {
       console.log("handleSettingErr:", error);
     }

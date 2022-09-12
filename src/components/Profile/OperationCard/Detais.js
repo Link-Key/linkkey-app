@@ -36,7 +36,7 @@ import { getChainId } from "../../../utils/web3";
 import { useSelector } from "react-redux";
 import CreateGroupDialog from "./CreateGroupDialog";
 import { getLastTokenId, getTotal, NFTInstance } from "../../../contracts/NFT";
-import { issueNFT, myContracts } from "../../../api";
+import { issueNFT, myContracts, queryUserInfo } from "../../../api";
 import useTransaction from "../../../hooks/useTransaction";
 import InfoDialog from "./InfoDialog";
 
@@ -231,6 +231,11 @@ const Details = ({ type }) => {
     setBtnLoading(false);
   }, [contractAdd, account]);
 
+  const queryIssueStatus = useCallback(async () => {
+    const resp = await queryUserInfo();
+    console.log("queryIssueStatus:", resp);
+  }, []);
+
   const issueNFTFn = useCallback(async () => {
     const reqParams = {
       address: profileAdd,
@@ -247,7 +252,7 @@ const Details = ({ type }) => {
       const isStake = await getIsIssueNFT(profileAdd, createType);
       console.log("isStake:", isStake, "createType:", createType);
     } catch (error) {
-      console.log("getIsIssueNFTErr:", error);
+      console.log("isStakeNFTErr:", error);
     }
   }, [profileAdd, createType]);
 
@@ -260,10 +265,10 @@ const Details = ({ type }) => {
       (resp.data.friendsContract || resp.data.groupContract)
     ) {
       if (isFriend && resp.data && resp.data.friendsContract) {
-        // setDetailsInfo(resp.data.friendsContract);
+        setDetailsInfo(resp.data.friendsContract);
       }
       if (!isFriend && resp.data.groupContract) {
-        // setDetailsInfo(resp.data.groupContract);
+        setDetailsInfo(resp.data.groupContract);
       }
     } else {
       isStakeNFT();
@@ -281,8 +286,11 @@ const Details = ({ type }) => {
   }, [keyName, account]);
 
   useEffect(() => {
-    getMyContractFn();
-  }, []);
+    if (profileAdd) {
+      getMyContractFn();
+    }
+    queryIssueStatus();
+  }, [profileAdd, getMyContractFn]);
 
   return (
     <Paper>

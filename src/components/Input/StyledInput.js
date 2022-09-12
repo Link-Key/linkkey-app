@@ -9,8 +9,10 @@ import {
 } from "@mui/material";
 import { memo, useRef, useState, useCallback } from "react";
 import PlusSvg from "../../assets/icons/common/plus.svg";
+import http, { IPFS_API_KEY } from "../../utils/https";
 import { getTwitterDataWithOAuth2 } from "../../utils/oauth2";
 import CommonLoadingBtn from "../Button/LoadingButton";
+import { useSelector } from "react-redux";
 
 const AvatarInput = ({
   showRequired,
@@ -22,6 +24,10 @@ const AvatarInput = ({
 }) => {
   const inputRef = useRef(null);
   const [uploading, setUploading] = useState(false);
+
+  const { snsName } = useSelector((state) => ({
+    snsName: state.walletInfo.snsName,
+  }));
 
   const onFileChange = useCallback(
     async (event) => {
@@ -38,21 +44,16 @@ const AvatarInput = ({
           return;
         }
         setUploading(true);
-        const type = file.type;
-        const URL = window.URL || window.webkitURL;
-        const imgURL = URL.createObjectURL(file);
-
-        console.log("imgURL:", imgURL);
-
-        // const res = await uploadToIpfs(file, type, false);
-        const res = "";
-
-        onSuccess("", inputRef, imgURL);
-        // if (res && res.Hash) {
-        //   onSuccess(res.Hash, inputRef, imgURL);
-        // } else {
-        //   onError(inputRef);
-        // }
+        try {
+          const res = await http.post("https://api.nft.storage/upload", file);
+          if (res && res.ok === true && res.value && res.value.cid) {
+            onSuccess(res.value.cid, inputRef);
+          } else {
+            onError(inputRef);
+          }
+        } catch (error) {
+          console.log("uploadError:", error);
+        }
         setUploading(false);
       }
       setUploading(false);

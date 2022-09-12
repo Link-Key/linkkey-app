@@ -1,4 +1,4 @@
-import { Card, styled, Typography, Stack } from "@mui/material";
+import { Card, styled, Typography, Stack, Box } from "@mui/material";
 import { memo } from "react";
 import OtherDetails from "./OtherDetails";
 
@@ -20,12 +20,15 @@ const OtherProfileCard = () => {
     <OperationCardWrapper>
       <Typography variant="title">Summary</Typography>
 
-      <Stack
-        direction="row"
-        spacing={2}
+      <Box
         sx={{
+          display: "flex",
+          justifyContent: "center",
+          gap: "16px",
+          flexWrap: { xs: "wrap", md: "wrap", lg: "unset", xl: "unset" },
           "& .MuiPaper-root": {
             width: "100%",
+            minWidth: "400px",
             borderRadius: "12px",
           },
           ".MuiTypography-subtitle1": {
@@ -40,7 +43,7 @@ const OtherProfileCard = () => {
       >
         <OtherDetails type="friend" />
         <OtherDetails type="group" />
-      </Stack>
+      </Box>
     </OperationCardWrapper>
   );
 };

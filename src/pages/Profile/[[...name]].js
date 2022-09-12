@@ -4,7 +4,6 @@ import {
   Button,
   Card,
   IconButton,
-  Paper,
   Stack,
   styled,
   Typography,

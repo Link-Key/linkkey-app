@@ -3,6 +3,9 @@ import Router from "next/router";
 import ToastMention from "../components/ToastMessage";
 import store from "../store";
 
+export const IPFS_API_KEY =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweGU1ZTkzYzk3YUVFRTQ5MTExN0U4MTg2ZWU4NkYwMjA5ODVGRTY4YmIiLCJpc3MiOiJuZnQtc3RvcmFnZSIsImlhdCI6MTY2Mjk3NjE5MTQ3MCwibmFtZSI6ImxpbmtrZXktYXZhdGFyIn0.EBXANJD-5t4N8WoFq-ufeWJcj8IO7MBbADPtNsaRalY";
+
 // create axios instance
 const http = axios.create({
   baseURL: "",
@@ -10,6 +13,9 @@ const http = axios.create({
   timeout: 2 * 60 * 1000,
   // 表示跨域请求时是否需要使用凭证，开启后，后端服务器要设置允许开启
   // withCredentials: true,
+  headers: {
+    "x-agent-did": IPFS_API_KEY,
+  },
 });
 
 const handleCode = (code, msg, errorUrl) => {
@@ -27,6 +33,10 @@ http.interceptors.request.use(
         store.getState().userInfo.token
       }`;
     }
+    if (config.url.includes("https://api.nft.storage/upload")) {
+      config.headers["Content-Type"] = "image/*'";
+      config.headers.Authorization = `Bearer ${IPFS_API_KEY}`;
+    }
     return config;
   },
   (error) => {
@@ -40,10 +50,10 @@ http.interceptors.response.use(
     const { data, config } = response;
     const { code, msg: message } = data;
 
+    console.log("code:", code);
+
     if (code === 10001) {
       handleCode(code, message, config.url);
-
-      Promise.reject;
     }
     return data;
   },

@@ -50,7 +50,7 @@ const Conversation = ({ name, recipientAdd }) => {
       const m = await newConversation.messages();
       setChatList([...m]);
     }
-  }, [client, recipientAdd]);
+  }, [recipientAdd, client]);
 
   const listenChatList = useCallback(async () => {
     console.log("here listen", conversations);
@@ -60,7 +60,6 @@ const Conversation = ({ name, recipientAdd }) => {
       console.log(message, "in the message");
       setChatList((v) => [...v, { ...message }]);
       continue;
-      // }
     }
   }, [conversations]);
 

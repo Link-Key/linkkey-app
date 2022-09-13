@@ -65,7 +65,6 @@ const Setting = () => {
     setBtnLoading(true);
     try {
       await setResolverInfo(snsName, preViewAvatar, bio);
-
       dispatch({ type: "SET_DES", value: bio });
       dispatch({ type: "SET_AVATAR", value: preViewAvatar });
       ToastMention({ message: "Setting success", type: "success" });

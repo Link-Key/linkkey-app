@@ -22,7 +22,7 @@ import html2canvas from "html2canvas";
 
 const BaseDialog = styled(Dialog)(() => ({
   "& .MuiDialog-paper": {
-    borderRadius: 40,
+    borderRadius: 20,
     "& .MuiDialogTitle-root": {
       display: "flex",
       justifyContent: "center",

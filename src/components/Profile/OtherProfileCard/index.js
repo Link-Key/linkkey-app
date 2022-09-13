@@ -18,7 +18,7 @@ const OperationCardWrapper = styled(Card)(() => ({
 const OtherProfileCard = () => {
   return (
     <OperationCardWrapper>
-      <Typography variant="title">Summary</Typography>
+      <Typography variant="title">NFTs</Typography>
 
       <Box
         sx={{

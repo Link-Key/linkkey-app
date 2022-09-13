@@ -45,6 +45,11 @@ const getFloorPrices = async (NFTAddress) => {
   return floorPrices;
 };
 
+const getTaxPreparation = async (NFTAddress) => {
+  const taxPreparation = await NFTInstance(NFTAddress).getTaxPreparation();
+  return taxPreparation;
+};
+
 const balanceOf = async (NFTAddress, owner) => {
   const balance = await NFTInstance(NFTAddress).balanceOf(owner);
   return balance;
@@ -88,6 +93,7 @@ export {
   setTaxPreparation, //设置版税（修改的时候）
   setApprovalForAll, // 授权
   isApprovedForAll, //查看是否授权
+  getTaxPreparation,//版税
   getFloorPrices, // 地板价
   balanceOf, // 拥有数量
   getTotal, // 总铸造数量

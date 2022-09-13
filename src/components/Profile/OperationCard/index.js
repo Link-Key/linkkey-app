@@ -84,13 +84,11 @@ const OperationCard = ({ profileAdd }) => {
         <Details
           type="friend"
           contractAdd={friendAddress}
-          isShow={friendAddress !== emptyAddress}
           profileAdd={profileAdd}
         />
         <Details
           type="group"
           contractAdd={groupAddress}
-          isShow={groupAddress !== emptyAddress}
           profileAdd={profileAdd}
         />
       </Box>

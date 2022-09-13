@@ -112,16 +112,17 @@ const Profile = ({ name }) => {
   }, []);
 
   useEffect(() => {
-    setLoading(true);
     if (name && name[0]) {
+      setLoading(true);
       getResolverOwner(name[0]).then((address) => {
         setProfileAdd(address.toLowerCase());
         if (address.toLowerCase() === account) {
           setIsSelf(true);
         }
       });
+
+      setLoading(false);
     }
-    setLoading(false);
   }, [name, account]);
 
   return (

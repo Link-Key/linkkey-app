@@ -20,11 +20,11 @@ const getFee = async (createType) => {
 
 //ownerMintAccount:followNFT max 150 ,group max 1500
 //taxPreparation: 版税 0-1000 
-const stakeNFT = async (tokenId, createType, ownerMintAccount, taxPreparation) => {
+const stakeNFT = async (tokenId, createType, ownerMintAmount, taxPreparation) => {
   const signer = await getSigner();
   console.log("signer", signer);
   const Stake = await StakeInstance().connect(signer);
-  await Stake.stakeNFT(tokenId, createType, ownerMintAccount, taxPreparation);
+  await Stake.stakeNFT(tokenId, createType, ownerMintAmount, taxPreparation);
 };
 
 const unstakeNFT = async () => {

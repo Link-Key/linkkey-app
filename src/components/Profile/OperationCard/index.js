@@ -1,4 +1,13 @@
-import { Button, Paper, Stack, styled, Typography, Card } from "@mui/material";
+import {
+  Button,
+  Paper,
+  Stack,
+  styled,
+  Typography,
+  Card,
+  CircularProgress,
+  Box,
+} from "@mui/material";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import Details from "./Detais";
 import { useCallback, useState } from "react";
@@ -36,12 +45,15 @@ const OperationCard = () => {
         below to release your NFT!
       </OperationAlert>
 
-      <Stack
-        direction="row"
-        spacing={2}
+      <Box
         sx={{
+          display: "flex",
+          justifyContent: "center",
+          gap: "16px",
+          flexWrap: { xs: "wrap", md: "wrap", lg: "unset", xl: "unset" },
           "& .MuiPaper-root": {
             width: "100%",
+            minWidth: "400px",
             borderRadius: "12px",
           },
           ".MuiTypography-subtitle1": {
@@ -56,7 +68,7 @@ const OperationCard = () => {
       >
         <Details type="friend" />
         <Details type="group" />
-      </Stack>
+      </Box>
     </OperationCardWrapper>
   );
 };

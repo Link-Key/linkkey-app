@@ -11,38 +11,32 @@ export const ResolverInstance = () => {
     return resolver;
 };
 
-const getAllProperties = async (name_) => {
+const getResolverInfo = async (name_) => {
     const allProperties = await ResolverInstance().getAllProperties(name_);
-    return allProperties;
+    if (allProperties === "") {
+        allProperties = "++++++++++++++"
+    }
+    let arr = allProperties.split('+');
+    return {
+        ipfsUrl: arr[4],
+        description: arr[8]
+    };
 };
 
-const getIpfsUrl = async (name_) => {
-    const allProperties = await ResolverInstance().getIpfsUrl(name_);
-    return allProperties;
-};
-
-const getDescription = async (name_) => {
-    const allProperties = await ResolverInstance().getDescription(name_);
-    return allProperties;
-};
-
-
-const setIpfsUrl = async (name_, ipfsUrl_) => {
-    const oldStr = getAllProperties(name_);
-    let arr = oldStr.split('+');
+const setResolverInfo = async (name_, ipfsUrl_, description_) => {
+    const allProperties = await ResolverInstance().getAllProperties(name_);
+    if (allProperties === "") {
+        allProperties = "++++++++++++++"
+    }
+    let arr = allProperties.split('+');
+    if (ipfsUrl_ === arr[4] && description_ === arr[8]) {
+        return
+    }
     arr[4] = ipfsUrl_;
-    const newStr = arr.join("+")
-    await setAllProperties(name_, newStr)
-};
-
-const setDescription = async (name_, description_) => {
-    const oldStr = getAllProperties(name_);
-    let arr = oldStr.split('+');
     arr[8] = description_;
     const newStr = arr.join("+")
     await setAllProperties(name_, newStr)
 };
-
 
 
 const setAllProperties = async (name_, recordsStr_) => {
@@ -54,9 +48,6 @@ const setAllProperties = async (name_, recordsStr_) => {
 
 
 export {
-    getAllProperties,
-    getIpfsUrl,
-    getDescription,
-    setIpfsUrl,  //设置头像IPFS
-    setDescription //设置简述
+    getResolverInfo,
+    setResolverInfo
 };

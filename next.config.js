@@ -19,6 +19,10 @@ const nextConfig = {
         source: "/api/:path*",
         destination: `${process.env.NEXT_PROXY_URL}/:path*`,
       },
+      {
+        source: "/upload/:path*",
+        destination: "https://api.nft.storage/:path*",
+      },
     ];
   },
 };

@@ -90,11 +90,12 @@ const SideBar = () => {
 
   const router = useRouter();
 
-  const { account, connecting, snsName } = useSelector((state) => {
+  const { account, connecting, snsName, token } = useSelector((state) => {
     return {
       account: state.walletInfo.account,
       connecting: state.walletInfo.connecting,
       snsName: state.walletInfo.snsName,
+      token: state.userInfo.token,
     };
   });
 
@@ -202,7 +203,7 @@ const SideBar = () => {
             }
           }}
         >
-          {account ? "Logout" : "Start Journey"}
+          {account && token ? "Logout" : "Start Journey"}
         </CommonLoadingBtn>
         <OuterLink />
         <Typography>© 2021-2022 by Linkkey DAO</Typography>

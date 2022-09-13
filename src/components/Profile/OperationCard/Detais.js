@@ -20,25 +20,25 @@ import EllipsisAddress from "../../EllipsisAddress";
 import CommonDialog from "../../CommonDialog";
 import TransferDialog from "./TransferDialog";
 import SaleDialog from "./SaleDialog";
-import { StakeInstance, stakeNFT } from "../../../contracts/Stake";
-import CommonLoadingBtn from "../../Button/LoadingButton";
 import {
-  getKeyBalance,
-  weiFormatToEth,
-  BNformatToWei,
-  hexToNumber,
-  ethFormatToWei,
-} from "../../../utils";
+  getIsIssueNFT,
+  StakeInstance,
+  stakeNFT,
+} from "../../../contracts/Stake";
+import CommonLoadingBtn from "../../Button/LoadingButton";
+import { getKeyBalance, weiFormatToEth, hexToNumber } from "../../../utils";
 import { getResolverOwner, getTokenIdOfName } from "../../../contracts/SNS";
 import { useRouter } from "next/router";
 import { useDialog } from "../../../providers/ApproveDialog";
-import { allowance, approve } from "../../../contracts/ERC20";
+
 import { contractAddress } from "../../../config/const";
 import { getChainId } from "../../../utils/web3";
 import { useSelector } from "react-redux";
 import CreateGroupDialog from "./CreateGroupDialog";
 import { getLastTokenId, getTotal, NFTInstance } from "../../../contracts/NFT";
-import { issueNFT } from "../../../api";
+import { issueNFT, myContracts, queryUserInfo } from "../../../api";
+import useTransaction from "../../../hooks/useTransaction";
+import InfoDialog from "./InfoDialog";
 
 const TitleWrapper = styled(Box)(() => ({
   display: "flex",
@@ -95,21 +95,6 @@ const TypographyBox = styled(Box)(() => ({
   },
 }));
 
-const ReleaseIntroduce = {
-  friend: [
-    "1. Twitter verification is required to release friend-NFT and only eligible Twitter accounts can be released",
-    "2. friend-NFT can be released by paying the release service fee",
-    "3. friend-NFT is fixed at 150 nft, all of which can be sold to the public",
-    "4. When releasing friend-NFT, a flat floor price is currently set to avoid pricing reasonableness",
-  ],
-  group: [
-    "1. Twitter verification is required to release group-NFT and only eligible Twitter accounts can be released",
-    "2. group-NFT can be released by paying the release service fee",
-    "3. group-NFT is fixed at 1500 nft, all of which can be sold to the public",
-    "4. When releasing group-NFT, a flat floor price is currently set to avoid pricing reasonableness",
-  ],
-};
-
 const Details = ({ type }) => {
   // dialog switch
   const [infoOpen, setInfoOpen] = useState(false);
@@ -119,23 +104,24 @@ const Details = ({ type }) => {
   // show nft details
   const [showDetails, setShowDetails] = useState(false);
   const [btnLoading, setBtnLoading] = useState(false);
-  const [payBtnLoading, setPayBtnLoading] = useState(false);
+
   // min fee price
   const [feeState, setFeeState] = useState(0);
   // fee of erc20 address
   const [feeAddress, setFeeAddress] = useState("");
   // profile address
   const [profileAdd, setProfileAdd] = useState("");
-  // is self profile
-  const [isSelf, setIsSelf] = useState(false);
+  // details info
+  const [detailsInfo, setDetailsInfo] = useState({});
+
   const [twitterStatus, setTwitterStatus] = useState(false);
   const [mintInp, setMintInp] = useState("");
   const [royaltiesInp, setRoyaltiesInp] = useState("");
   const [transferTokenId, setTransferTokenId] = useState(0);
 
   const isFriend = type === "friend" ? true : false;
-  const introduceList =
-    type === "friend" ? ReleaseIntroduce.friend : ReleaseIntroduce.group;
+  // friend:1 , group:2
+  const createType = isFriend ? 1 : 2;
 
   const contractAdd = isFriend
     ? "0x6495885a76038875812C6cF534ED0627763FdA33"
@@ -156,87 +142,17 @@ const Details = ({ type }) => {
 
   const { dialogDispatch, state } = useDialog();
 
-  const handleOpenTransferDialog = useCallback(async () => {
-    setBtnLoading(true);
-    const nft = await NFTInstance(contractAdd);
-    const total = await nft.totalSupply();
-    const tokenIdHex = await getLastTokenId(contractAdd, account);
-    const tokenId = hexToNumber(tokenIdHex);
-    console.log("tokenIdHex:", tokenIdHex);
-    console.log("tokenId:", tokenId);
-
-    if (tokenId) {
-      setTransferTokenId(tokenId);
-      setTransferOpen(true);
-    }
-
-    setBtnLoading(false);
-  }, [contractAdd, account]);
-
-  const queryAllowance = useCallback(async () => {
-    try {
-      const value = await allowance(feeAddress, profileAdd, stakeAdd);
-      return hexToNumber(value);
-    } catch (error) {
-      console.log("allowanceError:", error);
-      return 0;
-    }
-  }, [feeAddress, profileAdd, stakeAdd]);
-
-  const callApprove = useCallback(async () => {
-    const value = await queryAllowance();
-    console.log("approveFee:", ethFormatToWei(feeState));
-    try {
-      if (value >= feeState) {
-        return "approve";
-      } else {
-        const resp = await approve(
-          feeAddress,
-          stakeAdd,
-          ethFormatToWei(feeState)
-        );
-        console.log("approveResp:", resp);
-        return "unApprove";
-      }
-    } catch (error) {
-      console.log("callApproveErr:", error);
-      return false;
-    }
-  }, [feeAddress, feeState, queryAllowance, stakeAdd]);
-
-  const demo = async () => {
-    const mintType = isFriend ? 1 : 2;
-    const reqParams = {
-      address: account,
-      mintAmount: mintInp === "" ? 0 : Number(mintInp),
-      royalty: royaltiesInp === "" ? 0 : royaltiesInp,
-      type: mintType,
-    };
-    const resp = await issueNFT(reqParams);
-  };
-
   // todo query balance
   const mintNFT = useCallback(async () => {
     clearInterval(window.timer);
     dialogDispatch({ type: "ADD_STEP" });
 
     const keyBalance = await getKeyBalance(account);
-    console.log("keyBalance:", keyBalance);
-    console.log("feeState:", feeState);
     if (keyBalance > feeState) {
       try {
         const tokenId = await getTokenIdOfName(keyName);
-        console.log("tokenId:", tokenId);
         const mintType = isFriend ? 1 : 2;
         await stakeNFT(tokenId, mintType);
-        // call backend interface
-        const reqParams = {
-          address: account,
-          mintAmount: mintInp === "" ? 0 : Number(mintInp),
-          royalty: royaltiesInp === "" ? 0 : royaltiesInp,
-          type: mintType,
-        };
-        const resp = await issueNFT(reqParams);
 
         setShowDetails(true);
         dialogDispatch({ type: "ADD_STEP" });
@@ -249,34 +165,20 @@ const Details = ({ type }) => {
     }
   }, [isFriend, dialogDispatch, keyName, account, feeState]);
 
+  const { handlePayMint } = useTransaction({
+    coinAddress: feeAddress,
+    from: profileAdd,
+    to: stakeAdd,
+    price: feeState,
+    executeFn: mintNFT,
+  });
+
   // pay mint NFT
-  const handlePayMint = useCallback(async () => {
-    // setPayBtnLoading(true);
-    dialogDispatch({ type: "SET_LOADING", payload: true });
-    const approveStatus = await callApprove();
-    console.log("approveStatus:", approveStatus);
-    if (approveStatus === "unApprove") {
-      dialogDispatch({ type: "OPEN_DIALOG" });
-      setTimeout(() => {
-        window.timer = setInterval(async () => {
-          const allowancePrice = await queryAllowance();
-          console.log("allowancePrice:", allowancePrice);
-          if (allowancePrice > 0) {
-            await mintNFT();
-          }
-        }, 1000);
-      }, 0);
-    }
-
-    if (approveStatus === "approve") {
-      dialogDispatch({ type: "OPEN_DIALOG" });
-      await mintNFT();
-    }
-
+  const handlePayMintFn = useCallback(async () => {
+    await handlePayMint();
     setReleaseOpen(false);
     dialogDispatch({ type: "SET_LOADING", payload: false });
-    // setPayBtnLoading(false);
-  }, [callApprove, queryAllowance, dialogDispatch, mintNFT]);
+  }, [handlePayMint, dialogDispatch]);
 
   const changeMintInp = (e) => {
     const value = e.target.value;
@@ -314,16 +216,81 @@ const Details = ({ type }) => {
     }
   }, [isFriend]);
 
+  const handleOpenTransferDialog = useCallback(async () => {
+    setBtnLoading(true);
+    const tokenIdHex = await getLastTokenId(contractAdd, account);
+    const tokenId = hexToNumber(tokenIdHex);
+    console.log("tokenIdHex:", tokenIdHex);
+    console.log("tokenId:", tokenId);
+
+    if (tokenId) {
+      setTransferTokenId(tokenId);
+      setTransferOpen(true);
+    }
+
+    setBtnLoading(false);
+  }, [contractAdd, account]);
+
+  const queryIssueStatus = useCallback(async () => {
+    const resp = await queryUserInfo();
+    console.log("queryIssueStatus:", resp);
+  }, []);
+
+  const issueNFTFn = useCallback(async () => {
+    const reqParams = {
+      address: profileAdd,
+      mintAmount: mintInp === "" ? 0 : Number(mintInp),
+      royalty: royaltiesInp === "" ? 0 : royaltiesInp,
+      type: createType,
+    };
+    const resp = await issueNFT(reqParams);
+    console.log("resp:", resp);
+  }, [createType, mintInp, royaltiesInp, profileAdd]);
+
+  const isStakeNFT = useCallback(async () => {
+    try {
+      const isStake = await getIsIssueNFT(profileAdd, createType);
+      console.log("isStake:", isStake, "createType:", createType);
+    } catch (error) {
+      console.log("isStakeNFTErr:", error);
+    }
+  }, [profileAdd, createType]);
+
+  const getMyContractFn = useCallback(async () => {
+    const resp = await myContracts();
+    if (
+      resp &&
+      resp.code === 200 &&
+      resp.data &&
+      (resp.data.friendsContract || resp.data.groupContract)
+    ) {
+      if (isFriend && resp.data && resp.data.friendsContract) {
+        setDetailsInfo(resp.data.friendsContract);
+      }
+      if (!isFriend && resp.data.groupContract) {
+        setDetailsInfo(resp.data.groupContract);
+      }
+    } else {
+      isStakeNFT();
+    }
+  }, [isFriend, isStakeNFT]);
+
+  console.log("detailsInfo:", detailsInfo);
+
   useEffect(() => {
     if (keyName) {
       getResolverOwner(keyName).then((address) => {
         setProfileAdd(address);
-        if (address === account) {
-          setIsSelf(true);
-        }
       });
     }
   }, [keyName, account]);
+
+  useEffect(() => {
+    if (profileAdd) {
+      getMyContractFn();
+    }
+    queryIssueStatus();
+  }, [profileAdd, getMyContractFn]);
 
   return (
     <Paper>
@@ -332,14 +299,7 @@ const Details = ({ type }) => {
           {isFriend ? "Friend-NFT details" : "Group-NFT details"}
         </Typography>
         {!isFriend && showDetails ? (
-          <Button
-            variant="outlined"
-            onClick={async () => {
-              await demo();
-            }}
-          >
-            Info
-          </Button>
+          <Button variant="outlined">Info</Button>
         ) : (
           <></>
         )}
@@ -482,7 +442,7 @@ const Details = ({ type }) => {
             margin: "0 auto",
           }}
           onClick={() => {
-            handlePayMint();
+            handlePayMintFn();
           }}
         >
           Pay {feeState} Key
@@ -490,35 +450,14 @@ const Details = ({ type }) => {
       </CommonDialog>
 
       {/* Info modal */}
-      <CommonDialog
+      <InfoDialog
         open={infoOpen}
         title="Release Introduce"
+        type={isFriend}
         onClose={() => {
           setInfoOpen(false);
         }}
-      >
-        <DialogContent>
-          <Stack direction="column" spacing={3}>
-            {introduceList &&
-              introduceList.map((item, index) => (
-                <Typography key={index} sx={{ fontWeight: 500 }}>
-                  {item}
-                </Typography>
-              ))}
-          </Stack>
-        </DialogContent>
-        <Button
-          variant="contained"
-          sx={{
-            margin: "0 auto",
-          }}
-          onClick={() => {
-            setInfoOpen(false);
-          }}
-        >
-          OK
-        </Button>
-      </CommonDialog>
+      />
 
       <TransferDialog
         open={transferOpen}

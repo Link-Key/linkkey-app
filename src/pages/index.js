@@ -16,28 +16,19 @@ import CommonLoadingBtn from "../components/Button/LoadingButton";
 import { chainsInfo, linkList } from "../config/const";
 import { useWalletInfo } from "../providers/wallet";
 import store from "../store";
-import { splitAddress } from "../utils";
+import { compareAddress, splitAddress } from "../utils";
 
 import Check from "@mui/icons-material/Check";
 import CircularProgress from "@mui/material/CircularProgress";
 import http from "../utils/https";
 import { login, queryAccountInfo } from "../api";
 import { getSigner } from "../utils/web3";
+import { useRouter } from "next/router";
 
 const Wrapper = styled(Paper)(() => ({
   display: "flex",
   flexDirection: "column",
   maxWidth: "400px",
-  // alignItems: "flex-end",
-  // minWidth: "500px",
-  // position: "absolute",
-  // top: "30vh",
-  // right: "100px",
-
-  // width: "400px",
-  // height: "300px",
-  // borderRadius: "12px",
-  // boxShadow: "none",
 
   ".MuiTypography-title": {
     fontSize: "18px",
@@ -114,13 +105,20 @@ export default function Home() {
     useWalletInfo();
 
   const dispatch = useDispatch();
-  const { account, snsName, connecting } = useSelector((state) => {
-    return {
-      account: state.walletInfo.account,
-      snsName: state.walletInfo.snsName,
-      connecting: state.walletInfo.connecting,
-    };
-  });
+  const { account, snsName, connecting, clientAddress, token } = useSelector(
+    (state) => {
+      return {
+        account: state.walletInfo.account,
+        snsName: state.walletInfo.snsName,
+        connecting: state.walletInfo.connecting,
+        clientAddress: state.userInfo.clientAddress,
+        token: state.userInfo.token,
+      };
+    }
+  );
+  console.log("clientAddress:", clientAddress);
+
+  const router = useRouter();
 
   const [activeStep, setActiveStep] = useState(0);
 
@@ -154,10 +152,13 @@ export default function Home() {
     if (snsName) {
       setActiveStep(2);
     }
-    if (client && client.address === account) {
+    if (clientAddress && account && compareAddress(clientAddress, account)) {
       setActiveStep(3);
     }
-  }, [account, snsName, client]);
+    if (token) {
+      setActiveStep(4);
+    }
+  }, [account, snsName, clientAddress, token]);
 
   useEffect(() => {
     handleStep();
@@ -215,13 +216,18 @@ export default function Home() {
           <Step>
             <StepLabelWrapper>
               <Typography>
-                {snsName ? `Hi, ${snsName} ~` : "Get your sns domain name"}
+                {snsName
+                  ? `Hi, ${snsName} ~`
+                  : activeStep === 0
+                  ? "Get your sns domain name"
+                  : "SNS is not registered"}
               </Typography>
               {snsName ? (
                 <></>
               ) : (
                 <LoadingBtn
                   variant="contained"
+                  hidden={activeStep < 1}
                   loading={connecting}
                   onClick={() => {
                     window.open(`${linkList.sns}`, "__blank");
@@ -235,10 +241,14 @@ export default function Home() {
 
           <Step>
             <StepLabelWrapper>
-              <Typography>Initialize XMTP Client</Typography>
+              <Typography>
+                {clientAddress ? "Initialized" : "Initialize XMTP Client"}
+              </Typography>
               <LoadingBtn
                 variant="contained"
-                hidden={client && client.address === account}
+                hidden={
+                  compareAddress(clientAddress, account) || activeStep < 2
+                }
                 onClick={async () => {
                   await initialClient();
                 }}
@@ -250,13 +260,26 @@ export default function Home() {
 
           <Step>
             <StepLabelWrapper>
-              <Typography>Login</Typography>
-              <LoadingBtn variant="contained" onClick={handleLoginToken}>
+              <Typography>{token ? "Logged in" : "Login"}</Typography>
+              <LoadingBtn
+                variant="contained"
+                hidden={activeStep < 3 || token}
+                onClick={handleLoginToken}
+              >
                 Login
               </LoadingBtn>
             </StepLabelWrapper>
           </Step>
         </Stepper>
+        <LoadingBtn
+          hidden={!token}
+          variant="contained"
+          onClick={() => {
+            router.push(`Profile/${snsName}`);
+          }}
+        >
+          Get started
+        </LoadingBtn>
       </Wrapper>
     </Box>
   );

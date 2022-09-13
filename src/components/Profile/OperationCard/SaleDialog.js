@@ -64,7 +64,7 @@ const SelectWrapper = styled(Select)(() => ({
   },
 }));
 
-const SaleDialog = ({ open, title, contractAdd, onClose, onSuccess }) => {
+const SaleDialog = ({ open, title, contractAdd, onClose }) => {
   const [saleInp, setSaleInp] = useState("");
   const [selectItem, setSelectItem] = useState("key");
 

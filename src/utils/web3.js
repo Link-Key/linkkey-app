@@ -1,5 +1,7 @@
 import { ethers } from "ethers";
 import { chainsInfo } from "../config/const";
+import { getResolverInfo } from "../contracts/Resolver";
+import { getInfo } from "../contracts/SNS";
 
 let requested = false;
 
@@ -53,4 +55,34 @@ export const getChainId = () => {
   const eth = window.ethereum;
   const chainId = eth.networkVersion;
   return chainId;
+};
+
+export const fromNameGetInfo = async (name) => {
+  const obj = {
+    avatar: "",
+    description: "",
+  };
+  try {
+    const userInfo = await getResolverInfo(name);
+    if (userInfo && userInfo.ipfsUrl) {
+      obj.avatar = userInfo.ipfsUrl;
+    }
+    if (userInfo && userInfo.description) {
+      obj.description = userInfo.description;
+    }
+    return obj;
+  } catch (error) {
+    console.log("fromNameGetInfoErr:", error);
+    return obj;
+  }
+};
+
+export const fromAddressGetName = async (address) => {
+  try {
+    const info = await getInfo(address, "", 0);
+    return info[2];
+  } catch (error) {
+    console.log("fromAddressGetNameErr:", error);
+    return "";
+  }
 };

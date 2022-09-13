@@ -4,6 +4,7 @@ import {
   Button,
   Card,
   IconButton,
+  Skeleton,
   Stack,
   styled,
   Typography,
@@ -22,6 +23,7 @@ import { getLastTokenId } from "../../contracts/NFT";
 import ToastMention from "../../components/ToastMessage";
 import { getResolverOwner } from "../../contracts/SNS";
 import OtherProfileCard from "../../components/Profile/OtherProfileCard";
+import { useWalletInfo } from "../../providers/wallet";
 
 const CardInfoWrapper = styled(Card)(() => ({
   display: "flex",
@@ -120,26 +122,34 @@ const Profile = ({ name }) => {
             }}
           />
           <Stack spacing={2} p={0}>
-            <Typography
-              sx={{
-                fontWeight: 700,
-                fontSize: "28px",
-                lineHeight: "32px",
-                color: "#ea6060",
-              }}
-            >
-              {profileName}
-            </Typography>
-            <Box
-              justifyContent="center"
-              sx={{
-                border: "1px solid #ddd",
-                borderRadius: "12px",
-                padding: "2px 0",
-              }}
-            >
-              <EllipsisAddress account={profileAdd} />
-            </Box>
+            {profileName ? (
+              <Typography
+                sx={{
+                  fontWeight: 700,
+                  fontSize: "28px",
+                  lineHeight: "32px",
+                  color: "#ea6060",
+                }}
+              >
+                {profileName}
+              </Typography>
+            ) : (
+              <Skeleton />
+            )}
+            {profileAdd ? (
+              <Box
+                justifyContent="center"
+                sx={{
+                  border: "1px solid #ddd",
+                  borderRadius: "12px",
+                  padding: "2px 0",
+                }}
+              >
+                <EllipsisAddress account={profileAdd} />
+              </Box>
+            ) : (
+              <Skeleton />
+            )}
             <OuterLink sx={{ justifyContent: "flex-start" }} />
             <Typography>{description}</Typography>
           </Stack>

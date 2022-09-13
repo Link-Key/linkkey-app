@@ -16,9 +16,6 @@ const AddressBox = styled(Box)(() => ({
   textAlign: "center",
   gap: "5px",
   "& .MuiTypography-root": {
-    // fontWeight: 400,
-    // fontSize: "12px",
-    // lineHeight: "16px",
     color: "#ea6060",
   },
   svg: {

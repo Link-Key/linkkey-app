@@ -15,6 +15,7 @@ import { useCallback } from "react";
 import { useSelector } from "react-redux";
 import { useEffect } from "react";
 import { useWalletInfo } from "../../providers/wallet";
+import CommonAvatar from "../Common/CommonAvatar";
 
 const ConversationHeader = styled(Stack)(() => ({
   borderBottom: "1px solid #ddd",
@@ -98,7 +99,7 @@ const Conversation = ({ name, recipientAdd }) => {
       justifyContent="space-between"
     >
       <ConversationHeader direction="row" spacing={2} pt={0} pl={0}>
-        <Avatar />
+        <CommonAvatar account={recipientAdd} sx={{ borderRadius: "50%" }} />
         <Box>
           <Typography variant="title">{name}</Typography>
           <EllipsisAddress account={recipientAdd} />

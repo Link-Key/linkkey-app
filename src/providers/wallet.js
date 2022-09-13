@@ -192,7 +192,6 @@ const WalletProvider = ({ children }) => {
       });
     }
 
-
     closeLoading();
 
     const chainId = eth.networkVersion;
@@ -236,6 +235,7 @@ const WalletProvider = ({ children }) => {
         connectWallet,
         disconnectWallet,
         initialClient,
+        getUserBasicInfo,
         client,
       }}
     >

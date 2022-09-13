@@ -10,8 +10,8 @@ import {
   Typography,
 } from "@mui/material";
 import Image from "next/image";
-// import { ReactComponent as Logo } from "../../assets/icons/logo.svg";
-import LinkkeyLogo from "../../assets/images/LinkkeyLogo.png";
+import LinkkeyLogo from "../../assets/icons/common/logo.svg";
+// import LinkkeyLogo from "../../assets/images/LinkkeyLogo.png";
 import OuterLink from "./OuterLink";
 import InsertEmoticonIcon from "@mui/icons-material/InsertEmoticon";
 import DescriptionRoundedIcon from "@mui/icons-material/DescriptionRounded";
@@ -144,7 +144,7 @@ const SideBar = () => {
           sx={{
             display: "flex",
             alignItems: "center",
-            height: "80px",
+            // height: "80px",
             img: {
               width: "100%",
             },
@@ -153,7 +153,8 @@ const SideBar = () => {
             router.push("/");
           }}
         >
-          <Image src={LinkkeyLogo} alt="logo" />
+          <LinkkeyLogo />
+          {/* <Image src={LinkkeyLogo} alt="logo" /> */}
         </Link>
 
         <List

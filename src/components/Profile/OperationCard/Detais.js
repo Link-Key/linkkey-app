@@ -22,6 +22,7 @@ import TransferDialog from "./TransferDialog";
 import SaleDialog from "./SaleDialog";
 import {
   getIsIssueNFT,
+  getStakedInfo,
   StakeInstance,
   stakeNFT,
 } from "../../../contracts/Stake";
@@ -95,22 +96,20 @@ const TypographyBox = styled(Box)(() => ({
   },
 }));
 
-const Details = ({ type }) => {
+const Details = ({ type, contractAdd, isShow, profileAdd }) => {
   // dialog switch
   const [infoOpen, setInfoOpen] = useState(false);
   const [releaseOpen, setReleaseOpen] = useState(false);
   const [transferOpen, setTransferOpen] = useState(false);
   const [createGroupOpen, setCreateGroupOpen] = useState(false);
   // show nft details
-  const [showDetails, setShowDetails] = useState(false);
+  const [showDetails, setShowDetails] = useState(isShow);
   const [btnLoading, setBtnLoading] = useState(false);
 
   // min fee price
   const [feeState, setFeeState] = useState(0);
   // fee of erc20 address
   const [feeAddress, setFeeAddress] = useState("");
-  // profile address
-  const [profileAdd, setProfileAdd] = useState("");
   // details info
   const [detailsInfo, setDetailsInfo] = useState({});
 
@@ -122,10 +121,6 @@ const Details = ({ type }) => {
   const isFriend = type === "friend" ? true : false;
   // friend:1 , group:2
   const createType = isFriend ? 1 : 2;
-
-  const contractAdd = isFriend
-    ? "0x6495885a76038875812C6cF534ED0627763FdA33"
-    : "0x156783D9c9FE93E64Cb334449Ffab3f8C84F9e2e";
 
   const { account } = useSelector((state) => ({
     account: state.walletInfo.account,
@@ -274,23 +269,6 @@ const Details = ({ type }) => {
       isStakeNFT();
     }
   }, [isFriend, isStakeNFT]);
-
-  console.log("detailsInfo:", detailsInfo);
-
-  useEffect(() => {
-    if (keyName) {
-      getResolverOwner(keyName).then((address) => {
-        setProfileAdd(address);
-      });
-    }
-  }, [keyName, account]);
-
-  useEffect(() => {
-    if (profileAdd) {
-      getMyContractFn();
-    }
-    queryIssueStatus();
-  }, [profileAdd, getMyContractFn]);
 
   return (
     <Paper>

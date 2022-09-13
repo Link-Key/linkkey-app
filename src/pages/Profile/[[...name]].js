@@ -4,6 +4,7 @@ import {
   Button,
   Card,
   IconButton,
+  Paper,
   Skeleton,
   Stack,
   styled,
@@ -37,6 +38,17 @@ const IconButtonWrapper = styled(IconButton)(() => ({
   padding: "6px",
   ":hover": {
     color: "#FB6D05",
+  },
+}));
+
+const SkeletonCard = styled(Card)(() => ({
+  display: "flex",
+  gap: "20px",
+  borderRadius: "12px",
+  ".MuiSkeleton-root": {
+    display: "block",
+    width: "100%",
+    minWidth: "400px",
   },
 }));
 
@@ -76,6 +88,7 @@ const Profile = ({ name }) => {
 
   // is self profile
   const [isSelf, setIsSelf] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const profileName = name && name[0] ? name : profileAdd;
 
@@ -99,6 +112,7 @@ const Profile = ({ name }) => {
   }, []);
 
   useEffect(() => {
+    setLoading(true);
     if (name && name[0]) {
       getResolverOwner(name[0]).then((address) => {
         setProfileAdd(address.toLowerCase());
@@ -107,6 +121,7 @@ const Profile = ({ name }) => {
         }
       });
     }
+    setLoading(false);
   }, [name, account]);
 
   return (
@@ -172,7 +187,20 @@ const Profile = ({ name }) => {
         </Stack>
       </CardInfoWrapper>
 
-      {isSelf ? <OperationCard /> : <OtherProfileCard />}
+      {loading ? (
+        <SkeletonCard
+          sx={{
+            flexWrap: { xs: "wrap", md: "wrap", lg: "unset", xl: "unset" },
+          }}
+        >
+          <Skeleton height={300} />
+          <Skeleton height={300} />
+        </SkeletonCard>
+      ) : isSelf ? (
+        <OperationCard profileAdd={profileAdd} />
+      ) : (
+        <OtherProfileCard profileAdd={profileAdd} />
+      )}
 
       <FriendAndGroupCard />
 

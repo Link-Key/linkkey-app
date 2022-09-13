@@ -10,6 +10,7 @@ import {
 import { useEffect } from "react";
 import { memo, useCallback, useState } from "react";
 import { useSelector } from "react-redux";
+import { emptyAddress } from "../../../config/const";
 import { getFloorPrices, getTotal } from "../../../contracts/NFT";
 import { getKeyAddress, weiFormatToEth, hexToNumber } from "../../../utils";
 import CommonLoadingBtn from "../../Button/LoadingButton";
@@ -37,7 +38,7 @@ const Wrapper = styled(Box)(() => ({
   },
 }));
 
-const OtherDetails = ({ type }) => {
+const OtherDetails = ({ type, contractAdd, isMinted }) => {
   const { account } = useSelector((state) => ({
     account: state.walletInfo.account,
   }));
@@ -48,11 +49,6 @@ const OtherDetails = ({ type }) => {
   const [loading, setLoading] = useState(false);
   const [floorPrice, setFloorPrice] = useState(0);
   const [totalNFT, setTotalNFT] = useState(0);
-
-  const contractAdd = isFriend
-    ? "0x6495885a76038875812C6cF534ED0627763FdA33"
-    : "0x156783D9c9FE93E64Cb334449Ffab3f8C84F9e2e";
-
   const keyAddress = getKeyAddress();
 
   const handleOpenMintNFTDialog = useCallback(async () => {
@@ -86,8 +82,10 @@ const OtherDetails = ({ type }) => {
   }, [contractAdd]);
 
   useEffect(() => {
-    getBasicInfo();
-  }, [getBasicInfo]);
+    if (contractAdd !== emptyAddress) {
+      getBasicInfo();
+    }
+  }, [getBasicInfo, contractAdd]);
 
   return (
     <Paper>
@@ -107,12 +105,13 @@ const OtherDetails = ({ type }) => {
         <Stack direction="row" justifyContent="center" spacing={2}>
           <CommonLoadingBtn
             // loading={loading}
+            disabled={!isMinted}
             variant="outlined"
             onClick={handleOpenMintNFTDialog}
           >
             {isFriend ? "Mint His Friend-NFT" : "Mint His Group-NFT"}
           </CommonLoadingBtn>
-          <CommonLoadingBtn variant="outlined">
+          <CommonLoadingBtn variant="outlined" disabled={!isMinted}>
             {isFriend ? "Buy His Friend-NFT" : "Buy His Group-NFT"}
           </CommonLoadingBtn>
         </Stack>

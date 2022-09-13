@@ -75,6 +75,7 @@ const OtherDetails = ({ type, contractAdd, isMinted }) => {
   const getTotalNFT = useCallback(async () => {
     try {
       const totalHex = await getTotal(contractAdd);
+      console.log("totalHex:", hexToNumber(totalHex));
       setTotalNFT(hexToNumber(totalHex));
     } catch (error) {
       console.log("getTotalNFTErr:", error);
@@ -82,7 +83,10 @@ const OtherDetails = ({ type, contractAdd, isMinted }) => {
   }, [contractAdd]);
 
   useEffect(() => {
-    if (contractAdd !== emptyAddress) {
+    // if (contractAdd !== emptyAddress) {
+    // }
+    console.log("contractAdd:", contractAdd);
+    if (contractAdd) {
       getBasicInfo();
     }
   }, [getBasicInfo, contractAdd]);

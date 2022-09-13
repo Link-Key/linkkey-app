@@ -5,6 +5,8 @@ import { useSelector } from "react-redux";
 import { fromAddressGetName, fromNameGetInfo } from "../../utils/web3";
 
 const BlockiesWrapper = styled(Blockies)(({ sx }) => ({
+  width: "40px !important",
+  height: "40px !important",
   ...sx,
 }));
 
@@ -13,6 +15,7 @@ const CommonAvatar = ({ name, account, avatarUrl, sx }) => {
 
   const getAvatar = useCallback(async (name) => {
     const resp = await fromNameGetInfo(name);
+
     if (resp && resp.avatar) {
       setAvatarState(resp.avatar);
     }
@@ -21,7 +24,6 @@ const CommonAvatar = ({ name, account, avatarUrl, sx }) => {
   const getAccountAvatar = useCallback(
     async (account) => {
       const resp = await fromAddressGetName(account);
-      console.log("getAccountAvatar:", resp);
       if (resp) {
         getAvatar(resp);
       }
@@ -43,9 +45,9 @@ const CommonAvatar = ({ name, account, avatarUrl, sx }) => {
   return (
     <Box>
       {avatarState ? (
-        <Avatar src={avatarState} alt={avatarState} sx={sx} />
+        <Avatar src={avatarState} alt={avatarState} sx={{ ...sx }} />
       ) : (
-        <BlockiesWrapper seed={account} size={10} sx={sx} />
+        <BlockiesWrapper seed={account} sx={sx} />
       )}
     </Box>
   );

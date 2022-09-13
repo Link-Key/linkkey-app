@@ -1,10 +1,8 @@
 import {
-  Avatar,
   Box,
   Button,
   Card,
   IconButton,
-  Paper,
   Skeleton,
   Stack,
   styled,
@@ -15,16 +13,16 @@ import { useSelector } from "react-redux";
 import EllipsisAddress from "../../components/EllipsisAddress";
 import OuterLink from "../../components/SideBar/OuterLink";
 import SettingIcon from "../../assets/icons/common/Setting.svg";
-import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+
 import OperationCard from "../../components/Profile/OperationCard";
 import FriendAndGroupCard from "../../components/Profile/FriendAndGroupCard";
 import DIDCardDialog from "../../components/DIDCardDialog";
 import { useRouter } from "next/router";
-import { getLastTokenId } from "../../contracts/NFT";
 import ToastMention from "../../components/ToastMessage";
 import { getResolverOwner } from "../../contracts/SNS";
 import OtherProfileCard from "../../components/Profile/OtherProfileCard";
-import { useWalletInfo } from "../../providers/wallet";
+import CommonAvatar from "../../components/Common/CommonAvatar";
+import { fromNameGetInfo } from "../../utils/web3";
 
 const CardInfoWrapper = styled(Card)(() => ({
   display: "flex",
@@ -72,12 +70,15 @@ export async function getStaticProps({ params }) {
 }
 
 const Profile = ({ name }) => {
-  const { account, description, avatar } = useSelector((state) => {
+  const { account } = useSelector((state) => {
     return {
       account: state.walletInfo.account,
-      description: state.userInfo.description,
-      avatar: state.userInfo.avatar,
     };
+  });
+
+  const [basicInfo, setBasicInfo] = useState({
+    avatar: name,
+    description: "-",
   });
 
   const router = useRouter();
@@ -107,6 +108,11 @@ const Profile = ({ name }) => {
     }
   };
 
+  const getBasicUserInfo = useCallback(async () => {
+    const userInfo = await fromNameGetInfo(name[0]);
+    setBasicInfo(userInfo);
+  }, [name]);
+
   useEffect(() => {
     hasPathParams();
   }, []);
@@ -120,7 +126,7 @@ const Profile = ({ name }) => {
           setIsSelf(true);
         }
       });
-
+      getBasicUserInfo();
       setLoading(false);
     }
   }, [name, account]);
@@ -129,11 +135,11 @@ const Profile = ({ name }) => {
     <Stack spacing={3}>
       <CardInfoWrapper>
         <Stack direction="row" alignItems="flex-start" spacing={4}>
-          <Avatar
-            src={avatar}
+          <CommonAvatar
+            name={name[0]}
             sx={{
-              width: "100px",
-              height: "100px",
+              width: "100px !important",
+              height: "100px !important",
               borderRadius: "12px",
             }}
           />
@@ -167,7 +173,7 @@ const Profile = ({ name }) => {
               <Skeleton />
             )}
             <OuterLink sx={{ justifyContent: "flex-start" }} />
-            <Typography>{description}</Typography>
+            <Typography>{basicInfo.description}</Typography>
           </Stack>
         </Stack>
         <Stack

@@ -18,29 +18,31 @@ const getFee = async (createType) => {
   return fee;
 };
 
-const stakeNFT = async (tokenId, createType) => {
+//ownerMintAccount:followNFT max 150 ,group max 1500
+//taxPreparation: 版税 0-1000 
+const stakeNFT = async (tokenId, createType, ownerMintAccount, taxPreparation) => {
   const signer = await getSigner();
   console.log("signer", signer);
   const Stake = await StakeInstance().connect(signer);
-  await Stake.stakeNFT(tokenId, createType);
+  await Stake.stakeNFT(tokenId, createType, ownerMintAccount, taxPreparation);
 };
 
-const unstakeNFT = async (followNFT, groupNFT) => {
+const unstakeNFT = async () => {
   const signer = await getSigner();
   const Stake = await StakeInstance().connect(signer);
-  await Stake.unstakeNFT(followNFT, groupNFT);
+  await Stake.unstakeNFT();
 };
 
-const getIsIssueNFT = async (owner, createType) => {
-  const isIssue = await StakeInstance().getIsIssueNFT(owner, createType);
-  return isIssue;
+const getStakedInfo = async (owner) => {
+  const stakeInfo = await StakeInstance().getStakedInfo(owner);
+  return stakeInfo;
 };
 
 export {
   getFee, //质押费用，
   stakeNFT, //质押 1.getFee 2.ERC20 allance => approve,3.this
   unstakeNFT, // 解质押 1.NFT balanceOf == 150｜｜1500
-  getIsIssueNFT, //是否发行NFT
+  getStakedInfo, //得到质押信息
 };
 
 /**

@@ -1,42 +1,6 @@
 [
   {
-    "inputs": [
-      {
-        "internalType": "string",
-        "name": "nftName",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "nftSymbol",
-        "type": "string"
-      },
-      {
-        "internalType": "address",
-        "name": "owner",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "keyAddress",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "floorPrices",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "ownerMintAccount",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "taxPreparation",
-        "type": "uint256"
-      }
-    ],
+    "inputs": [],
     "stateMutability": "nonpayable",
     "type": "constructor"
   },
@@ -402,6 +366,44 @@
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "nftName",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "nftSymbol",
+        "type": "string"
+      },
+      {
+        "internalType": "address",
+        "name": "owner",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "floorPrices",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "ownerMintAccount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "taxPreparation",
+        "type": "uint256"
+      }
+    ],
+    "name": "initialize",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {

@@ -1,4 +1,4 @@
-import store from "../Store";
+import store from "../store";
 
 const twitterOAuth2URL = "https://twitter.com/i/oauth2/authorize?";
 export const params = {

@@ -203,7 +203,7 @@ const SideBar = () => {
             }
           }}
         >
-          {account && token ? "Logout" : "Start Journey"}
+          {account ? (token ? "Logout" : "Disconnect") : "Start Journey"}
         </CommonLoadingBtn>
         <OuterLink />
         <Typography>© 2021-2022 by Linkkey DAO</Typography>

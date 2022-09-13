@@ -172,7 +172,7 @@ const Chat = ({ type }) => {
 
   const isFriend = tabValue === 0 ? true : false;
 
-  console.log("type:", type);
+  const { client, initialClient } = useWalletInfo();
 
   const router = useRouter();
 
@@ -195,6 +195,12 @@ const Chat = ({ type }) => {
   }, []);
 
   const tabList = ["Friend", "Group"];
+
+  useEffect(() => {
+    if (!client) {
+      initialClient();
+    }
+  }, [client, initialClient]);
 
   return (
     <Stack direction="column" spacing={2}>

@@ -116,6 +116,7 @@ export default function Home() {
       };
     }
   );
+  console.log("clientAddress:", clientAddress);
 
   const router = useRouter();
 
@@ -215,7 +216,11 @@ export default function Home() {
           <Step>
             <StepLabelWrapper>
               <Typography>
-                {snsName ? `Hi, ${snsName} ~` : "Get your sns domain name"}
+                {snsName
+                  ? `Hi, ${snsName} ~`
+                  : activeStep === 0
+                  ? "Get your sns domain name"
+                  : "SNS is not registered"}
               </Typography>
               {snsName ? (
                 <></>
@@ -236,7 +241,9 @@ export default function Home() {
 
           <Step>
             <StepLabelWrapper>
-              <Typography>Initialize XMTP Client</Typography>
+              <Typography>
+                {clientAddress ? "Initialized" : "Initialize XMTP Client"}
+              </Typography>
               <LoadingBtn
                 variant="contained"
                 hidden={

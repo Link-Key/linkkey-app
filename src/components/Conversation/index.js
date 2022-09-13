@@ -42,6 +42,7 @@ const Conversation = ({ name, recipientAdd }) => {
   const { client } = useWalletInfo();
 
   const startClient = useCallback(async () => {
+    console.log("client:", client);
     if (client && recipientAdd) {
       const newConversation = await client.conversations.newConversation(
         recipientAdd

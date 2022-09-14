@@ -64,9 +64,9 @@ export const myContracts = async (data) => {
   return res;
 };
 
-export const queryMyFriends = async (data) => {
+export const queryFriends = async (data) => {
   const res = await http({
-    url: "/api/chatService/user/myFriends",
+    url: "/api/chatService/user/friends",
     params: {
       ...data,
     },

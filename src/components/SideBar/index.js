@@ -144,9 +144,8 @@ const SideBar = () => {
           sx={{
             display: "flex",
             alignItems: "center",
-            // height: "80px",
-            img: {
-              width: "100%",
+            svg: {
+              width: "220px",
             },
           }}
           onClick={() => {

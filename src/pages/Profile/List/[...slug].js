@@ -7,11 +7,13 @@ import {
   styled,
   Box,
 } from "@mui/material";
-import { memo, useState, useCallback } from "react";
+import { memo, useState, useCallback, useEffect } from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import { TypographyWrapper } from "../../../components/Styled";
 
 import SaleDialog from "../../../components/Profile/OperationCard/SaleDialog";
+import { getResolverOwner } from "../../../contracts/SNS";
+import { queryFriends } from "../../../api";
 
 const TitleWrapper = styled(Paper)(() => ({
   // display: "flex",
@@ -61,6 +63,10 @@ const ProfileList = ({ type, name }) => {
   const [selectItem, setSelectItem] = useState("all");
   const [saleOpen, setSaleOpen] = useState(false);
 
+  const [friendRows, setFriendRows] = useState([]);
+
+  console.log("name:", name);
+
   const handleSelectChange = useCallback((e) => {
     setSelectItem(e.target.value);
   }, []);
@@ -77,13 +83,13 @@ const ProfileList = ({ type, name }) => {
 
   const friendColumns = [
     {
-      field: "domain",
+      field: "name",
       headerName: "Domain",
       width: 90,
       ...commonColumnsProps,
     },
     {
-      field: "relation",
+      field: "type",
       headerName: "Relation",
       width: 150,
       ...commonColumnsProps,
@@ -231,6 +237,24 @@ const ProfileList = ({ type, name }) => {
     },
   ];
 
+  useEffect(() => {
+    getResolverOwner(name).then((address) => {
+      console.log("address:", address);
+      queryFriends({
+        type: "empty",
+        address: address,
+        pageNum: 1,
+        pageSize: 30,
+      }).then((resp) => {
+        console.log("resp:");
+        if (resp && resp.code === 200 && resp.data && resp.data.list) {
+          console.log("friendList:", resp.data.list);
+          setFriendRows(resp.data.list);
+        }
+      });
+    });
+  }, [name]);
+
   return (
     <Stack spacing={3}>
       <TitleWrapper>
@@ -252,7 +276,8 @@ const ProfileList = ({ type, name }) => {
         </SelectWrapper>
         <Box sx={{ height: "72vh", width: "100%" }}>
           <DataGrid
-            rows={rows}
+            rows={friendRows}
+            getRowId={(row) => row.address}
             columns={type === "0" ? friendColumns : groupColumns}
             pageSize={20}
             disableSelectionOnClick={true}

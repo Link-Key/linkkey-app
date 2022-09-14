@@ -89,7 +89,9 @@ const Profile = ({ name }) => {
 
   // is self profile
   const [isSelf, setIsSelf] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [skeletonLoading, setSkeletonLoading] = useState(true);
+
+  console.log("skeletonLoading:", skeletonLoading);
 
   const profileName = name && name[0] ? name : profileAdd;
 
@@ -119,16 +121,15 @@ const Profile = ({ name }) => {
 
   useEffect(() => {
     if (name && name[0]) {
-      setLoading(true);
       getResolverOwner(name[0]).then((address) => {
         setProfileAdd(address.toLowerCase());
         if (address.toLowerCase() === account) {
           setIsSelf(true);
+          setSkeletonLoading(false);
         }
       });
-      getBasicUserInfo();
-      setLoading(false);
     }
+    getBasicUserInfo();
   }, [name, account, getBasicUserInfo]);
 
   return (
@@ -136,7 +137,7 @@ const Profile = ({ name }) => {
       <CardInfoWrapper>
         <Stack direction="row" alignItems="flex-start" spacing={4}>
           <CommonAvatar
-            name={name[0]}
+            account={profileAdd}
             sx={{
               width: "100px !important",
               height: "100px !important",
@@ -198,7 +199,7 @@ const Profile = ({ name }) => {
         </Stack>
       </CardInfoWrapper>
 
-      {loading ? (
+      {skeletonLoading && !isSelf ? (
         <SkeletonCard
           sx={{
             flexWrap: { xs: "wrap", md: "wrap", lg: "unset", xl: "unset" },
@@ -217,7 +218,7 @@ const Profile = ({ name }) => {
 
       <DIDCardDialog
         open={showDIDCard}
-        name={name[0]}
+        name={profileName}
         onOpen={handleShowDIDCard}
         onClose={handleCloseDIDCard}
       />

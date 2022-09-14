@@ -28,10 +28,10 @@ const AddChatDialog = ({ open, type, onClose }) => {
         />
 
         <Button variant="outlined">
-          {isFriend ? "Mint Friend-NFT" : "Mint Group-NFT"}
+          {isFriend ? "Mint Follow-NFT" : "Mint Group-NFT"}
         </Button>
         <Button variant="outlined">
-          {isFriend ? "Buy Friend-NFT" : "Buy Group-NFT"}
+          {isFriend ? "Buy Follow-NFT" : "Buy Group-NFT"}
         </Button>
       </Stack>
     </CommonDialog>

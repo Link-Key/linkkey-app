@@ -78,7 +78,7 @@ const MintOtherDialog = ({
             }}
           >
             {isFriend
-              ? `NOTE: After minted his Friend-NFT, you will automatically become his
+              ? `NOTE: After minted his Follow-NFT, you will automatically become his
             friend`
               : `Note: Group-NFT must be verified by twitter before it can be release, and your sns domain name will be locked into a pledge contract`}
           </Typography>

@@ -40,7 +40,7 @@ const MarketDialog = ({ open, onClose, type }) => {
         >
           {type
             ? `
-          Note:Your Friend-NFT is still not listed,please click button below for
+          Note:Your Follow-NFT is still not listed,please click button below for
           listing operation`
             : `Note: buy a Group-NFT, you will automatically join the Group chat. You can buy it in the above two ways`}
         </Typography>

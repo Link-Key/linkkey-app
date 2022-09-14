@@ -95,7 +95,7 @@ const OtherDetails = ({ type, contractAdd, isMinted }) => {
     <Paper>
       <TitleWrapper>
         <Typography variant="subtitle1">
-          {isFriend ? "Friend-NFT details" : "Group-NFT details"}
+          {isFriend ? "Follow-NFT details" : "Group-NFT details"}
         </Typography>
         {!isFriend ? (
           <CommonLoadingBtn disabled={true} variant="outlined">
@@ -119,17 +119,17 @@ const OtherDetails = ({ type, contractAdd, isMinted }) => {
             variant="outlined"
             onClick={handleOpenMintNFTDialog}
           >
-            {isFriend ? "Mint His Friend-NFT" : "Mint His Group-NFT"}
+            {isFriend ? "Mint His Follow-NFT" : "Mint His Group-NFT"}
           </CommonLoadingBtn>
           <CommonLoadingBtn variant="outlined" disabled={!isMinted}>
-            {isFriend ? "Buy His Friend-NFT" : "Buy His Group-NFT"}
+            {isFriend ? "Buy His Follow-NFT" : "Buy His Group-NFT"}
           </CommonLoadingBtn>
         </Stack>
       </Wrapper>
 
       <MintOtherDialog
         open={mintOpen}
-        title={isFriend ? "Release Friend-NFT" : "Release Group-NFT"}
+        title={isFriend ? "Release Follow-NFT" : "Release Group-NFT"}
         isFriend={isFriend}
         coinAddress={keyAddress}
         from={account}

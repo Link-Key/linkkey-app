@@ -19,6 +19,7 @@ const useTransaction = ({ coinAddress, from, to, price, executeFn }) => {
   const callApprove = useCallback(async () => {
     const value = await queryAllowance();
     console.log("approveFee:", ethFormatToWei(price));
+
     try {
       if (value >= price) {
         return "approve";

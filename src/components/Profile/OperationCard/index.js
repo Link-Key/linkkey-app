@@ -53,7 +53,7 @@ const OperationCard = ({ profileAdd }) => {
       <Typography variant="title">NTFs</Typography>
       {friendAddress === emptyAddress || groupAddress === emptyAddress ? (
         <OperationAlert>
-          You are not currently release Friend-NFT or Group-NFT, click the
+          You are not currently release Follow-NFT or Group-NFT, click the
           button below to release your NFT!
         </OperationAlert>
       ) : (

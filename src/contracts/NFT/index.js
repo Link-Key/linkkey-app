@@ -1,4 +1,5 @@
 import { Contract, ethers } from "ethers";
+import { hexToNumber } from "../../utils";
 import { getProvider, getSigner } from "../../utils/web3";
 import NFTContractABI from "./NFT.json";
 
@@ -55,6 +56,23 @@ const balanceOf = async (NFTAddress, owner) => {
   return balance;
 };
 
+const getNFTInfo = async (NFTAddress, owner) => {
+  const tax = await getTaxPreparation(NFTAddress);
+  const balance = await balanceOf(NFTAddress, owner);
+  console.log("tax:", hexToNumber(tax), "balance:", hexToNumber(balance));
+  const obj = {
+    tax: "",
+    balance: "",
+  };
+  if (tax) {
+    obj.tax = hexToNumber(tax);
+  }
+  if (balance) {
+    obj.balance = hexToNumber(balance);
+  }
+  return obj;
+};
+
 const getTotal = async (NFTAddress) => {
   const total = await NFTInstance(NFTAddress).totalSupply();
   return total;
@@ -99,4 +117,5 @@ export {
   getTotal, // 总铸造数量
   getLastTokenId, //获取地址拥有的一个tokenId
   getOwner, //获取NFT的
+  getNFTInfo,
 };

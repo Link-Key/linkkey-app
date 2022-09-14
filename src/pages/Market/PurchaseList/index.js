@@ -71,7 +71,7 @@ const PurchaseList = () => {
 
   return (
     <Stack spacing={3}>
-      <PageTitleWrapper title="Buy Friend-NFT" />
+      <PageTitleWrapper title="Buy Follow-NFT" />
 
       <Paper sx={{ height: "85vh", width: "100%" }}>
         <DataGrid

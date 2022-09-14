@@ -1,9 +1,9 @@
 import {
-  Avatar,
   Box,
   Button,
   Card,
   IconButton,
+  Skeleton,
   Stack,
   styled,
   Typography,
@@ -13,15 +13,16 @@ import { useSelector } from "react-redux";
 import EllipsisAddress from "../../components/EllipsisAddress";
 import OuterLink from "../../components/SideBar/OuterLink";
 import SettingIcon from "../../assets/icons/common/Setting.svg";
-import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+
 import OperationCard from "../../components/Profile/OperationCard";
 import FriendAndGroupCard from "../../components/Profile/FriendAndGroupCard";
 import DIDCardDialog from "../../components/DIDCardDialog";
 import { useRouter } from "next/router";
-import { getLastTokenId } from "../../contracts/NFT";
 import ToastMention from "../../components/ToastMessage";
 import { getResolverOwner } from "../../contracts/SNS";
 import OtherProfileCard from "../../components/Profile/OtherProfileCard";
+import CommonAvatar from "../../components/Common/CommonAvatar";
+import { fromNameGetInfo } from "../../utils/web3";
 
 const CardInfoWrapper = styled(Card)(() => ({
   display: "flex",
@@ -35,6 +36,17 @@ const IconButtonWrapper = styled(IconButton)(() => ({
   padding: "6px",
   ":hover": {
     color: "#FB6D05",
+  },
+}));
+
+const SkeletonCard = styled(Card)(() => ({
+  display: "flex",
+  gap: "20px",
+  borderRadius: "12px",
+  ".MuiSkeleton-root": {
+    display: "block",
+    width: "100%",
+    minWidth: "400px",
   },
 }));
 
@@ -58,12 +70,15 @@ export async function getStaticProps({ params }) {
 }
 
 const Profile = ({ name }) => {
-  const { account, description, avatar } = useSelector((state) => {
+  const { account } = useSelector((state) => {
     return {
       account: state.walletInfo.account,
-      description: state.userInfo.description,
-      avatar: state.userInfo.avatar,
     };
+  });
+
+  const [basicInfo, setBasicInfo] = useState({
+    avatar: name,
+    description: "-",
   });
 
   const router = useRouter();
@@ -74,6 +89,7 @@ const Profile = ({ name }) => {
 
   // is self profile
   const [isSelf, setIsSelf] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const profileName = name && name[0] ? name : profileAdd;
 
@@ -92,18 +108,26 @@ const Profile = ({ name }) => {
     }
   };
 
+  const getBasicUserInfo = useCallback(async () => {
+    const userInfo = await fromNameGetInfo(name[0]);
+    setBasicInfo(userInfo);
+  }, [name]);
+
   useEffect(() => {
     hasPathParams();
   }, []);
 
   useEffect(() => {
     if (name && name[0]) {
+      setLoading(true);
       getResolverOwner(name[0]).then((address) => {
         setProfileAdd(address.toLowerCase());
         if (address.toLowerCase() === account) {
           setIsSelf(true);
         }
       });
+      getBasicUserInfo();
+      setLoading(false);
     }
   }, [name, account]);
 
@@ -111,37 +135,45 @@ const Profile = ({ name }) => {
     <Stack spacing={3}>
       <CardInfoWrapper>
         <Stack direction="row" alignItems="flex-start" spacing={4}>
-          <Avatar
-            src={avatar}
+          <CommonAvatar
+            name={name[0]}
             sx={{
-              width: "100px",
-              height: "100px",
+              width: "100px !important",
+              height: "100px !important",
               borderRadius: "12px",
             }}
           />
           <Stack spacing={2} p={0}>
-            <Typography
-              sx={{
-                fontWeight: 700,
-                fontSize: "28px",
-                lineHeight: "32px",
-                color: "#ea6060",
-              }}
-            >
-              {profileName}
-            </Typography>
-            <Box
-              justifyContent="center"
-              sx={{
-                border: "1px solid #ddd",
-                borderRadius: "12px",
-                padding: "2px 0",
-              }}
-            >
-              <EllipsisAddress account={profileAdd} />
-            </Box>
+            {profileName ? (
+              <Typography
+                sx={{
+                  fontWeight: 700,
+                  fontSize: "28px",
+                  lineHeight: "32px",
+                  color: "#ea6060",
+                }}
+              >
+                {profileName}
+              </Typography>
+            ) : (
+              <Skeleton />
+            )}
+            {profileAdd ? (
+              <Box
+                justifyContent="center"
+                sx={{
+                  border: "1px solid #ddd",
+                  borderRadius: "12px",
+                  padding: "2px 0",
+                }}
+              >
+                <EllipsisAddress account={profileAdd} />
+              </Box>
+            ) : (
+              <Skeleton />
+            )}
             <OuterLink sx={{ justifyContent: "flex-start" }} />
-            <Typography>{description}</Typography>
+            <Typography>{basicInfo.description}</Typography>
           </Stack>
         </Stack>
         <Stack
@@ -162,7 +194,20 @@ const Profile = ({ name }) => {
         </Stack>
       </CardInfoWrapper>
 
-      {isSelf ? <OperationCard /> : <OtherProfileCard />}
+      {loading ? (
+        <SkeletonCard
+          sx={{
+            flexWrap: { xs: "wrap", md: "wrap", lg: "unset", xl: "unset" },
+          }}
+        >
+          <Skeleton height={300} />
+          <Skeleton height={300} />
+        </SkeletonCard>
+      ) : isSelf ? (
+        <OperationCard profileAdd={profileAdd} />
+      ) : (
+        <OtherProfileCard profileAdd={profileAdd} />
+      )}
 
       <FriendAndGroupCard />
 

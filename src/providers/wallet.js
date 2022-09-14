@@ -17,6 +17,8 @@ const WalletProvider = ({ children }) => {
 
   const [client, setClient] = useState();
 
+  console.log("env:", process.env.NEXT_PUBLIC_XMTP_URL);
+
   const startLoading = useCallback(() => {
     dispatch({
       type: "WALLET_LOADING",
@@ -190,7 +192,6 @@ const WalletProvider = ({ children }) => {
       });
     }
 
-
     closeLoading();
 
     const chainId = eth.networkVersion;
@@ -208,12 +209,20 @@ const WalletProvider = ({ children }) => {
   ]);
 
   const initialClient = useCallback(async () => {
-    const client = await Client.create(await getSigner(), "dev");
-    if (client && client.address) {
-      dispatch({ type: "SET_CLIENT_ADD", value: client.address });
-      setClient(client);
+    try {
+      const client = await Client.create(
+        await getSigner(),
+        process.env.NEXT_PUBLIC_XMTP_URL
+      );
+      console.log("client:".client);
+      if (client && client.address) {
+        dispatch({ type: "SET_CLIENT_ADD", value: client.address });
+        setClient(client);
+      }
+      return client;
+    } catch (error) {
+      console.log("initialClientErr:", error);
     }
-    return client;
   }, [dispatch]);
 
   useEffect(() => {
@@ -226,6 +235,7 @@ const WalletProvider = ({ children }) => {
         connectWallet,
         disconnectWallet,
         initialClient,
+        getUserBasicInfo,
         client,
       }}
     >

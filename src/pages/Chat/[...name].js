@@ -31,6 +31,7 @@ import { useWalletInfo } from "../../providers/wallet";
 import { splitAddress } from "../../utils";
 import Conversation from "../../components/Conversation";
 import { useSelector } from "react-redux";
+import CommonAvatar from "../../components/Common/CommonAvatar";
 
 const ChatHeader = styled(Paper)(() => ({
   display: "flex",
@@ -278,7 +279,10 @@ const Chat = ({ type }) => {
                       setConversation({ ...item });
                     }}
                   >
-                    <Avatar />
+                    <CommonAvatar
+                      account={item.address}
+                      sx={{ borderRadius: "50%" }}
+                    />
                     <ListItemText
                       primary={item.name}
                       secondary={splitAddress(item.address)}

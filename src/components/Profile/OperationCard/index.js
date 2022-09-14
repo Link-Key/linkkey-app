@@ -1,16 +1,9 @@
-import {
-  Button,
-  Paper,
-  Stack,
-  styled,
-  Typography,
-  Card,
-  CircularProgress,
-  Box,
-} from "@mui/material";
-import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import { Paper, styled, Typography, Card, Box } from "@mui/material";
+
 import Details from "./Detais";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { getStakedInfo } from "../../../contracts/Stake";
+import { emptyAddress } from "../../../config/const";
 
 const OperationCardWrapper = styled(Card)(() => ({
   display: "flex",
@@ -36,14 +29,36 @@ const OperationAlert = styled(Paper)(() => ({
   margin: "0 auto",
 }));
 
-const OperationCard = () => {
+const OperationCard = ({ profileAdd }) => {
+  const [friendAddress, setFriendAddress] = useState(emptyAddress);
+  const [groupAddress, setGroupAddress] = useState(emptyAddress);
+
+  const getStakeInfoFn = useCallback(async () => {
+    const resp = await getStakedInfo(profileAdd);
+    console.log("resp:", resp);
+    if (resp && resp.friendNFTAddress && resp.groupNFTAddress) {
+      setFriendAddress(resp.friendNFTAddress);
+      setGroupAddress(resp.groupNFTAddress);
+    }
+  }, [profileAdd]);
+
+  useEffect(() => {
+    if (profileAdd) {
+      getStakeInfoFn();
+    }
+  });
+
   return (
     <OperationCardWrapper>
       <Typography variant="title">NTFs</Typography>
-      <OperationAlert>
-        You are not currently release Friend-NFT or Group-NFT, click the button
-        below to release your NFT!
-      </OperationAlert>
+      {friendAddress === emptyAddress || groupAddress === emptyAddress ? (
+        <OperationAlert>
+          You are not currently release Friend-NFT or Group-NFT, click the
+          button below to release your NFT!
+        </OperationAlert>
+      ) : (
+        <></>
+      )}
 
       <Box
         sx={{
@@ -66,8 +81,16 @@ const OperationCard = () => {
           },
         }}
       >
-        <Details type="friend" />
-        <Details type="group" />
+        <Details
+          type="friend"
+          contractAdd={friendAddress}
+          profileAdd={profileAdd}
+        />
+        <Details
+          type="group"
+          contractAdd={groupAddress}
+          profileAdd={profileAdd}
+        />
       </Box>
     </OperationCardWrapper>
   );

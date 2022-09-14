@@ -2,6 +2,7 @@ import { Avatar, Box, styled, Stack, Typography } from "@mui/material";
 import { useCallback } from "react";
 import { useState } from "react";
 import { memo } from "react";
+import CommonAvatar from "../Common/CommonAvatar";
 import MarketDialog from "./MarketDialog";
 
 const Wrapper = styled(Box)(() => ({
@@ -37,7 +38,7 @@ const MarketItem = ({ type }) => {
       }}
     >
       <Stack direction="row" p={0} spacing={1}>
-        <Avatar sx={{ borderRadius: "12px" }} />
+        <CommonAvatar sx={{ borderRadius: "12px" }} />
         <Stack direction="column" p={0}>
           <Typography
             variant="title"

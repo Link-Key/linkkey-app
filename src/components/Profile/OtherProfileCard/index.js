@@ -1,5 +1,9 @@
 import { Card, styled, Typography, Stack, Box } from "@mui/material";
-import { memo } from "react";
+import { useCallback } from "react";
+import { useEffect } from "react";
+import { memo, useState } from "react";
+import { emptyAddress } from "../../../config/const";
+import { getStakedInfo } from "../../../contracts/Stake";
 import OtherDetails from "./OtherDetails";
 
 const OperationCardWrapper = styled(Card)(() => ({
@@ -15,7 +19,24 @@ const OperationCardWrapper = styled(Card)(() => ({
   },
 }));
 
-const OtherProfileCard = () => {
+const OtherProfileCard = ({ profileAdd }) => {
+  const [friendAddress, setFriendAddress] = useState(emptyAddress);
+  const [groupAddress, setGroupAddress] = useState(emptyAddress);
+
+  const getStakeInfoFn = useCallback(async () => {
+    const resp = await getStakedInfo(profileAdd);
+    console.log("resp:", resp);
+    if (resp && resp.friendNFTAddress && resp.groupNFTAddress) {
+      setFriendAddress(resp.friendNFTAddress);
+      setGroupAddress(resp.groupNFTAddress);
+    }
+  }, [profileAdd]);
+
+  useEffect(() => {
+    if (profileAdd) {
+      getStakeInfoFn();
+    }
+  });
   return (
     <OperationCardWrapper>
       <Typography variant="title">NFTs</Typography>
@@ -41,8 +62,16 @@ const OtherProfileCard = () => {
           },
         }}
       >
-        <OtherDetails type="friend" />
-        <OtherDetails type="group" />
+        <OtherDetails
+          type="friend"
+          contractAdd={friendAddress}
+          isMinted={friendAddress !== emptyAddress}
+        />
+        <OtherDetails
+          type="group"
+          contractAdd={groupAddress}
+          isMinted={groupAddress !== emptyAddress}
+        />
       </Box>
     </OperationCardWrapper>
   );

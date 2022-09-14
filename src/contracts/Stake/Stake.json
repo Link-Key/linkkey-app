@@ -54,6 +54,48 @@
       },
       {
         "indexed": false,
+        "internalType": "address",
+        "name": "newNFTAddress",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "nftName",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "nftSymbol",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "keyAddress",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "floorPrices",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "ownerMintAccount",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "taxPreparation",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
         "internalType": "uint256",
         "name": "stakeNFTAt",
         "type": "uint256"
@@ -76,6 +118,18 @@
         "internalType": "uint256",
         "name": "tokenId",
         "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "friendNFTAddress",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "groupAddress",
+        "type": "address"
       },
       {
         "indexed": false,
@@ -117,38 +171,31 @@
         "internalType": "address",
         "name": "owner_",
         "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "type_",
-        "type": "uint256"
       }
     ],
-    "name": "getIsIssueNFT",
+    "name": "getStakedInfo",
     "outputs": [
       {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "owner_",
-        "type": "address"
-      }
-    ],
-    "name": "getStakedTokenIds",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "stakedTokenId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "friendNFTAddress",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "groupNFTAddress",
+            "type": "address"
+          }
+        ],
+        "internalType": "struct Stake.StakeInfo",
+        "name": "stakeInfo",
+        "type": "tuple"
       }
     ],
     "stateMutability": "view",
@@ -207,6 +254,16 @@
         "internalType": "address",
         "name": "keyAddress_",
         "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "demoFollowNFTAddress_",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "demoGroupNFTAddress_",
+        "type": "address"
       }
     ],
     "name": "setAddress",
@@ -224,6 +281,16 @@
       {
         "internalType": "uint256",
         "name": "createType_",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "ownerMintAccount_",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "taxPreparation_",
         "type": "uint256"
       }
     ],
@@ -246,18 +313,7 @@
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "followNFT_",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "groupNFT_",
-        "type": "address"
-      }
-    ],
+    "inputs": [],
     "name": "unstakeNFT",
     "outputs": [],
     "stateMutability": "nonpayable",

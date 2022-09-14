@@ -60,7 +60,10 @@ const MessageList = ({ messages, recipientName }) => {
           spacing={1}
           key={index}
         >
-          <CommonAvatar account={item.senderAddress} />
+          <CommonAvatar
+            account={item.senderAddress}
+            sx={{ borderRadius: "50%" }}
+          />
           <Stack p={0}>
             <NameAndTime direction="row" alignItems="center" spacing={1} p={0}>
               {item &&

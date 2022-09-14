@@ -6,7 +6,9 @@ import SNSContractABI from "./SNS.json";
 export const SNSInstance = () => {
   const provider = getProvider();
   const chainId = getChainId();
+  console.log("chainId:", chainId);
   const snsAddress = contractAddress(chainId).snsAddress;
+  console.log("snsAddress:", snsAddress);
   const SNS = new Contract(snsAddress, SNSContractABI, provider);
   return SNS;
 };
@@ -35,5 +37,5 @@ export {
   getInfo,
   getTokenIdOfName,
   getResolverOwner,
-  getStake //是否质押
+  getStake, //是否质押
 };

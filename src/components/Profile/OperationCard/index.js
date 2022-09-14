@@ -39,7 +39,7 @@ const OperationAlert = styled(Paper)(() => ({
 const OperationCard = () => {
   return (
     <OperationCardWrapper>
-      <Typography variant="title">Operation</Typography>
+      <Typography variant="title">NTFs</Typography>
       <OperationAlert>
         You are not currently release Friend-NFT or Group-NFT, click the button
         below to release your NFT!

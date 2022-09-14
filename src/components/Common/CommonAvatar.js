@@ -31,9 +31,8 @@ const CommonAvatar = ({ name, account, avatarUrl, sx }) => {
     [getAvatar]
   );
 
-  console.log("avatarState:", avatarState);
-
   useEffect(() => {
+    setAvatarState("");
     if (!avatarUrl && name) {
       getAvatar(name);
     }

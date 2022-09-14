@@ -20,8 +20,8 @@ const OperationCardWrapper = styled(Card)(() => ({
 }));
 
 const OtherProfileCard = ({ profileAdd }) => {
-  const [friendAddress, setFriendAddress] = useState(emptyAddress);
-  const [groupAddress, setGroupAddress] = useState(emptyAddress);
+  const [friendAddress, setFriendAddress] = useState("");
+  const [groupAddress, setGroupAddress] = useState("");
 
   const getStakeInfoFn = useCallback(async () => {
     const resp = await getStakedInfo(profileAdd);
@@ -37,6 +37,7 @@ const OtherProfileCard = ({ profileAdd }) => {
       getStakeInfoFn();
     }
   });
+
   return (
     <OperationCardWrapper>
       <Typography variant="title">NFTs</Typography>
@@ -65,12 +66,12 @@ const OtherProfileCard = ({ profileAdd }) => {
         <OtherDetails
           type="friend"
           contractAdd={friendAddress}
-          isMinted={friendAddress === emptyAddress}
+          // isMinted={friendAddress === emptyAddress}
         />
         <OtherDetails
           type="group"
           contractAdd={groupAddress}
-          isMinted={groupAddress !== emptyAddress}
+          // isMinted={groupAddress !== emptyAddress}
         />
       </Box>
     </OperationCardWrapper>

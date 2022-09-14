@@ -1,9 +1,9 @@
 import { Box, DialogContent, styled, Typography } from "@mui/material";
 import { memo, useCallback } from "react";
-import { safeMint } from "../../../contracts/NFT";
+import { balanceOf, safeMint } from "../../../contracts/NFT";
 import useTransaction from "../../../hooks/useTransaction";
 import { useDialog } from "../../../providers/ApproveDialog";
-import { getKeyBalance } from "../../../utils";
+import { getKeyBalance, hexToNumber } from "../../../utils";
 import CommonLoadingBtn from "../../Button/LoadingButton";
 import CommonDialog from "../../CommonDialog";
 import ToastMention from "../../ToastMessage";
@@ -22,6 +22,7 @@ const MintOtherDialog = ({
   open,
   title,
   onClose,
+  onSuccess,
   isFriend,
   coinAddress,
   from,
@@ -29,6 +30,17 @@ const MintOtherDialog = ({
   price,
 }) => {
   const { state, dialogDispatch } = useDialog();
+
+  const closeGetBalanceOfFn = useCallback(async () => {
+    const balance = await balanceOf(to, from);
+    console.log("balance:", balance);
+    if (hexToNumber(balance) > 0) {
+      clearInterval(window.safeMintTimer);
+      dialogDispatch({ type: "ADD_STEP" });
+      dialogDispatch({ type: "CLOSE_DIALOG" });
+      onSuccess();
+    }
+  }, [to, from, onSuccess, dialogDispatch]);
 
   const mintNFT = useCallback(async () => {
     console.log("from:", from);
@@ -38,8 +50,11 @@ const MintOtherDialog = ({
     if (keyBalance > price) {
       try {
         await safeMint(to);
-        dialogDispatch({ type: "ADD_STEP" });
-        dialogDispatch({ type: "CLOSE_DIALOG" });
+        setTimeout(() => {
+          window.safeMintTimer = setInterval(async () => {
+            await closeGetBalanceOfFn();
+          }, 3000);
+        }, 0);
       } catch (error) {
         dialogDispatch({ type: "CLOSE_DIALOG" });
         console.log("safeMintErr:", error);
@@ -49,7 +64,7 @@ const MintOtherDialog = ({
       dialogDispatch({ type: "CLOSE_DIALOG" });
       ToastMention({ message: "Key is not enough!", type: "warn" });
     }
-  }, [to, from, price, dialogDispatch]);
+  }, [to, from, price, dialogDispatch, closeGetBalanceOfFn]);
 
   const { handlePayMint } = useTransaction({
     coinAddress,

@@ -93,7 +93,7 @@ const Profile = ({ name }) => {
 
   console.log("skeletonLoading:", skeletonLoading);
 
-  const profileName = name && name[0] ? name : profileAdd;
+  const profileName = name && name[0] ? name : "";
 
   const handleShowDIDCard = useCallback(() => {
     setShowDIDCard(true);

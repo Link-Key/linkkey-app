@@ -67,7 +67,7 @@ const DIDCardDialog = ({ open, onOpen, onClose, name }) => {
       // setImageState(<img width="100%" src={dataImg.src} alt="card" />);
       const alink = document.createElement("a");
       alink.href = dataImg.src;
-      alink.download = `${snsName.name}.png`;
+      alink.download = `${name}.png`;
       alink.click();
     });
   };

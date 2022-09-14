@@ -1,3 +1,4 @@
+import { ContactPageSharp } from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -11,7 +12,7 @@ import { useEffect } from "react";
 import { memo, useCallback, useState } from "react";
 import { useSelector } from "react-redux";
 import { emptyAddress } from "../../../config/const";
-import { getFloorPrices, getTotal } from "../../../contracts/NFT";
+import { balanceOf, getFloorPrices, getTotal } from "../../../contracts/NFT";
 import { getKeyAddress, weiFormatToEth, hexToNumber } from "../../../utils";
 import CommonLoadingBtn from "../../Button/LoadingButton";
 import MintOtherDialog from "./MintOtherDialog";
@@ -38,7 +39,7 @@ const Wrapper = styled(Box)(() => ({
   },
 }));
 
-const OtherDetails = ({ type, contractAdd, isMinted }) => {
+const OtherDetails = ({ type, contractAdd }) => {
   const { account } = useSelector((state) => ({
     account: state.walletInfo.account,
   }));
@@ -46,50 +47,68 @@ const OtherDetails = ({ type, contractAdd, isMinted }) => {
   const isFriend = type === "friend" ? true : false;
 
   const [mintOpen, setMintOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [floorPrice, setFloorPrice] = useState(0);
   const [totalNFT, setTotalNFT] = useState(0);
+  const [nftBalance, setNFTBalance] = useState(0);
+  const [nftAdd, setNFTAdd] = useState(contractAdd);
   const keyAddress = getKeyAddress();
 
   const handleOpenMintNFTDialog = useCallback(async () => {
     setMintOpen(true);
   }, []);
 
-  const getBasicInfo = useCallback(async () => {
-    setLoading(true);
-    await getFloorPrice();
-    await getTotalNFT();
+  const getBasicInfo = useCallback(
+    async (nftAddress) => {
+      await getFloorPrice(nftAddress);
+      await getTotalNFT(nftAddress);
+      await getBalanceOf(nftAddress);
+    },
+    [getFloorPrice, getTotalNFT, getBalanceOf]
+  );
 
-    setLoading(false);
-  }, [getFloorPrice, getTotalNFT]);
-
-  const getFloorPrice = useCallback(async () => {
+  const getFloorPrice = useCallback(async (nftAddress) => {
     try {
-      const priceHex = await getFloorPrices(contractAdd);
+      const priceHex = await getFloorPrices(nftAddress);
       setFloorPrice(weiFormatToEth(priceHex));
     } catch (error) {
       console.log("getFloorPriceErr:", error);
     }
-  }, [contractAdd]);
+  }, []);
 
-  const getTotalNFT = useCallback(async () => {
+  const getTotalNFT = useCallback(async (nftAddress) => {
     try {
-      const totalHex = await getTotal(contractAdd);
+      const totalHex = await getTotal(nftAddress);
       console.log("totalHex:", hexToNumber(totalHex));
       setTotalNFT(hexToNumber(totalHex));
     } catch (error) {
       console.log("getTotalNFTErr:", error);
     }
-  }, [contractAdd]);
+  }, []);
+
+  const getBalanceOf = useCallback(
+    async (nftAddress) => {
+      try {
+        const balance = await balanceOf(nftAddress, account);
+        console.log("balance:", hexToNumber(balance));
+        setNFTBalance(hexToNumber(balance));
+      } catch (error) {
+        console.log("getBalanceOfErr:", error);
+      }
+    },
+    [account]
+  );
 
   useEffect(() => {
-    // if (contractAdd !== emptyAddress) {
-    // }
-    console.log("contractAdd:", contractAdd);
-    if (contractAdd) {
-      getBasicInfo();
+    if (nftAdd && nftAdd !== emptyAddress) {
+      getBasicInfo(nftAdd);
     }
-  }, [getBasicInfo, contractAdd]);
+  }, [getBasicInfo, nftAdd, contractAdd]);
+
+  useEffect(() => {
+    setNFTAdd(contractAdd);
+  }, [contractAdd]);
+
+  console.log("nftBalance:", nftBalance);
 
   return (
     <Paper>
@@ -107,6 +126,7 @@ const OtherDetails = ({ type, contractAdd, isMinted }) => {
       </TitleWrapper>
 
       <Wrapper>
+        <Typography>Contract Address: {nftAdd}</Typography>
         <Typography>{`Minted/All: ${totalNFT} / ${
           isFriend ? "150" : "1500"
         }`}</Typography>
@@ -114,14 +134,16 @@ const OtherDetails = ({ type, contractAdd, isMinted }) => {
 
         <Stack direction="row" justifyContent="center" spacing={2}>
           <CommonLoadingBtn
-            // loading={loading}
-            disabled={!isMinted}
+            disabled={totalNFT === 0 || nftBalance !== 0}
             variant="outlined"
             onClick={handleOpenMintNFTDialog}
           >
             {isFriend ? "Mint His Follow-NFT" : "Mint His Group-NFT"}
           </CommonLoadingBtn>
-          <CommonLoadingBtn variant="outlined" disabled={!isMinted}>
+          <CommonLoadingBtn
+            variant="outlined"
+            disabled={totalNFT === 0 || nftBalance !== 0}
+          >
             {isFriend ? "Buy His Follow-NFT" : "Buy His Group-NFT"}
           </CommonLoadingBtn>
         </Stack>
@@ -133,10 +155,14 @@ const OtherDetails = ({ type, contractAdd, isMinted }) => {
         isFriend={isFriend}
         coinAddress={keyAddress}
         from={account}
-        to={contractAdd}
+        to={nftAdd}
         price={floorPrice}
         onClose={() => {
           setMintOpen(false);
+        }}
+        onSuccess={async () => {
+          await getTotalNFT(nftAdd);
+          await getBalanceOf(nftAdd);
         }}
       />
     </Paper>

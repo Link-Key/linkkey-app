@@ -50,7 +50,7 @@ const OperationCard = ({ profileAdd }) => {
 
   return (
     <OperationCardWrapper>
-      <Typography variant="title">Operation</Typography>
+      <Typography variant="title">NTFs</Typography>
       {friendAddress === emptyAddress || groupAddress === emptyAddress ? (
         <OperationAlert>
           You are not currently release Friend-NFT or Group-NFT, click the

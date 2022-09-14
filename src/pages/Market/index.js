@@ -20,8 +20,6 @@ const MarketWrapper = styled(Box)(() => ({
   padding: "20px 0",
 }));
 
-const tabList = ["Friend", "Group"];
-
 const list = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 
 const Market = () => {
@@ -29,6 +27,8 @@ const Market = () => {
   const [marketList, setMarketList] = useState(list);
 
   const [dialogOpen, setOpen] = useState(false);
+
+  const tabList = ["Friend", <span key="group">Group</span>];
 
   const handleCloseDialog = useCallback(() => {
     setOpen(false);

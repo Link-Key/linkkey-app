@@ -10,6 +10,7 @@ import {
   DialogContent,
   IconButton,
   InputBase,
+  Tooltip,
 } from "@mui/material";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { useState, useCallback, useEffect, memo } from "react";
@@ -360,18 +361,20 @@ const Details = ({ type, contractAdd, profileAdd }) => {
             minHeight="200px"
             spacing={1}
           >
-            <CommonLoadingBtn
-              loading={btnLoading}
-              variant="outlined"
-              sx={{
-                fontWeight: 500,
-              }}
-              onClick={() => {
-                handleReleaseDialogOpen();
-              }}
-            >
-              {isFriend ? "Release Friend-NFT" : "Release Group-NFT"}
-            </CommonLoadingBtn>
+            <Tooltip title="Coming soon!">
+              <CommonLoadingBtn
+                loading={btnLoading}
+                variant="outlined"
+                sx={{
+                  fontWeight: 500,
+                }}
+                onClick={() => {
+                  // handleReleaseDialogOpen();
+                }}
+              >
+                {isFriend ? "Release Friend-NFT" : "Release Group-NFT"}
+              </CommonLoadingBtn>
+            </Tooltip>
             <InfoOutlinedIcon
               onClick={() => {
                 setInfoOpen(true);

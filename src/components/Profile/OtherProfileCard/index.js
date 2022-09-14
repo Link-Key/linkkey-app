@@ -65,7 +65,7 @@ const OtherProfileCard = ({ profileAdd }) => {
         <OtherDetails
           type="friend"
           contractAdd={friendAddress}
-          isMinted={friendAddress !== emptyAddress}
+          isMinted={friendAddress === emptyAddress}
         />
         <OtherDetails
           type="group"

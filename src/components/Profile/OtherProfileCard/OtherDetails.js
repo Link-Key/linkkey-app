@@ -97,7 +97,13 @@ const OtherDetails = ({ type, contractAdd, isMinted }) => {
         <Typography variant="subtitle1">
           {isFriend ? "Friend-NFT details" : "Group-NFT details"}
         </Typography>
-        {!isFriend ? <Button variant="outlined">Info</Button> : <></>}
+        {!isFriend ? (
+          <CommonLoadingBtn disabled={true} variant="outlined">
+            Info
+          </CommonLoadingBtn>
+        ) : (
+          <></>
+        )}
       </TitleWrapper>
 
       <Wrapper>

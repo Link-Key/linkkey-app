@@ -17,7 +17,7 @@ const FriendAndGroupCard = () => {
     >
       <ItemsCard type="friend" />
 
-      <ItemsCard type="group" />
+      {/* <ItemsCard type="group" /> */}
     </Stack>
   );
 };

@@ -129,7 +129,7 @@ const Profile = ({ name }) => {
       getBasicUserInfo();
       setLoading(false);
     }
-  }, [name, account]);
+  }, [name, account, getBasicUserInfo]);
 
   return (
     <Stack spacing={3}>
@@ -184,13 +184,17 @@ const Profile = ({ name }) => {
           <Button variant="outlined" onClick={handleShowDIDCard}>
             DID Card
           </Button>
-          <IconButtonWrapper
-            onClick={() => {
-              router.push("/Setting");
-            }}
-          >
-            <SettingIcon />
-          </IconButtonWrapper>
+          {isSelf ? (
+            <IconButtonWrapper
+              onClick={() => {
+                router.push("/Setting");
+              }}
+            >
+              <SettingIcon />
+            </IconButtonWrapper>
+          ) : (
+            <></>
+          )}
         </Stack>
       </CardInfoWrapper>
 

@@ -23,6 +23,7 @@ html,
 body {
   padding: 0;
   margin: 0;
+  background:white;
 }
 
 
@@ -42,7 +43,7 @@ a {
   }
   body {
     color: black;
-    background: white;
+    background: white !important;
   }
 }
 

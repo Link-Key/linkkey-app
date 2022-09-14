@@ -20,6 +20,7 @@ const ToastMention = (props) => {
     onClose,
     duration = 3000,
     showClose = false,
+    position = "bottom-right",
   } = props;
 
   const handleParams = () => {
@@ -57,7 +58,7 @@ const ToastMention = (props) => {
 
   return toast(<span>{message}</span>, {
     icon: handleParams().icon,
-    position: "bottom-right",
+    position: position,
     autoClose: duration,
     pauseOnHover: true,
     closeButton: showClose,

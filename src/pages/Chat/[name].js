@@ -129,7 +129,12 @@ export async function getStaticPaths() {
     paths: [
       {
         params: {
-          name: ["Friend"],
+          name: "Friend",
+        },
+      },
+      {
+        params: {
+          name: "Group",
         },
       },
     ],
@@ -141,7 +146,7 @@ export async function getStaticProps({ params }) {
   return {
     props: {
       ...params,
-      type: name[0] === "Friend" || "friend" ? 0 : 1,
+      type: name === "Friend" || "friend" ? 0 : 1,
     },
   };
 }
@@ -195,7 +200,7 @@ const Chat = ({ type }) => {
     setSelectItem(e.target.value);
   }, []);
 
-  const tabList = ["Friend", "Group"];
+  const tabList = ["Friend", <span key="group">Group</span>];
 
   useEffect(() => {
     if (!client) {

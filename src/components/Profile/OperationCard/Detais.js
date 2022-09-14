@@ -25,6 +25,7 @@ import {
   getStakedInfo,
   StakeInstance,
   stakeNFT,
+  unstakeNFT,
 } from "../../../contracts/Stake";
 import CommonLoadingBtn from "../../Button/LoadingButton";
 import { getKeyBalance, weiFormatToEth, hexToNumber } from "../../../utils";
@@ -36,7 +37,12 @@ import { contractAddress, emptyAddress } from "../../../config/const";
 import { getChainId } from "../../../utils/web3";
 import { useSelector } from "react-redux";
 import CreateGroupDialog from "./CreateGroupDialog";
-import { getLastTokenId, getNFTInfo } from "../../../contracts/NFT";
+import {
+  balanceOf,
+  getLastTokenId,
+  getNFTInfo,
+  getTotal,
+} from "../../../contracts/NFT";
 import { issueNFT, myContracts, queryUserInfo } from "../../../api";
 import useTransaction from "../../../hooks/useTransaction";
 import InfoDialog from "./InfoDialog";
@@ -138,6 +144,15 @@ const Details = ({ type, contractAdd, profileAdd }) => {
 
   const { dialogDispatch, state } = useDialog();
 
+  const handleUnStakeFn = useCallback(async () => {
+    const total = await getTotal(nftAddState);
+    const balance = await balanceOf(nftAddState, account);
+    console.log("total:", total, "balance:", balance);
+    if (hexToNumber(total) === hexToNumber(balance)) {
+      await unstakeNFT();
+    }
+  }, [nftAddState, account]);
+
   const handleCloseReleaseDialog = useCallback(() => {
     setMintInp("");
     setReleaseOpen(false);
@@ -148,6 +163,7 @@ const Details = ({ type, contractAdd, profileAdd }) => {
     async (nftAddress) => {
       clearInterval(window.stakeInfoTimer);
       await getNFTInfoFn(nftAddress);
+      setNFTAddState(nftAddress);
       setShowDetails(true);
       dialogDispatch({ type: "ADD_STEP" });
       dialogDispatch({ type: "CLOSE_DIALOG" });
@@ -326,6 +342,15 @@ const Details = ({ type, contractAdd, profileAdd }) => {
                 onClick={handleOpenTransferDialog}
               >
                 Transfer
+              </CommonLoadingBtn>
+
+              <CommonLoadingBtn
+                loading={btnLoading}
+                variant="outlined"
+                hidden={true}
+                onClick={handleUnStakeFn}
+              >
+                UnStake
               </CommonLoadingBtn>
               <Button
                 sx={{

@@ -112,6 +112,8 @@ const Profile = ({ name }) => {
 
   const getBasicUserInfo = useCallback(async () => {
     const userInfo = await fromNameGetInfo(name[0]);
+
+    setSkeletonLoading(false);
     setBasicInfo(userInfo);
   }, [name]);
 
@@ -125,7 +127,6 @@ const Profile = ({ name }) => {
         setProfileAdd(address.toLowerCase());
         if (address.toLowerCase() === account) {
           setIsSelf(true);
-          setSkeletonLoading(false);
         }
       });
     }

@@ -1,6 +1,5 @@
 import {
   Button,
-  Card,
   Dialog,
   DialogContent,
   DialogTitle,
@@ -16,7 +15,6 @@ import Down from "../../assets/icons/didCard/down.svg";
 import CopyIcon from "../../assets/icons/common/copy.svg";
 import TwitterIcon from "../../assets/icons/common/twitterIcon.svg";
 import CopyToClipboard from "react-copy-to-clipboard";
-import { useSelector } from "react-redux";
 import ToastMention from "../ToastMessage";
 import html2canvas from "html2canvas";
 
@@ -50,11 +48,7 @@ const DialogContentWrapper = styled(DialogContent)(() => ({
   paddingBottom: "0",
 }));
 
-const DIDCardDialog = ({ open, onOpen, onClose }) => {
-  const { snsName } = useSelector((state) => ({
-    snsName: state.walletInfo.snsName,
-  }));
-
+const DIDCardDialog = ({ open, onOpen, onClose, name }) => {
   const copyDID = useCallback(() => {
     ToastMention({ message: "Copied", type: "success" });
   }, []);
@@ -97,14 +91,14 @@ const DIDCardDialog = ({ open, onOpen, onClose }) => {
       </DialogTitle>
 
       <DialogContentWrapper>
-        <DIDCard />
+        <DIDCard name={name} />
       </DialogContentWrapper>
       <Stack direction="row" justifyContent="center" spacing={3}>
         <ButtonIcon startIcon={<Down />} onClick={sharedImg}>
           Download
         </ButtonIcon>
         <CopyToClipboard
-          text={`https://sns.chat/name/${snsName}/details`}
+          text={`https://sns.chat/name/${name}/details`}
           onCopy={copyDID}
         >
           <ButtonIcon startIcon={<CopyIcon />}>Copy URL</ButtonIcon>

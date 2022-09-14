@@ -1,7 +1,6 @@
 import { Box, Stack, styled, Typography } from "@mui/material";
 import QRCode from "qrcode.react";
 import { memo } from "react";
-import { useSelector } from "react-redux";
 import backImgItem from "../../assets/images/didCard/backImgItem.png";
 import whiteLogo from "../../assets/images/didCard/whiteLogo.png";
 import polygonGrant from "../../assets/images/didCard/polygonGrant.png";
@@ -137,11 +136,7 @@ const SharePolygonImg = styled(Image)(() => ({
   transform: "scale(0.43)",
 }));
 
-const DIDCard = () => {
-  const { snsName } = useSelector((state) => ({
-    snsName: state.walletInfo.snsName,
-  }));
-
+const DIDCard = ({ name }) => {
   const ShareFooterImg = {
     width: "14px",
     height: "14px",
@@ -177,13 +172,13 @@ const DIDCard = () => {
           spacing={2}
         >
           <QRCodeItem
-            value={`https://sns.chat/name/${snsName}/details`}
+            value={`https://sns.chat/name/${name}/details`}
             size={110}
             fgColor="#ea6060"
           />
 
           <ShareNameAndIcon>
-            <span>{snsName}</span>
+            <span>{name}</span>
             <Box>
               <SearchIcon />
             </Box>

@@ -213,6 +213,7 @@ const Profile = ({ name }) => {
 
       <DIDCardDialog
         open={showDIDCard}
+        name={name[0]}
         onOpen={handleShowDIDCard}
         onClose={handleCloseDIDCard}
       />

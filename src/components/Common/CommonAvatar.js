@@ -11,7 +11,7 @@ const BlockiesWrapper = styled(Blockies)(({ sx }) => ({
 }));
 
 const CommonAvatar = ({ name, account, avatarUrl, sx }) => {
-  const [avatarState, setAvatarState] = useState(avatarUrl);
+  const [avatarState, setAvatarState] = useState("");
 
   const getAvatar = useCallback(async (name) => {
     const resp = await fromNameGetInfo(name);
@@ -32,12 +32,17 @@ const CommonAvatar = ({ name, account, avatarUrl, sx }) => {
   );
 
   useEffect(() => {
-    setAvatarState("");
-    if (!avatarUrl && name) {
-      getAvatar(name);
-    }
-    if (!avatarUrl && account) {
-      getAccountAvatar(account);
+    // console.log("avatarUrl:", avatarUrl);
+    if (avatarUrl) {
+      setAvatarState(avatarUrl);
+    } else {
+      setAvatarState("");
+      if (name) {
+        getAvatar(name);
+      }
+      if (account) {
+        getAccountAvatar(account);
+      }
     }
   }, [avatarUrl, getAvatar, name, account, getAccountAvatar]);
 

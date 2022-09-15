@@ -133,6 +133,8 @@ const Profile = ({ name }) => {
     getBasicUserInfo();
   }, [name, account, getBasicUserInfo]);
 
+  console.log("profileAdd:", profileAdd);
+
   return (
     <Stack spacing={3}>
       <CardInfoWrapper>

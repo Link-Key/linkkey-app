@@ -16,6 +16,7 @@ import SaleDialog from "../../../components/Profile/OperationCard/SaleDialog";
 import { getResolverOwner } from "../../../contracts/SNS";
 import { queryFriends } from "../../../api";
 import TableNoData from "../../../assets/icons/common/tableNoRows.svg";
+import CommonAvatar from "../../../components/Common/CommonAvatar";
 
 const TitleWrapper = styled(Paper)(() => ({
   // display: "flex",
@@ -107,15 +108,41 @@ const ProfileList = ({ type, name }) => {
 
   const friendColumns = [
     {
-      field: "address",
-      headerName: "Account",
-      ...commonColumnsProps,
-    },
-    {
       field: "name",
       headerName: "Domain",
       width: 90,
       ...commonColumnsProps,
+      align: "left",
+      renderCell: (params) => {
+        const { row } = params;
+        return (
+          <>
+            {row && row.ipfsUrl ? (
+              <Stack
+                direction="row"
+                p={0}
+                pl={2}
+                spacing={1}
+                alignItems="center"
+              >
+                <CommonAvatar avatarUrl={row.ipfsUrl} />
+                <span>{row.name ? row.name : "-"}</span>
+              </Stack>
+            ) : (
+              <Stack
+                direction="row"
+                p={0}
+                pl={2}
+                spacing={1}
+                alignItems="center"
+              >
+                <CommonAvatar account={row.address} />
+                <span>{row.name ? row.name : "-"}</span>
+              </Stack>
+            )}
+          </>
+        );
+      },
     },
     {
       field: "type",
@@ -234,9 +261,6 @@ const ProfileList = ({ type, name }) => {
     setListLoading(false);
   }, [profileAdd, queryFriendsFn]);
 
-  console.log("friendRows:", friendRows);
-  console.log("listLoading:", listLoading);
-
   return (
     <Stack spacing={3}>
       <TitleWrapper>
@@ -266,7 +290,6 @@ const ProfileList = ({ type, name }) => {
               LoadingOverlay: LinearProgress,
               NoRowsOverlay: TableNoRowComp,
             }}
-            pagination={false}
             hideFooter={true}
             disableSelectionOnClick={true}
             experimentalFeatures={{ newEditingApi: true }}

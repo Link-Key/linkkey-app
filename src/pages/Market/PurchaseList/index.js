@@ -1,11 +1,26 @@
-import { memo, useState } from "react";
+import { memo, useCallback, useState, useEffect } from "react";
 import { DataGrid } from "@mui/x-data-grid";
-import { Button, Paper, Stack } from "@mui/material";
+import {
+  Box,
+  Button,
+  LinearProgress,
+  Pagination,
+  Paper,
+  Stack,
+} from "@mui/material";
 import PageTitleWrapper from "../../../components/PageTitleWrapper/PageTitleWrapper";
 import BuyDialog from "../../../components/Market/BuyDialog";
+import { queryOrderList } from "../../../api/market";
+import TableNoRow from "../../../components/TableNoRow";
+import TableNoData from "../../../assets/icons/common/tableNoRows.svg";
 
 const PurchaseList = () => {
   const [buyOpen, setBuyOpen] = useState(false);
+  const [pageState, setPageState] = useState(1);
+  const [pageTotal, setPageTotal] = useState(1);
+  const [buyList, setBuyList] = useState([]);
+  const [listLoading, setListLoading] = useState(true);
+  const pageSize = 30;
 
   const commonColumnsProps = {
     sortable: false,
@@ -15,6 +30,19 @@ const PurchaseList = () => {
     headerAlign: "center",
     flex: 1,
     align: "center",
+  };
+
+  const TableNoRowComp = () => {
+    return (
+      <Stack
+        width="100%"
+        height="100%"
+        justifyContent="center"
+        alignItems="center"
+      >
+        <TableNoData />
+      </Stack>
+    );
   };
 
   const columns = [
@@ -69,18 +97,69 @@ const PurchaseList = () => {
     { id: 9, name: "Roxie", action: "Harvey", price: 65 },
   ];
 
+  const queryOrderListFn = useCallback(
+    async ({ page }) => {
+      setListLoading(true);
+      const reqParams = {
+        contractAddress: "111",
+        pageNum: page,
+        pageSize: pageSize,
+      };
+      const resp = await queryOrderList(reqParams);
+      if (resp && resp.code === 200 && resp.data && resp.data.list) {
+        setPageTotal(resp.data.pages);
+        setBuyList(resp.data.list);
+      }
+      setListLoading(false);
+    },
+    [pageSize]
+  );
+
+  console.log("buyList:", buyList);
+
+  useEffect(() => {
+    setListLoading(true);
+    queryOrderListFn({ page: 1 });
+    setListLoading(false);
+  }, []);
+
   return (
     <Stack spacing={3}>
       <PageTitleWrapper title="Buy Follow-NFT" />
 
-      <Paper sx={{ height: "85vh", width: "100%" }}>
-        <DataGrid
-          rows={rows}
-          columns={columns}
-          pageSize={20}
-          disableSelectionOnClick={true}
-          // rowsPerPageOptions={[5]}
-          experimentalFeatures={{ newEditingApi: true }}
+      <Paper sx={{ width: "100%" }}>
+        <Box sx={{ height: "72vh", width: "100%" }}>
+          <DataGrid
+            rows={buyList}
+            columns={columns}
+            pageSize={20}
+            loading={listLoading}
+            components={{
+              LoadingOverlay: LinearProgress,
+              NoRowsOverlay: TableNoRowComp,
+            }}
+            hideFooter={true}
+            disableSelectionOnClick={true}
+            experimentalFeatures={{ newEditingApi: true }}
+          />
+        </Box>
+        <Pagination
+          count={pageTotal}
+          defaultPage={1}
+          page={pageState}
+          color="primary"
+          variant="outlined"
+          shape="rounded"
+          sx={{
+            margin: "20px auto 0",
+            ".MuiPagination-ul": {
+              justifyContent: "center",
+            },
+          }}
+          onChange={(e, page) => {
+            setPageState(page);
+            queryOrderListFn({ page });
+          }}
         />
       </Paper>
 

@@ -6,14 +6,16 @@ import {
   MenuItem,
   styled,
   Box,
+  LinearProgress,
+  Pagination,
 } from "@mui/material";
 import { memo, useState, useCallback, useEffect } from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import { TypographyWrapper } from "../../../components/Styled";
-
 import SaleDialog from "../../../components/Profile/OperationCard/SaleDialog";
 import { getResolverOwner } from "../../../contracts/SNS";
 import { queryFriends } from "../../../api";
+import TableNoData from "../../../assets/icons/common/tableNoRows.svg";
 
 const TitleWrapper = styled(Paper)(() => ({
   // display: "flex",
@@ -60,16 +62,38 @@ export async function getStaticProps({ params }) {
 }
 
 const ProfileList = ({ type, name }) => {
-  const [selectItem, setSelectItem] = useState("all");
   const [saleOpen, setSaleOpen] = useState(false);
+  const [listType, setListType] = useState("empty");
+  const [profileAdd, setProfileAdd] = useState("");
 
+  const [pageState, setPageState] = useState(1);
+  const [pageTotal, setPageTotal] = useState(0);
   const [friendRows, setFriendRows] = useState([]);
+  const [listLoading, setListLoading] = useState(true);
+  const pageSize = 30;
 
-  console.log("name:", name);
+  const TableNoRowComp = () => {
+    return (
+      <Stack
+        width="100%"
+        height="100%"
+        justifyContent="center"
+        alignItems="center"
+      >
+        <TableNoData />
+      </Stack>
+    );
+  };
 
-  const handleSelectChange = useCallback((e) => {
-    setSelectItem(e.target.value);
-  }, []);
+  const handleChangeListType = useCallback(
+    (e) => {
+      if (listType !== e.target.value) {
+        setPageState(1);
+        setListType(e.target.value);
+      }
+    },
+    [listType]
+  );
 
   const commonColumnsProps = {
     sortable: false,
@@ -82,6 +106,11 @@ const ProfileList = ({ type, name }) => {
   };
 
   const friendColumns = [
+    {
+      field: "address",
+      headerName: "Account",
+      ...commonColumnsProps,
+    },
     {
       field: "name",
       headerName: "Domain",
@@ -102,10 +131,9 @@ const ProfileList = ({ type, name }) => {
       ...commonColumnsProps,
       renderCell: (params) => {
         const { row } = params;
-
         return (
           <>
-            {row.relation === "owner" ? (
+            {row.type === "following" ? (
               <Button
                 variant="outlined"
                 onClick={() => {
@@ -171,89 +199,43 @@ const ProfileList = ({ type, name }) => {
     },
   ];
 
-  const rows = [
-    {
-      id: 1,
-      domain: "liujuncheng.key",
-      groupName: "Snow",
-      relation: "owner",
-      price: 35,
+  const queryFriendsFn = useCallback(
+    async ({ page }) => {
+      setListLoading(true);
+      const reqParams = {
+        type: listType,
+        address: profileAdd,
+        pageNum: page,
+        pageSize,
+      };
+      const resp = await queryFriends(reqParams);
+      console.log("resp:", resp);
+      if (resp && resp.code === 200 && resp.data && resp.data.list) {
+        setPageTotal(resp.data.pages);
+        setFriendRows(resp.data.list);
+      }
+
+      setListLoading(false);
     },
-    {
-      id: 2,
-      domain: "dsdsds.key",
-      groupName: "Lannister",
-      relation: "member",
-      price: 42,
-    },
-    {
-      id: 3,
-      domain: "liujuncheng.key",
-      groupName: "Lannister",
-      relation: "owner",
-      price: 45,
-    },
-    {
-      id: 4,
-      domain: "dsdsds.key",
-      groupName: "Stark",
-      relation: "member",
-      price: 16,
-    },
-    {
-      id: 5,
-      domain: "liujuncheng.key",
-      groupName: "Targaryen",
-      relation: "owner",
-      price: null,
-    },
-    {
-      id: 6,
-      domain: "dsdsds.key",
-      groupName: "Melisandre",
-      relation: "member",
-      price: 150,
-    },
-    {
-      id: 7,
-      domain: "liujuncheng.key",
-      groupName: "Clifford",
-      relation: "owner",
-      price: 44,
-    },
-    {
-      id: 8,
-      domain: "dsdsds.key",
-      groupName: "Frances",
-      relation: "member",
-      price: 36,
-    },
-    {
-      id: 9,
-      domain: "liujuncheng.key",
-      groupName: "Roxie",
-      relation: "owner",
-      price: 65,
-    },
-  ];
+    [listType, profileAdd]
+  );
 
   useEffect(() => {
     getResolverOwner(name).then((address) => {
-      console.log("address:", address);
-      queryFriends({
-        type: "empty",
-        address: address,
-        pageNum: 1,
-        pageSize: 30,
-      }).then((resp) => {
-        console.log("resp:");
-        if (resp && resp.code === 200 && resp.data && resp.data.list) {
-          console.log("friendList:", resp.data.list);
-          setFriendRows(resp.data.list);
-        }
-      });
+      setProfileAdd(address);
     });
-  }, [name]);
+  }, [name, listType]);
+
+  useEffect(() => {
+    setListLoading(true);
+    if (profileAdd) {
+      queryFriendsFn({ page: 1 });
+    }
+    setListLoading(false);
+  }, [profileAdd, queryFriendsFn]);
+
+  console.log("friendRows:", friendRows);
+  console.log("listLoading:", listLoading);
 
   return (
     <Stack spacing={3}>
@@ -269,9 +251,9 @@ const ProfileList = ({ type, name }) => {
           alignItems: "flex-end",
         }}
       >
-        <SelectWrapper value={selectItem} onChange={handleSelectChange}>
-          <MenuItem value="all">All</MenuItem>
-          <MenuItem value="followers">Followers</MenuItem>
+        <SelectWrapper value={listType} onChange={handleChangeListType}>
+          <MenuItem value="empty">All</MenuItem>
+          <MenuItem value="follower">Followers</MenuItem>
           <MenuItem value="following">Following</MenuItem>
         </SelectWrapper>
         <Box sx={{ height: "72vh", width: "100%" }}>
@@ -279,11 +261,30 @@ const ProfileList = ({ type, name }) => {
             rows={friendRows}
             getRowId={(row) => row.address}
             columns={type === "0" ? friendColumns : groupColumns}
-            pageSize={20}
+            loading={listLoading}
+            components={{
+              LoadingOverlay: LinearProgress,
+              NoRowsOverlay: TableNoRowComp,
+            }}
+            pagination={false}
+            hideFooter={true}
             disableSelectionOnClick={true}
             experimentalFeatures={{ newEditingApi: true }}
           />
         </Box>
+        <Pagination
+          count={pageTotal}
+          defaultPage={1}
+          page={pageState}
+          color="primary"
+          variant="outlined"
+          shape="rounded"
+          sx={{ margin: "20px auto 0" }}
+          onChange={(e, page) => {
+            setPageState(page);
+            queryFriendsFn({ page });
+          }}
+        />
       </Paper>
 
       <SaleDialog

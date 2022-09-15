@@ -5,14 +5,18 @@ import {
   Stack,
   Box,
   styled,
+  CircularProgress,
+  Pagination,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import { memo, useCallback, useState } from "react";
+import { memo, useCallback, useEffect, useState } from "react";
 import CommonTabs from "../../components/CommonTabs";
 import PageTitleWrapper from "../../components/PageTitleWrapper/PageTitleWrapper";
 import MarketItem from "../../components/Market/MarketItem";
+import { queryContractList } from "../../api/market";
 
 const MarketWrapper = styled(Box)(() => ({
+  width: "100%",
   display: "grid",
   justifyContent: "center",
   gridTemplateColumns: "repeat(auto-fill,minmax(190px,1fr))",
@@ -20,19 +24,16 @@ const MarketWrapper = styled(Box)(() => ({
   padding: "20px 0",
 }));
 
-const list = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+// const list = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 
 const Market = () => {
   const [tabValue, setTabValue] = useState(0);
-  const [marketList, setMarketList] = useState(list);
-
-  const [dialogOpen, setOpen] = useState(false);
+  const [marketList, setMarketList] = useState([]);
+  const [pageState, setPageState] = useState(1);
+  const [listLoading, setListLoading] = useState(false);
+  const [pageTotal, setPageTotal] = useState(0);
 
   const tabList = ["Friend", <span key="group">Group</span>];
-
-  const handleCloseDialog = useCallback(() => {
-    setOpen(false);
-  }, []);
 
   const handleChangeTabs = useCallback((e, newValue) => {
     setTabValue(newValue);
@@ -41,6 +42,27 @@ const Market = () => {
     } else {
       setMarketList([0, 1, 2, 3, 4, 5]);
     }
+  }, []);
+
+  const getMarketList = useCallback(async () => {
+    setListLoading(true);
+    if (tabValue === 0) {
+      const resp = await queryContractList({
+        type: "friends",
+        pageNum: pageState,
+        pageSize: 2,
+      });
+      console.log("marketList:", resp);
+      if (resp && resp.code === 200 && resp.data && resp.data.list) {
+        setPageTotal(resp.data.pages);
+        setMarketList(resp.data.list);
+      }
+    }
+    setListLoading(false);
+  }, [pageState, tabValue]);
+
+  useEffect(() => {
+    getMarketList();
   }, []);
 
   return (
@@ -70,11 +92,32 @@ const Market = () => {
             }
           />
         </Stack>
-        <MarketWrapper>
-          {marketList.map((item) => (
-            <MarketItem key={item} type={tabValue} />
-          ))}
-        </MarketWrapper>
+        {listLoading ? (
+          <Stack height="30vh" justifyContent="center" alignItems="center">
+            <CircularProgress sx={{ margin: "0 auto" }} />
+          </Stack>
+        ) : (
+          <Stack p={0} justifyContent="center" alignItems="center">
+            <MarketWrapper>
+              {marketList.map((item) => (
+                <MarketItem key={item} info={item} type={tabValue} />
+              ))}
+            </MarketWrapper>
+            <Pagination
+              count={pageTotal}
+              defaultPage={1}
+              page={pageState}
+              color="primary"
+              variant="outlined"
+              shape="rounded"
+              sx={{ margin: "20px auto 0" }}
+              onChange={(e, page) => {
+                setPageState(page);
+                getMarketList();
+              }}
+            />
+          </Stack>
+        )}
       </Paper>
     </Stack>
   );

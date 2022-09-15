@@ -22,8 +22,9 @@ const Wrapper = styled(Box)(() => ({
   },
 }));
 
-const MarketItem = ({ type }) => {
+const MarketItem = ({ type, info }) => {
   const [marketItemOpen, setMarketItemOpen] = useState(false);
+  const { name, releaseAmount, floorPrice, mintAmount, ipfsUrl } = info;
 
   const handleCloseDialog = useCallback(() => {
     // console.log("marketItemOpen:", marketItemOpen);
@@ -38,13 +39,17 @@ const MarketItem = ({ type }) => {
       }}
     >
       <Stack direction="row" p={0} spacing={1}>
-        <CommonAvatar sx={{ borderRadius: "12px" }} />
+        {ipfsUrl ? (
+          <CommonAvatar avatarUrl={ipfsUrl} sx={{ borderRadius: "12px" }} />
+        ) : (
+          <CommonAvatar name={name} />
+        )}
         <Stack direction="column" p={0}>
           <Typography
             variant="title"
             sx={{ fontWeight: 600, fontSize: "15px" }}
           >
-            Linkkey.key
+            {name}
           </Typography>
           <Typography sx={{ color: "#7a7a7a" }}>130 owners</Typography>
         </Stack>
@@ -54,13 +59,15 @@ const MarketItem = ({ type }) => {
           <Typography sx={{ fontWeight: 500, fontSize: "14px" }}>
             Minted/All
           </Typography>
-          <Typography sx={{ fontWeight: 600 }}>30/100</Typography>
+          <Typography sx={{ fontWeight: 600 }}>
+            {mintAmount}/{releaseAmount}
+          </Typography>
         </Box>
         <Box>
           <Typography sx={{ fontWeight: 500, fontSize: "14px" }}>
             Floor price
           </Typography>
-          <Typography sx={{ fontWeight: 600 }}>12 KEY</Typography>
+          <Typography sx={{ fontWeight: 600 }}>{floorPrice} KEY</Typography>
         </Box>
       </Stack>
 

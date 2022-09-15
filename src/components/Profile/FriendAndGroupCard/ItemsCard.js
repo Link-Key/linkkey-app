@@ -61,7 +61,6 @@ const ItemsCard = ({ type }) => {
   const isFriend = type === "friend" ? true : false;
   const [selectItem, setSelectItem] = useState("empty");
   const [profileAdd, setProfileAdd] = useState("");
-  const [listLoading, setListLoading] = useState(true);
   const [friendList, setFriendList] = useState([]);
 
   const { snsName } = useSelector((state) => ({
@@ -70,14 +69,11 @@ const ItemsCard = ({ type }) => {
 
   const router = useRouter();
 
-  console.log("router:", router.query);
-
   const handleSelectChange = useCallback((e) => {
     setSelectItem(e.target.value);
   }, []);
 
   const queryFriendsFn = useCallback(async () => {
-    setListLoading(true);
     const reqParams = {
       type: selectItem,
       address: profileAdd,
@@ -89,16 +85,12 @@ const ItemsCard = ({ type }) => {
     if (resp && resp.code === 200 && resp.data && resp.data.list) {
       setFriendList(resp.data.list);
     }
-
-    setListLoading(false);
   }, [selectItem, profileAdd]);
 
   useEffect(() => {
-    setListLoading(true);
     if (profileAdd) {
       queryFriendsFn();
     }
-    setListLoading(false);
   }, [profileAdd, queryFriendsFn]);
 
   useEffect(() => {

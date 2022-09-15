@@ -6,9 +6,7 @@ import SNSContractABI from "./SNS.json";
 export const SNSInstance = () => {
   const provider = getProvider();
   const chainId = getChainId();
-  console.log("chainId:", chainId);
   const snsAddress = contractAddress(chainId).snsAddress;
-  console.log("snsAddress:", snsAddress);
   const SNS = new Contract(snsAddress, SNSContractABI, provider);
   return SNS;
 };
@@ -28,6 +26,11 @@ const getResolverOwner = async (name) => {
   return info.resolverOwner;
 };
 
+const nameExisted = async (name) => {
+  const info = await SNSInstance().getInfo(emptyAddress, name, 0);
+  return info.recordExists;
+};
+
 const getStake = async (tokenId_) => {
   const isStake = await SNSInstance().getStake(tokenId_);
   return isStake;
@@ -37,5 +40,6 @@ export {
   getInfo,
   getTokenIdOfName,
   getResolverOwner,
-  getStake, //是否质押
+  getStake, // is staked
+  nameExisted,
 };

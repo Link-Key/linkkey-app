@@ -27,11 +27,9 @@ const MarketItem = ({ type, info }) => {
   const { name, releaseAmount, floorPrice, mintAmount, ipfsUrl } = info;
 
   const handleCloseDialog = useCallback(() => {
-    // console.log("marketItemOpen:", marketItemOpen);
     setMarketItemOpen(false);
   }, []);
 
-  console.log(marketItemOpen, "marketItemOpen out");
   return (
     <Wrapper
       onClick={() => {

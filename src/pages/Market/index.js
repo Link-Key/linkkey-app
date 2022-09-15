@@ -24,8 +24,6 @@ const MarketWrapper = styled(Box)(() => ({
   padding: "20px 0",
 }));
 
-// const list = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
-
 const Market = () => {
   const [tabValue, setTabValue] = useState(0);
   const [marketList, setMarketList] = useState([]);
@@ -50,7 +48,7 @@ const Market = () => {
       const resp = await queryContractList({
         type: "friends",
         pageNum: pageState,
-        pageSize: 2,
+        pageSize: 30,
       });
       console.log("marketList:", resp);
       if (resp && resp.code === 200 && resp.data && resp.data.list) {

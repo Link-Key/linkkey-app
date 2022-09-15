@@ -32,6 +32,7 @@ import { splitAddress } from "../../utils";
 import Conversation from "../../components/Conversation";
 import { useSelector } from "react-redux";
 import CommonAvatar from "../../components/Common/CommonAvatar";
+import { queryFriends } from "../../api";
 
 const ChatHeader = styled(Paper)(() => ({
   display: "flex",
@@ -151,30 +152,17 @@ export async function getStaticProps({ params }) {
   };
 }
 
-const list = [
-  {
-    name: "liujuncheng.key",
-    address: "0x5435e8Bb74D7Ba8F4a76287Dc0E75e203D87647e",
-  },
-  {
-    name: "keibest.key",
-    address: "0xB59E953EAc1f887dBc17ba0A97bc6aD8b2759c69",
-  },
-  {
-    name: "dsdsds.key",
-    address: "0xB3eF1C9718F3EAFaeb6fd7Ac63E8f43493101Ded",
-  },
-  {
-    name: "bowen.key",
-    address: "0xAf5d1fEA5Ae2656DDcd6CdB37471236B5C5Dcc17",
-  },
-];
-
 const Chat = ({ type }) => {
   const [tabValue, setTabValue] = useState(type);
-  const [selectItem, setSelectItem] = useState("all");
+  const [selectItem, setSelectItem] = useState("empty");
   const [addOpen, setAddOpen] = useState(false);
   const [conversation, setConversation] = useState({});
+
+  const [friendList, setFriendList] = useState([]);
+
+  const { account } = useSelector((state) => ({
+    account: state.walletInfo.account,
+  }));
 
   const isFriend = tabValue === 0 ? true : false;
 
@@ -197,16 +185,35 @@ const Chat = ({ type }) => {
   );
 
   const handleSelectChange = useCallback((e) => {
+    console.log("e.taget");
     setSelectItem(e.target.value);
   }, []);
 
   const tabList = ["Friend", <span key="group">Group</span>];
+
+  const queryFriendsFn = useCallback(async () => {
+    const reqParams = {
+      type: selectItem,
+      address: account,
+      pageNum: 1,
+      pageSize: 1000,
+    };
+    const resp = await queryFriends(reqParams);
+    console.log("resp:", resp);
+    if (resp && resp.code === 200 && resp.data && resp.data.list) {
+      setFriendList(resp.data.list);
+    }
+  }, [selectItem, account]);
 
   useEffect(() => {
     if (!client) {
       initialClient();
     }
   }, [client, initialClient]);
+
+  useEffect(() => {
+    queryFriendsFn();
+  }, [queryFriendsFn]);
 
   return (
     <Stack direction="column" spacing={2}>
@@ -271,13 +278,13 @@ const Chat = ({ type }) => {
                 </Typography>
 
                 <SelectWrapper value={selectItem} onChange={handleSelectChange}>
-                  <MenuItem value="all">All</MenuItem>
-                  <MenuItem value="my">My</MenuItem>
-                  <MenuItem value="his">His</MenuItem>
+                  <MenuItem value="empty">All</MenuItem>
+                  <MenuItem value="following">My</MenuItem>
+                  <MenuItem value="followers">His</MenuItem>
                 </SelectWrapper>
               </Stack>
               <RelationList component="nav">
-                {list.map((item, index) => (
+                {friendList.map((item, index) => (
                   <ListItemButton
                     key={index}
                     onClick={() => {

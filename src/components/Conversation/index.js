@@ -98,13 +98,21 @@ const Conversation = ({ name, recipientAdd }) => {
       height="100%"
       justifyContent="space-between"
     >
-      <ConversationHeader direction="row" spacing={2} pt={0} pl={0}>
-        <CommonAvatar account={recipientAdd} sx={{ borderRadius: "50%" }} />
-        <Box>
-          <Typography variant="title">{name}</Typography>
-          <EllipsisAddress account={recipientAdd} />
-        </Box>
-      </ConversationHeader>
+      {recipientAdd ? (
+        <ConversationHeader direction="row" spacing={2} pt={0} pl={0}>
+          <CommonAvatar account={recipientAdd} sx={{ borderRadius: "50%" }} />
+          <Box>
+            <Typography variant="title">{name}</Typography>
+            <EllipsisAddress account={recipientAdd} />
+          </Box>
+        </ConversationHeader>
+      ) : (
+        <ConversationHeader>
+          <Typography variant="title" sx={{ color: "#ea6060" }}>
+            Click your friend start chat !
+          </Typography>
+        </ConversationHeader>
+      )}
 
       <MessageList messages={chatList} recipientName={name} />
 

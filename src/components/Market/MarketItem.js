@@ -51,7 +51,7 @@ const MarketItem = ({ type, info }) => {
           >
             {name}
           </Typography>
-          <Typography sx={{ color: "#7a7a7a" }}>130 owners</Typography>
+          <Typography sx={{ color: "#7a7a7a" }}>{mintAmount} owners</Typography>
         </Stack>
       </Stack>
       <Stack direction="row" justifyContent="space-between" p={0}>
@@ -59,9 +59,7 @@ const MarketItem = ({ type, info }) => {
           <Typography sx={{ fontWeight: 500, fontSize: "14px" }}>
             Minted/All
           </Typography>
-          <Typography sx={{ fontWeight: 600 }}>
-            {mintAmount}/{releaseAmount}
-          </Typography>
+          <Typography sx={{ fontWeight: 600 }}>{releaseAmount}/150</Typography>
         </Box>
         <Box>
           <Typography sx={{ fontWeight: 500, fontSize: "14px" }}>

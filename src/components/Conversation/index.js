@@ -45,12 +45,16 @@ const Conversation = ({ name, recipientAdd }) => {
   const startClient = useCallback(async () => {
     console.log("client:", client);
     if (client && recipientAdd) {
-      const newConversation = await client.conversations.newConversation(
-        recipientAdd
-      );
-      setConversations(newConversation);
-      const m = await newConversation.messages();
-      setChatList([...m]);
+      try {
+        const newConversation = await client.conversations.newConversation(
+          recipientAdd
+        );
+        setConversations(newConversation);
+        const m = await newConversation.messages();
+        setChatList([...m]);
+      } catch (error) {
+        console.log("startClientErr:", error);
+      }
     }
   }, [recipientAdd, client]);
 

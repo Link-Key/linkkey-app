@@ -91,6 +91,8 @@ const BuyDialog = ({ open, title, onClose, info }) => {
     if (keyBalance > orderInfoState.erc20Amount) {
       try {
         await buy(info.tokenOwner, info.contractAddress, info.tokenId);
+        dialogDispatch({ type: "ADD_STEP" });
+        dialogDispatch({ type: "CLOSE_DIALOG" });
       } catch (error) {
         dialogDispatch({ type: "CLOSE_DIALOG" });
         ToastMention({ message: "contract error", type: "error" });
@@ -107,9 +109,10 @@ const BuyDialog = ({ open, title, onClose, info }) => {
       const orderInfo = await getOrder(info.tokenOwner, info.contractAddress);
       console.log("getOrderFn:", orderInfo);
       const weiAmount = BNformatToWei(orderInfo.erc20Amount);
-      console.log("weiAmount:", weiAmount);
-      console.log("amount:", weiFormatToEth(weiAmount));
-      setOrderInfoState(orderInfo);
+      setOrderInfoState({
+        ...orderInfo,
+        erc20Amount: weiFormatToEth(weiAmount).toFixed(18),
+      });
     } catch (error) {
       console.log("getOrderFnErr:", error);
     }
@@ -117,7 +120,7 @@ const BuyDialog = ({ open, title, onClose, info }) => {
 
   const { handlePayMint } = useTransaction({
     coinAddress: orderInfoState.erc20Address,
-    from: info.tokenOwner,
+    from: account,
     to: tradingAddress,
     price: orderInfoState.erc20Amount,
     executeFn: buyFn,

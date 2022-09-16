@@ -23,7 +23,7 @@ const OperationAlert = styled(Paper)(() => ({
   height: "70px",
   borderRadius: "12px",
   textAlign: "center",
-  background: "#ea6060",
+  background: "#ff928d",
   color: "#fff",
   fontWeight: 500,
   margin: "0 auto",
@@ -53,7 +53,7 @@ const OperationCard = ({ profileAdd }) => {
       <Typography variant="title">NTFs</Typography>
       {friendAddress === emptyAddress || groupAddress === emptyAddress ? (
         <OperationAlert>
-          You are not currently release Follow-NFT or Group-NFT, click the
+          ⚠️ You are not currently release Follow-NFT or Group-NFT, click the
           button below to release your NFT!
         </OperationAlert>
       ) : (

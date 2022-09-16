@@ -62,7 +62,7 @@ const MintOtherDialog = ({
       }
     } else {
       dialogDispatch({ type: "CLOSE_DIALOG" });
-      ToastMention({ message: "Key is not enough!", type: "warn" });
+      ToastMention({ message: "Balance is not enough!", type: "warn" });
     }
   }, [to, from, price, dialogDispatch, closeGetBalanceOfFn]);
 

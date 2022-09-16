@@ -13,13 +13,24 @@ import BuyDialog from "../../../components/Market/BuyDialog";
 import { queryOrderList } from "../../../api/market";
 import TableNoData from "../../../assets/icons/common/tableNoRows.svg";
 import { useRouter } from "next/router";
-import { getStakedInfo } from "../../../contracts/Stake";
+
+const list = [
+  {
+    txHash: "1111",
+    tokenOwnerName: "",
+    orderPrice: 1,
+    tokenOwner: "0x68aF7EF8182F4Bf50e32814AeCaaeB747bfc905F",
+    tokenId: 14,
+    contractAddress: "0x5FFC9D5F88ae0F79cF41f35c04cF85994f4C017E",
+  },
+];
 
 const PurchaseList = () => {
   const [buyOpen, setBuyOpen] = useState(false);
   const [pageState, setPageState] = useState(1);
   const [pageTotal, setPageTotal] = useState(1);
   const [buyList, setBuyList] = useState([]);
+  const [buyInfo, setBuyInfo] = useState({});
   const [listLoading, setListLoading] = useState(true);
   const pageSize = 30;
 
@@ -75,11 +86,13 @@ const PurchaseList = () => {
       type: "number",
       width: 110,
       ...commonColumnsProps,
-      renderCell: () => {
+      renderCell: (params) => {
+        const { row } = params;
         return (
           <Button
             variant="outlined"
             onClick={() => {
+              setBuyInfo(row);
               setBuyOpen(true);
             }}
           >
@@ -109,11 +122,13 @@ const PurchaseList = () => {
   );
 
   useEffect(() => {
-    if (router && router.query && router.query.contractAddress) {
-      setListLoading(true);
-      queryOrderListFn({ page: 1 });
-      setListLoading(false);
-    }
+    // if (router && router.query && router.query.contractAddress) {
+    //   setListLoading(true);
+    //   queryOrderListFn({ page: 1 });
+    //   setListLoading(false);
+    // }
+
+    setListLoading(false);
   }, [router]);
 
   return (
@@ -123,7 +138,8 @@ const PurchaseList = () => {
       <Paper sx={{ width: "100%" }}>
         <Box sx={{ height: "72vh", width: "100%" }}>
           <DataGrid
-            rows={buyList}
+            // rows={buyList}
+            rows={list}
             columns={columns}
             pageSize={20}
             loading={listLoading}
@@ -160,7 +176,8 @@ const PurchaseList = () => {
       <BuyDialog
         open={buyOpen}
         title="Buy Info"
-        contractAdd="0x5435e8bb74d7ba8f4a76287dc0e75e203d87647e"
+        info={buyInfo}
+        // contractAdd="0x5435e8bb74d7ba8f4a76287dc0e75e203d87647e"
         onClose={() => {
           setBuyOpen(false);
         }}

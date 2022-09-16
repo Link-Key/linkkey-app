@@ -30,6 +30,7 @@ const Market = () => {
   const [pageState, setPageState] = useState(1);
   const [listLoading, setListLoading] = useState(false);
   const [pageTotal, setPageTotal] = useState(0);
+  const [searchInp, setSearchInp] = useState("");
 
   const tabList = ["Friend", <span key="group">Group</span>];
 
@@ -42,11 +43,16 @@ const Market = () => {
     }
   }, []);
 
+  const handleChangeSearchInp = useCallback((e) => {
+    setSearchInp(e.target.value);
+  }, []);
+
   const getMarketList = useCallback(async () => {
     setListLoading(true);
     if (tabValue === 0) {
       const resp = await queryContractList({
         type: "friends",
+        name: searchInp,
         pageNum: pageState,
         pageSize: 30,
       });
@@ -57,7 +63,7 @@ const Market = () => {
       }
     }
     setListLoading(false);
-  }, [pageState, tabValue]);
+  }, [pageState, tabValue, searchInp]);
 
   useEffect(() => {
     getMarketList();
@@ -81,10 +87,17 @@ const Market = () => {
           />
 
           <InputBase
+            value={searchInp}
             placeholder="Please input name"
             sx={{ height: "40px", paddingRight: "0px" }}
+            onChange={handleChangeSearchInp}
             endAdornment={
-              <IconButton sx={{ borderRadius: "12px" }}>
+              <IconButton
+                sx={{ borderRadius: "12px" }}
+                onClick={() => {
+                  getMarketList({ name: searchInp });
+                }}
+              >
                 <SearchIcon />
               </IconButton>
             }

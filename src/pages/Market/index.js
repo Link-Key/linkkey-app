@@ -49,6 +49,7 @@ const Market = () => {
 
   const getMarketList = useCallback(async () => {
     setListLoading(true);
+
     if (tabValue === 0) {
       const resp = await queryContractList({
         type: "friends",
@@ -95,7 +96,7 @@ const Market = () => {
               <IconButton
                 sx={{ borderRadius: "12px" }}
                 onClick={() => {
-                  getMarketList({ name: searchInp });
+                  getMarketList();
                 }}
               >
                 <SearchIcon />
@@ -110,8 +111,8 @@ const Market = () => {
         ) : (
           <Stack p={0} justifyContent="center" alignItems="center">
             <MarketWrapper>
-              {marketList.map((item) => (
-                <MarketItem key={item} info={item} type={tabValue} />
+              {marketList.map((item, index) => (
+                <MarketItem key={index} info={item} type={tabValue} />
               ))}
             </MarketWrapper>
             <Pagination

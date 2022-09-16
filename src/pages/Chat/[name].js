@@ -157,6 +157,7 @@ const Chat = ({ type }) => {
   const [selectItem, setSelectItem] = useState("empty");
   const [addOpen, setAddOpen] = useState(false);
   const [conversation, setConversation] = useState({});
+  const [searchInp, setSearchInp] = useState("");
 
   const [friendList, setFriendList] = useState([]);
 
@@ -184,8 +185,11 @@ const Chat = ({ type }) => {
     [router]
   );
 
+  const handleChangeInp = useCallback((e) => {
+    setSearchInp(e.target.value);
+  }, []);
+
   const handleSelectChange = useCallback((e) => {
-    console.log("e.taget");
     setSelectItem(e.target.value);
   }, []);
 
@@ -195,6 +199,7 @@ const Chat = ({ type }) => {
     const reqParams = {
       type: selectItem,
       address: account,
+      name: searchInp,
       pageNum: 1,
       pageSize: 1000,
     };
@@ -202,7 +207,7 @@ const Chat = ({ type }) => {
     if (resp && resp.code === 200 && resp.data && resp.data.list) {
       setFriendList(resp.data.list);
     }
-  }, [selectItem, account]);
+  }, [selectItem, account, searchInp]);
 
   useEffect(() => {
     if (!client) {
@@ -212,7 +217,7 @@ const Chat = ({ type }) => {
 
   useEffect(() => {
     queryFriendsFn();
-  }, [queryFriendsFn]);
+  }, []);
 
   return (
     <Stack direction="column" spacing={2}>
@@ -224,12 +229,19 @@ const Chat = ({ type }) => {
         />
         <Stack direction="row" spacing={1} p={0} alignItems="center">
           <InputBase
+            value={searchInp}
             placeholder={
               tabValue === 0 ? "Search friend Name" : "Search group name"
             }
+            onChange={handleChangeInp}
             sx={{ height: "40px", paddingRight: "0px" }}
             endAdornment={
-              <IconButton sx={{ borderRadius: "12px" }}>
+              <IconButton
+                sx={{ borderRadius: "12px" }}
+                onClick={() => {
+                  queryFriendsFn();
+                }}
+              >
                 <SearchIcon />
               </IconButton>
             }

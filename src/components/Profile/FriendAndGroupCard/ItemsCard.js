@@ -156,9 +156,9 @@ const ItemsCard = ({ type }) => {
       ) : (
         <Stack justifyContent="center" alignItems="center">
           <TableNoData />
-          <Typography variant="title" sx={{ fontWeight: 600 }}>
-            No Data
-          </Typography>
+          {/*<Typography variant="title" sx={{ fontWeight: 600 }}>*/}
+          {/*  No Data*/}
+          {/*</Typography>*/}
         </Stack>
       )}
     </Card>

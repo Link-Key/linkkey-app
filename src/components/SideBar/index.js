@@ -14,10 +14,13 @@ import LinkkeyLogo from "../../assets/icons/common/logo.svg";
 // import LinkkeyLogo from "../../assets/images/LinkkeyLogo.png";
 import OuterLink from "./OuterLink";
 import InsertEmoticonIcon from "@mui/icons-material/InsertEmoticon";
+import PortraitIcon from '@mui/icons-material/Portrait';
 import DescriptionRoundedIcon from "@mui/icons-material/DescriptionRounded";
 import SmsIcon from "@mui/icons-material/Sms";
 import StoreIcon from "@mui/icons-material/Store";
+import InterestsIcon from '@mui/icons-material/Interests';
 import HelpCenterIcon from "@mui/icons-material/HelpCenter";
+import DnsIcon from '@mui/icons-material/Dns';
 import { useWalletInfo } from "../../providers/wallet";
 import { useSelector } from "react-redux";
 import CommonLoadingBtn from "../Button/LoadingButton";
@@ -65,7 +68,7 @@ const menuList = [
   {
     name: "Profile",
     type: "menu",
-    icon: <InsertEmoticonIcon />,
+    icon: <PortraitIcon />,
   },
   { name: "Chat", type: "menu", icon: <SmsIcon /> },
   {
@@ -74,14 +77,19 @@ const menuList = [
     icon: <StoreIcon />,
   },
   {
+    name: "Circle",
+    type: "https://docs.linkkey.tech/AboutLinkkey/Circle.html",
+    icon: <InterestsIcon />,
+  },
+  {
+    name: "SNS",
+    type: "https://sns.chat/",
+    icon: <DnsIcon />,
+  },
+  {
     name: "Docs",
     type: "https://docs.linkkey.tech",
     icon: <DescriptionRoundedIcon />,
-  },
-  {
-    name: "FAQ",
-    type: "https://sns.chat/",
-    icon: <HelpCenterIcon />,
   },
 ];
 
@@ -140,21 +148,26 @@ const SideBar = () => {
   return (
     <SideBarWrapper>
       <Box>
-        <Link
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            svg: {
-              width: "220px",
-            },
-          }}
-          onClick={() => {
-            router.push("/");
-          }}
-        >
-          <LinkkeyLogo />
-          {/* <Image src={LinkkeyLogo} alt="logo" /> */}
-        </Link>
+        <div style={{display: "block"}}>
+          <Link
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              svg: {
+                width: "200px",
+              },
+            }}
+            onClick={() => {
+              router.push("/");
+            }}
+          >
+            <LinkkeyLogo />
+            {/* <Image src={LinkkeyLogo} alt="logo" /> */}
+          </Link>
+          <div style={{textAlign: "right", fontSize: "12px", color: "#eb6161"}}>
+            <a href="https://github.com/Link-Key/linkkey-app/releases">V1.0.0</a>
+          </div>
+        </div>
 
         <List
           component="nav"

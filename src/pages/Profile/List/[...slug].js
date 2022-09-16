@@ -17,6 +17,9 @@ import { getResolverOwner } from "../../../contracts/SNS";
 import { queryFriends } from "../../../api";
 import TableNoData from "../../../assets/icons/common/tableNoRows.svg";
 import CommonAvatar from "../../../components/Common/CommonAvatar";
+import { getStakedInfo } from "../../../contracts/Stake";
+import CommonLoadingBtn from "../../../components/Button/LoadingButton";
+import { getNFTInfo } from "../../../contracts/NFT";
 
 const TitleWrapper = styled(Paper)(() => ({
   // display: "flex",
@@ -66,11 +69,18 @@ const ProfileList = ({ type, name }) => {
   const [saleOpen, setSaleOpen] = useState(false);
   const [listType, setListType] = useState("empty");
   const [profileAdd, setProfileAdd] = useState("");
+  const [saleInfo, setSaleInfo] = useState({
+    address: "",
+    contractAdd: "",
+    tokenId: "",
+    tax: "",
+  });
 
   const [pageState, setPageState] = useState(1);
   const [pageTotal, setPageTotal] = useState(0);
   const [friendRows, setFriendRows] = useState([]);
   const [listLoading, setListLoading] = useState(true);
+  const [saleLoading, setSaleLoading] = useState(true);
   const pageSize = 30;
 
   const TableNoRowComp = () => {
@@ -95,6 +105,23 @@ const ProfileList = ({ type, name }) => {
     },
     [listType]
   );
+
+  const handleOpenSaleDialog = useCallback(async (address) => {
+    const stakeInfo = await getStakedInfo(address);
+    console.log("stakeInfo:", stakeInfo);
+
+    if (stakeInfo && stakeInfo.friendNFTAddress) {
+      const obj = await getNFTInfo(stakeInfo.friendNFTAddress, address);
+
+      setSaleInfo({
+        tokenId: obj.tokenId,
+        tax: obj.tax,
+        contractAdd: stakeInfo.friendNFTAddress,
+      });
+    }
+
+    setSaleOpen(true);
+  }, []);
 
   const commonColumnsProps = {
     sortable: false,
@@ -159,25 +186,26 @@ const ProfileList = ({ type, name }) => {
       renderCell: (params) => {
         const { row } = params;
         return (
-          <>
+          <Box key={row.address}>
             {row.type === "following" ? (
-              <Button
+              <CommonLoadingBtn
                 variant="outlined"
-                onClick={() => {
-                  setSaleOpen(true);
+                onClick={async () => {
+                  await handleOpenSaleDialog(
+                    "0x5435e8bb74d7ba8f4a76287dc0e75e203d87647e"
+                  );
                 }}
               >
                 Sale
-              </Button>
+              </CommonLoadingBtn>
             ) : (
               "-"
             )}
-          </>
+          </Box>
         );
       },
     },
   ];
-
   const groupColumns = [
     {
       field: "id",
@@ -313,9 +341,12 @@ const ProfileList = ({ type, name }) => {
       <SaleDialog
         open={saleOpen}
         title="Sale"
-        contractAdd="0x5435e8bb74d7ba8f4a76287dc0e75e203d87647e"
+        contractAdd={saleInfo.contractAdd}
+        tokenId={saleInfo.tokenId}
+        tax={saleInfo.tax}
         onClose={() => {
           setSaleOpen(false);
+          setSaleInfo({ address: "", contractAdd: "", tokenId: "", tax: "" });
         }}
       />
     </Stack>

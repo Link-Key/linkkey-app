@@ -47,7 +47,7 @@ const PurchaseList = () => {
 
   const columns = [
     {
-      field: "name",
+      field: "tokenOwnerName",
       headerName: "Domain name",
       width: 90,
       ...commonColumnsProps,
@@ -59,7 +59,7 @@ const PurchaseList = () => {
       ...commonColumnsProps,
     },
     {
-      field: "price",
+      field: "orderPrice",
       headerName: "Price",
       width: 150,
       ...commonColumnsProps,
@@ -85,23 +85,11 @@ const PurchaseList = () => {
     },
   ];
 
-  const rows = [
-    { id: 1, name: "Snow", action: "Jon", price: 35 },
-    { id: 2, name: "Lannister", action: "Cersei", price: 42 },
-    { id: 3, name: "Lannister", action: "Jaime", price: 45 },
-    { id: 4, name: "Stark", action: "Arya", price: 16 },
-    { id: 5, name: "Targaryen", action: "Daenerys", price: null },
-    { id: 6, name: "Melisandre", action: null, price: 150 },
-    { id: 7, name: "Clifford", action: "Ferrara", price: 44 },
-    { id: 8, name: "Frances", action: "Rossini", price: 36 },
-    { id: 9, name: "Roxie", action: "Harvey", price: 65 },
-  ];
-
   const queryOrderListFn = useCallback(
     async ({ page }) => {
       setListLoading(true);
       const reqParams = {
-        contractAddress: "111",
+        contractAddress: "0nIje3pH9vUQkZOUYXGqT1g5v5Nx90nIkilF7sMmkp",
         pageNum: page,
         pageSize: pageSize,
       };
@@ -134,6 +122,7 @@ const PurchaseList = () => {
             columns={columns}
             pageSize={20}
             loading={listLoading}
+            getRowId={(row) => row.txHash}
             components={{
               LoadingOverlay: LinearProgress,
               NoRowsOverlay: TableNoRowComp,

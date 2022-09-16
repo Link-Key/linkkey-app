@@ -1,7 +1,7 @@
-import { memo, useCallback } from "react";
+import { useCallback } from "react";
 import { allowance, approve } from "../contracts/ERC20";
 import { useDialog } from "../providers/ApproveDialog";
-import { BNformatToWei, ethFormatToWei, hexToNumber } from "../utils";
+import { ethFormatToWei, hexToNumber } from "../utils";
 
 const useTransaction = ({ coinAddress, from, to, price, executeFn }) => {
   const { dialogDispatch } = useDialog();

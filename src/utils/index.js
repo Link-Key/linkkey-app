@@ -48,6 +48,10 @@ export const getKeyAddress = () => {
   return contractAddress(chainId.toString()).keyAddress;
 };
 
+export const getTradingAddress = () => {
+  return contractAddress(chainId.toString()).tradingAddress;
+};
+
 export const getKeyBalance = async (owner) => {
   const keyAddress = getKeyAddress();
   try {

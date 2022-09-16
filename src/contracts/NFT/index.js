@@ -59,16 +59,20 @@ const balanceOf = async (NFTAddress, owner) => {
 const getNFTInfo = async (NFTAddress, owner) => {
   const tax = await getTaxPreparation(NFTAddress);
   const balance = await balanceOf(NFTAddress, owner);
-  console.log("tax:", hexToNumber(tax), "balance:", hexToNumber(balance));
+  const tokenId = await getLastTokenId(NFTAddress, owner);
   const obj = {
     tax: "",
     balance: "",
+    tokenId: "",
   };
   if (tax) {
     obj.tax = hexToNumber(tax);
   }
   if (balance) {
     obj.balance = hexToNumber(balance);
+  }
+  if (tokenId) {
+    obj.tokenId = hexToNumber(tokenId);
   }
   return obj;
 };

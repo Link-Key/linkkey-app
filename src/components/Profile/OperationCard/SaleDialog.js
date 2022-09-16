@@ -11,6 +11,12 @@ import { memo, useCallback, useState } from "react";
 import CommonDialog from "../../CommonDialog";
 import EllipsisAddress from "../../EllipsisAddress";
 import KeyboardArrowDown from "@mui/icons-material/KeyboardArrowDown";
+import { isApprovedForAll, setApprovalForAll } from "../../../contracts/NFT";
+import { setOrder } from "../../../contracts/Trading";
+import { useSelector } from "react-redux";
+import { getKeyAddress, getTradingAddress } from "../../../utils";
+import CommonLoadingBtn from "../../Button/LoadingButton";
+import { useDialog } from "../../../providers/ApproveDialog";
 
 const Wrapper = styled(Box)(() => ({
   display: "flex",
@@ -64,24 +70,120 @@ const SelectWrapper = styled(Select)(() => ({
   },
 }));
 
-const SaleDialog = ({ open, title, contractAdd, onClose }) => {
+const SaleDialog = ({ open, title, contractAdd, tax, tokenId, onClose }) => {
   const [saleInp, setSaleInp] = useState("");
   const [selectItem, setSelectItem] = useState("key");
+  const [receiveInp, setReceiveInp] = useState("-");
+  const [submitLoading, setSubmitLoading] = useState(false);
+  const keyAddress = getKeyAddress();
+  const tradingAddress = getTradingAddress();
 
-  const handleChangeSaleInp = useCallback((e) => {
-    const value = e.target.value;
-    console.log("value:", typeof value);
-    if (/^[0-9]*$/.test(value) && !value.startsWith("0")) {
-      setSaleInp(value);
+  const { account } = useSelector((state) => ({
+    account: state.walletInfo.account,
+  }));
+
+  const { dialogDispatch } = useDialog();
+
+  const handleChangeSaleInp = useCallback(
+    (e) => {
+      const value = e.target.value;
+      console.log("value:", typeof value);
+      if (/^[0-9]*$/.test(value) && !value.startsWith("0")) {
+        setSaleInp(value);
+        const receivePrice = (value * (100 - tax - 2.5)) / 100;
+        setReceiveInp(receivePrice);
+      }
+    },
+    [tax]
+  );
+
+  const handleCloseDialog = useCallback(() => {
+    setSaleInp("");
+    setReceiveInp("");
+    onClose();
+  }, [onClose]);
+
+  const allowanceFn = useCallback(async () => {
+    try {
+      const isApprove = await isApprovedForAll(
+        contractAdd,
+        account,
+        tradingAddress
+      );
+      return isApprove;
+    } catch (error) {
+      console.log("handleAllowanceFnErr:", error);
+      return false;
     }
-  }, []);
+  }, [contractAdd, account, tradingAddress]);
+
+  const approveFn = useCallback(
+    async (isApprove) => {
+      try {
+        const resp = await setApprovalForAll(
+          contractAdd,
+          tradingAddress,
+          isApprove
+        );
+        console.log("resp:", resp);
+      } catch (error) {
+        console.log("handleApproveFnErr:", error);
+      }
+    },
+    [contractAdd, tradingAddress]
+  );
+
+  const saleNFTFn = useCallback(async () => {
+    try {
+      clearInterval(window.approveTimer);
+      const resp = await setOrder(contractAdd, keyAddress, saleInp, tokenId);
+      console.log("setOrder:", resp);
+      dialogDispatch({ type: "ADD_STEP" });
+      dialogDispatch({ type: "CLOSE_DIALOG" });
+      handleCloseDialog();
+    } catch (error) {
+      console.log("saleNFTFnErr:", error);
+      dialogDispatch({ type: "CLOSE_DIALOG" });
+    }
+  }, [
+    contractAdd,
+    keyAddress,
+    saleInp,
+    tokenId,
+    dialogDispatch,
+    handleCloseDialog,
+  ]);
+
+  const handleSale = useCallback(async () => {
+    dialogDispatch({ type: "SET_LOADING", payload: true });
+    const isApprove = await allowanceFn();
+    handleCloseDialog();
+    if (isApprove) {
+      dialogDispatch({ type: "OPEN_DIALOG" });
+      dialogDispatch({ type: "ADD_STEP" });
+      await saleNFTFn();
+    } else {
+      dialogDispatch({ type: "OPEN_DIALOG" });
+      await approveFn(true);
+      setTimeout(async () => {
+        window.approveTimer = setInterval(async () => {
+          const approve = await allowanceFn();
+          console.log("approve:", approve);
+          if (approve) {
+            dialogDispatch({ type: "ADD_STEP" });
+            await saleNFTFn();
+          }
+        }, 1000);
+      }, 0);
+    }
+  }, [dialogDispatch, allowanceFn, saleNFTFn, approveFn, handleCloseDialog]);
 
   const handleSelectChange = useCallback((e) => {
     setSelectItem(e.target.value);
   }, []);
 
   return (
-    <CommonDialog open={open} title={title} onClose={onClose}>
+    <CommonDialog open={open} title={title} onClose={handleCloseDialog}>
       <Wrapper>
         <Items>
           <Typography>Contract Address: </Typography>
@@ -100,16 +202,25 @@ const SaleDialog = ({ open, title, contractAdd, onClose }) => {
         </TypographyBox>
 
         <Typography variant="subtitle1">- Service fee: 2.5%</Typography>
-        <Typography variant="subtitle1">- Royalties: 10%</Typography>
-        <Typography variant="subtitle1">You will receive: - </Typography>
-        <Button
+        <Typography variant="subtitle1">- Royalties: {tax}%</Typography>
+        <Typography variant="subtitle1">
+          You will receive: {receiveInp}
+        </Typography>
+        <CommonLoadingBtn
+          loading={submitLoading}
+          disabled={saleInp.length === 0}
           variant="contained"
           sx={{
             margin: "5px auto",
           }}
+          onClick={async () => {
+            setSubmitLoading(true);
+            await handleSale();
+            setSubmitLoading(false);
+          }}
         >
           Submit
-        </Button>
+        </CommonLoadingBtn>
       </Wrapper>
     </CommonDialog>
   );

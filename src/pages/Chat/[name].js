@@ -189,25 +189,33 @@ const Chat = ({ type }) => {
     setSearchInp(e.target.value);
   }, []);
 
-  const handleSelectChange = useCallback((e) => {
-    setSelectItem(e.target.value);
-  }, []);
+  const handleSelectChange = useCallback(
+    async (e) => {
+      setSelectItem(e.target.value);
+      await queryFriendsFn(e.target.value);
+    },
+    [queryFriendsFn]
+  );
 
   const tabList = ["Friend", <span key="group">Group</span>];
 
-  const queryFriendsFn = useCallback(async () => {
-    const reqParams = {
-      type: selectItem,
-      address: account,
-      name: searchInp,
-      pageNum: 1,
-      pageSize: 1000,
-    };
-    const resp = await queryFriends(reqParams);
-    if (resp && resp.code === 200 && resp.data && resp.data.list) {
-      setFriendList(resp.data.list);
-    }
-  }, [selectItem, account, searchInp]);
+  const queryFriendsFn = useCallback(
+    async (selectType) => {
+      console.log("selectType:", selectType);
+      const reqParams = {
+        type: selectType ? selectType : selectItem,
+        address: account,
+        searchName: searchInp,
+        pageNum: 1,
+        pageSize: 1000,
+      };
+      const resp = await queryFriends(reqParams);
+      if (resp && resp.code === 200 && resp.data && resp.data.list) {
+        setFriendList(resp.data.list);
+      }
+    },
+    [account, searchInp, selectItem]
+  );
 
   useEffect(() => {
     if (!client) {

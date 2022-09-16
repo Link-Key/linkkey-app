@@ -11,8 +11,9 @@ import {
 import PageTitleWrapper from "../../../components/PageTitleWrapper/PageTitleWrapper";
 import BuyDialog from "../../../components/Market/BuyDialog";
 import { queryOrderList } from "../../../api/market";
-import TableNoRow from "../../../components/TableNoRow";
 import TableNoData from "../../../assets/icons/common/tableNoRows.svg";
+import { useRouter } from "next/router";
+import { getStakedInfo } from "../../../contracts/Stake";
 
 const PurchaseList = () => {
   const [buyOpen, setBuyOpen] = useState(false);
@@ -21,6 +22,10 @@ const PurchaseList = () => {
   const [buyList, setBuyList] = useState([]);
   const [listLoading, setListLoading] = useState(true);
   const pageSize = 30;
+
+  const router = useRouter();
+
+  const friendAddress = router.query.contractAddress;
 
   const commonColumnsProps = {
     sortable: false,
@@ -89,7 +94,7 @@ const PurchaseList = () => {
     async ({ page }) => {
       setListLoading(true);
       const reqParams = {
-        contractAddress: "0nIje3pH9vUQkZOUYXGqT1g5v5Nx90nIkilF7sMmkp",
+        contractAddress: friendAddress,
         pageNum: page,
         pageSize: pageSize,
       };
@@ -100,16 +105,16 @@ const PurchaseList = () => {
       }
       setListLoading(false);
     },
-    [pageSize]
+    [pageSize, friendAddress]
   );
 
-  console.log("buyList:", buyList);
-
   useEffect(() => {
-    setListLoading(true);
-    queryOrderListFn({ page: 1 });
-    setListLoading(false);
-  }, []);
+    if (router && router.query && router.query.contractAddress) {
+      setListLoading(true);
+      queryOrderListFn({ page: 1 });
+      setListLoading(false);
+    }
+  }, [router]);
 
   return (
     <Stack spacing={3}>

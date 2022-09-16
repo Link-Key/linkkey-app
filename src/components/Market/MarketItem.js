@@ -69,6 +69,7 @@ const MarketItem = ({ type, info }) => {
 
       <MarketDialog
         type={type}
+        info={info}
         open={marketItemOpen}
         onClose={handleCloseDialog}
       />

@@ -134,6 +134,13 @@ const SaleDialog = ({ open, title, contractAdd, tax, tokenId, onClose }) => {
   );
 
   const saleNFTFn = useCallback(async () => {
+    console.log(
+      "contractAdd, keyAddress, saleInp, tokenId:",
+      contractAdd,
+      keyAddress,
+      saleInp,
+      tokenId
+    );
     try {
       clearInterval(window.approveTimer);
       const resp = await setOrder(contractAdd, keyAddress, saleInp, tokenId);

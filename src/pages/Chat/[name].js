@@ -199,7 +199,6 @@ const Chat = ({ type }) => {
       pageSize: 1000,
     };
     const resp = await queryFriends(reqParams);
-    console.log("resp:", resp);
     if (resp && resp.code === 200 && resp.data && resp.data.list) {
       setFriendList(resp.data.list);
     }

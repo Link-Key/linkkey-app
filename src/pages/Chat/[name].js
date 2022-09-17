@@ -33,6 +33,8 @@ import Conversation from "../../components/Conversation";
 import { useSelector } from "react-redux";
 import CommonAvatar from "../../components/Common/CommonAvatar";
 import { queryFriends } from "../../api";
+import { getResolverOwner } from "../../contracts/SNS";
+import ToastMention from "../../components/ToastMessage";
 
 const ChatHeader = styled(Paper)(() => ({
   display: "flex",
@@ -157,6 +159,7 @@ const Chat = ({ type }) => {
   const [selectItem, setSelectItem] = useState("empty");
   const [addOpen, setAddOpen] = useState(false);
   const [conversation, setConversation] = useState({});
+  const [searchInp, setSearchInp] = useState("");
 
   const [friendList, setFriendList] = useState([]);
 
@@ -184,26 +187,50 @@ const Chat = ({ type }) => {
     [router]
   );
 
-  const handleSelectChange = useCallback((e) => {
-    console.log("e.taget");
-    setSelectItem(e.target.value);
+  const handleChangeInp = useCallback((e) => {
+    setSearchInp(e.target.value);
+  }, []);
+
+  const handleSelectChange = useCallback(
+    async (e) => {
+      setSelectItem(e.target.value);
+      await queryFriendsFn(e.target.value);
+    },
+    [queryFriendsFn]
+  );
+
+  const handleSelectChat = useCallback(async (item) => {
+    console.log("item:", item);
+    try {
+      const resp = await getResolverOwner(item.name);
+      if (resp) {
+        setConversation({ ...item, address: resp });
+      }
+    } catch (error) {
+      ToastMention({ message: "Get friend message error", type: "error" });
+      console.log("handleSelectChatErr:", error);
+    }
   }, []);
 
   const tabList = ["Friend", <span key="group">Group</span>];
 
-  const queryFriendsFn = useCallback(async () => {
-    const reqParams = {
-      type: selectItem,
-      address: account,
-      pageNum: 1,
-      pageSize: 1000,
-    };
-    const resp = await queryFriends(reqParams);
-    console.log("resp:", resp);
-    if (resp && resp.code === 200 && resp.data && resp.data.list) {
-      setFriendList(resp.data.list);
-    }
-  }, [selectItem, account]);
+  const queryFriendsFn = useCallback(
+    async (selectType) => {
+      console.log("selectType:", selectType);
+      const reqParams = {
+        type: selectType ? selectType : selectItem,
+        address: account,
+        searchName: searchInp,
+        pageNum: 1,
+        pageSize: 1000,
+      };
+      const resp = await queryFriends(reqParams);
+      if (resp && resp.code === 200 && resp.data && resp.data.list) {
+        setFriendList(resp.data.list);
+      }
+    },
+    [account, searchInp, selectItem]
+  );
 
   useEffect(() => {
     if (!client) {
@@ -213,7 +240,7 @@ const Chat = ({ type }) => {
 
   useEffect(() => {
     queryFriendsFn();
-  }, [queryFriendsFn]);
+  }, []);
 
   return (
     <Stack direction="column" spacing={2}>
@@ -225,12 +252,19 @@ const Chat = ({ type }) => {
         />
         <Stack direction="row" spacing={1} p={0} alignItems="center">
           <InputBase
+            value={searchInp}
             placeholder={
               tabValue === 0 ? "Search friend Name" : "Search group name"
             }
+            onChange={handleChangeInp}
             sx={{ height: "40px", paddingRight: "0px" }}
             endAdornment={
-              <IconButton sx={{ borderRadius: "12px" }}>
+              <IconButton
+                sx={{ borderRadius: "12px" }}
+                onClick={() => {
+                  queryFriendsFn();
+                }}
+              >
                 <SearchIcon />
               </IconButton>
             }
@@ -288,7 +322,7 @@ const Chat = ({ type }) => {
                   <ListItemButton
                     key={index}
                     onClick={() => {
-                      setConversation({ ...item });
+                      handleSelectChat(item);
                     }}
                   >
                     <CommonAvatar

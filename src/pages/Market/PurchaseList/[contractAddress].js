@@ -11,16 +11,32 @@ import {
 import PageTitleWrapper from "../../../components/PageTitleWrapper/PageTitleWrapper";
 import BuyDialog from "../../../components/Market/BuyDialog";
 import { queryOrderList } from "../../../api/market";
-import TableNoRow from "../../../components/TableNoRow";
 import TableNoData from "../../../assets/icons/common/tableNoRows.svg";
+import { useRouter } from "next/router";
+
+const list = [
+  {
+    txHash: "1111",
+    tokenOwnerName: "",
+    orderPrice: 1,
+    tokenOwner: "0x68aF7EF8182F4Bf50e32814AeCaaeB747bfc905F",
+    tokenId: 14,
+    contractAddress: "0x5FFC9D5F88ae0F79cF41f35c04cF85994f4C017E",
+  },
+];
 
 const PurchaseList = () => {
   const [buyOpen, setBuyOpen] = useState(false);
   const [pageState, setPageState] = useState(1);
   const [pageTotal, setPageTotal] = useState(1);
   const [buyList, setBuyList] = useState([]);
+  const [buyInfo, setBuyInfo] = useState({});
   const [listLoading, setListLoading] = useState(true);
   const pageSize = 30;
+
+  const router = useRouter();
+
+  const friendAddress = router.query.contractAddress;
 
   const commonColumnsProps = {
     sortable: false,
@@ -47,7 +63,7 @@ const PurchaseList = () => {
 
   const columns = [
     {
-      field: "name",
+      field: "tokenOwnerName",
       headerName: "Domain name",
       width: 90,
       ...commonColumnsProps,
@@ -59,7 +75,7 @@ const PurchaseList = () => {
       ...commonColumnsProps,
     },
     {
-      field: "price",
+      field: "orderPrice",
       headerName: "Price",
       width: 150,
       ...commonColumnsProps,
@@ -70,11 +86,13 @@ const PurchaseList = () => {
       type: "number",
       width: 110,
       ...commonColumnsProps,
-      renderCell: () => {
+      renderCell: (params) => {
+        const { row } = params;
         return (
           <Button
             variant="outlined"
             onClick={() => {
+              setBuyInfo(row);
               setBuyOpen(true);
             }}
           >
@@ -85,23 +103,11 @@ const PurchaseList = () => {
     },
   ];
 
-  const rows = [
-    { id: 1, name: "Snow", action: "Jon", price: 35 },
-    { id: 2, name: "Lannister", action: "Cersei", price: 42 },
-    { id: 3, name: "Lannister", action: "Jaime", price: 45 },
-    { id: 4, name: "Stark", action: "Arya", price: 16 },
-    { id: 5, name: "Targaryen", action: "Daenerys", price: null },
-    { id: 6, name: "Melisandre", action: null, price: 150 },
-    { id: 7, name: "Clifford", action: "Ferrara", price: 44 },
-    { id: 8, name: "Frances", action: "Rossini", price: 36 },
-    { id: 9, name: "Roxie", action: "Harvey", price: 65 },
-  ];
-
   const queryOrderListFn = useCallback(
     async ({ page }) => {
       setListLoading(true);
       const reqParams = {
-        contractAddress: "111",
+        contractAddress: friendAddress,
         pageNum: page,
         pageSize: pageSize,
       };
@@ -112,16 +118,18 @@ const PurchaseList = () => {
       }
       setListLoading(false);
     },
-    [pageSize]
+    [pageSize, friendAddress]
   );
 
-  console.log("buyList:", buyList);
-
   useEffect(() => {
-    setListLoading(true);
-    queryOrderListFn({ page: 1 });
+    // if (router && router.query && router.query.contractAddress) {
+    //   setListLoading(true);
+    //   queryOrderListFn({ page: 1 });
+    //   setListLoading(false);
+    // }
+
     setListLoading(false);
-  }, []);
+  }, [router]);
 
   return (
     <Stack spacing={3}>
@@ -130,10 +138,12 @@ const PurchaseList = () => {
       <Paper sx={{ width: "100%" }}>
         <Box sx={{ height: "72vh", width: "100%" }}>
           <DataGrid
-            rows={buyList}
+            // rows={buyList}
+            rows={list}
             columns={columns}
             pageSize={20}
             loading={listLoading}
+            getRowId={(row) => row.txHash}
             components={{
               LoadingOverlay: LinearProgress,
               NoRowsOverlay: TableNoRowComp,
@@ -166,7 +176,8 @@ const PurchaseList = () => {
       <BuyDialog
         open={buyOpen}
         title="Buy Info"
-        contractAdd="0x5435e8bb74d7ba8f4a76287dc0e75e203d87647e"
+        info={buyInfo}
+        // contractAdd="0x5435e8bb74d7ba8f4a76287dc0e75e203d87647e"
         onClose={() => {
           setBuyOpen(false);
         }}

@@ -124,17 +124,17 @@ export default function Home() {
 
   const handleLoginToken = useCallback(async () => {
     const singer = await getSigner();
-    console.log("singer:", singer);
+
     try {
       const signInfo = await singer.signMessage(snsName);
-      console.log("signInfo:", signInfo);
+
       const reqParams = {
         address: account,
         message: snsName,
         signature: signInfo,
       };
       const resp = await login(reqParams);
-      console.log(resp, "resp");
+
       if (resp && resp.code === 200 && resp.data.token) {
         dispatch({ type: "USER_INFO", value: resp.data });
       }

@@ -10,10 +10,8 @@ import {
   styled,
   Typography,
 } from "@mui/material";
-import { makeStyles } from "@mui/styles";
 import { useRouter } from "next/router";
 import { memo, useCallback, useEffect, useState } from "react";
-import { useSelector } from "react-redux";
 import { queryFriends } from "../../../api";
 import { getResolverOwner } from "../../../contracts/SNS";
 import TableNoData from "../../../assets/icons/common/tableNoRows.svg";
@@ -63,11 +61,8 @@ const ItemsCard = ({ type }) => {
   const [profileAdd, setProfileAdd] = useState("");
   const [friendList, setFriendList] = useState([]);
 
-  const { snsName } = useSelector((state) => ({
-    snsName: state.walletInfo.snsName,
-  }));
-
   const router = useRouter();
+  const profileName = router && router.query && router.query.name[0];
 
   const handleSelectChange = useCallback((e) => {
     setSelectItem(e.target.value);
@@ -94,13 +89,13 @@ const ItemsCard = ({ type }) => {
   }, [profileAdd, queryFriendsFn]);
 
   useEffect(() => {
-    const profileName = router && router.query && router.query.name[0];
     if (profileName) {
+      console.log("profileName:", profileName);
       getResolverOwner(profileName).then((address) => {
         setProfileAdd(address);
       });
     }
-  }, [router]);
+  }, [profileName]);
 
   return (
     <Card>
@@ -147,7 +142,7 @@ const ItemsCard = ({ type }) => {
           <Button
             variant="outlined"
             onClick={() => {
-              router.push(`/Profile/List/${isFriend ? 0 : 1}/${snsName}`);
+              router.push(`/Profile/List/${isFriend ? 0 : 1}/${profileName}`);
             }}
           >
             Show more

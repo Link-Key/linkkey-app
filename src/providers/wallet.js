@@ -17,8 +17,6 @@ const WalletProvider = ({ children }) => {
 
   const [client, setClient] = useState();
 
-  console.log("env:", process.env.NEXT_PUBLIC_XMTP_URL);
-
   const startLoading = useCallback(() => {
     dispatch({
       type: "WALLET_LOADING",
@@ -214,7 +212,7 @@ const WalletProvider = ({ children }) => {
         await getSigner(),
         process.env.NEXT_PUBLIC_XMTP_URL
       );
-      console.log("client:".client);
+      console.log("initialClient:", client);
       if (client && client.address) {
         dispatch({ type: "SET_CLIENT_ADD", value: client.address });
         setClient(client);

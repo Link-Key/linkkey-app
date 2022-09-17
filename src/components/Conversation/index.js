@@ -45,12 +45,16 @@ const Conversation = ({ name, recipientAdd }) => {
   const startClient = useCallback(async () => {
     console.log("client:", client);
     if (client && recipientAdd) {
-      const newConversation = await client.conversations.newConversation(
-        recipientAdd
-      );
-      setConversations(newConversation);
-      const m = await newConversation.messages();
-      setChatList([...m]);
+      try {
+        const newConversation = await client.conversations.newConversation(
+          recipientAdd
+        );
+        setConversations(newConversation);
+        const m = await newConversation.messages();
+        setChatList([...m]);
+      } catch (error) {
+        console.log("startClientErr:", error);
+      }
     }
   }, [recipientAdd, client]);
 
@@ -100,7 +104,10 @@ const Conversation = ({ name, recipientAdd }) => {
     >
       {recipientAdd ? (
         <ConversationHeader direction="row" spacing={2} pt={0} pl={0}>
-          <CommonAvatar account={recipientAdd} sx={{ borderRadius: "50%" }} />
+          <CommonAvatar
+            account={recipientAdd.toLowerCase()}
+            sx={{ borderRadius: "50%" }}
+          />
           <Box>
             <Typography variant="title">{name}</Typography>
             <EllipsisAddress account={recipientAdd} />

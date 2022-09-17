@@ -14,13 +14,11 @@ import {
 } from "@mui/material";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { useState, useCallback, useEffect, memo } from "react";
-import CloseIcon from "@mui/icons-material/Close";
 import TwitterIcon from "../../../assets/icons/common/twitterIcon.svg";
-import ToastMention from "../../ToastMessage";
 import EllipsisAddress from "../../EllipsisAddress";
 import CommonDialog from "../../CommonDialog";
 import TransferDialog from "./TransferDialog";
-import SaleDialog from "./SaleDialog";
+
 import {
   getStakedInfo,
   StakeInstance,
@@ -43,7 +41,6 @@ import {
   getNFTInfo,
   getTotal,
 } from "../../../contracts/NFT";
-import { issueNFT, myContracts, queryUserInfo } from "../../../api";
 import useTransaction from "../../../hooks/useTransaction";
 import InfoDialog from "./InfoDialog";
 
@@ -347,7 +344,7 @@ const Details = ({ type, contractAdd, profileAdd }) => {
               <CommonLoadingBtn
                 loading={btnLoading}
                 variant="outlined"
-                hidden={true}
+                // hidden={true}
                 onClick={handleUnStakeFn}
               >
                 UnStake

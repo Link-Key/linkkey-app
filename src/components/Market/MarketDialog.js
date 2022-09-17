@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { memo } from "react";
 import CommonDialog from "../CommonDialog";
 
-const MarketDialog = ({ open, onClose, type }) => {
+const MarketDialog = ({ open, onClose, type, info }) => {
   const router = useRouter();
 
   return (
@@ -17,7 +17,7 @@ const MarketDialog = ({ open, onClose, type }) => {
         <Button
           variant="outlined"
           onClick={() => {
-            router.push("/Profile/dsdsds.key");
+            router.push(`/Profile/${info.name}`);
           }}
         >
           Mint at owner
@@ -25,7 +25,7 @@ const MarketDialog = ({ open, onClose, type }) => {
         <Button
           variant="outlined"
           onClick={() => {
-            router.push("/Market/PurchaseList");
+            router.push(`/Market/PurchaseList/${info.contractAddress}`);
           }}
         >
           Buy at market

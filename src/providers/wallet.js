@@ -234,6 +234,8 @@ const WalletProvider = ({ children }) => {
         disconnectWallet,
         initialClient,
         getUserBasicInfo,
+        startLoading,
+        closeLoading,
         client,
       }}
     >

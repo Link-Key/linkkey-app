@@ -49,7 +49,9 @@ const MarketItem = ({ type, info }) => {
           >
             {name}
           </Typography>
-          <Typography sx={{ color: "#7a7a7a" }}>{mintAmount} owners</Typography>
+          <Typography sx={{ color: "#7a7a7a" }}>
+            {mintAmount} holders
+          </Typography>
         </Stack>
       </Stack>
       <Stack direction="row" justifyContent="space-between" p={0}>

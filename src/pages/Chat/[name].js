@@ -33,6 +33,8 @@ import Conversation from "../../components/Conversation";
 import { useSelector } from "react-redux";
 import CommonAvatar from "../../components/Common/CommonAvatar";
 import { queryFriends } from "../../api";
+import { getResolverOwner } from "../../contracts/SNS";
+import ToastMention from "../../components/ToastMessage";
 
 const ChatHeader = styled(Paper)(() => ({
   display: "flex",
@@ -197,6 +199,19 @@ const Chat = ({ type }) => {
     [queryFriendsFn]
   );
 
+  const handleSelectChat = useCallback(async (item) => {
+    console.log("item:", item);
+    try {
+      const resp = await getResolverOwner(item.name);
+      if (resp) {
+        setConversation({ ...item, address: resp });
+      }
+    } catch (error) {
+      ToastMention({ message: "Get friend message error", type: "error" });
+      console.log("handleSelectChatErr:", error);
+    }
+  }, []);
+
   const tabList = ["Friend", <span key="group">Group</span>];
 
   const queryFriendsFn = useCallback(
@@ -307,7 +322,7 @@ const Chat = ({ type }) => {
                   <ListItemButton
                     key={index}
                     onClick={() => {
-                      setConversation({ ...item });
+                      handleSelectChat(item);
                     }}
                   >
                     <CommonAvatar

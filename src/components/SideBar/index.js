@@ -27,6 +27,7 @@ import CommonLoadingBtn from "../Button/LoadingButton";
 import { useRouter } from "next/router";
 import { useCallback } from "react";
 import ToastMention from "../ToastMessage";
+import {version} from "../../config/const";
 
 const SideBarWrapper = styled(Box)(() => ({
   display: "flex",
@@ -165,7 +166,7 @@ const SideBar = () => {
             {/* <Image src={LinkkeyLogo} alt="logo" /> */}
           </Link>
           <div style={{textAlign: "right", fontSize: "12px", color: "#eb6161"}}>
-            <a href="https://github.com/Link-Key/linkkey-app/releases">V1.0.0</a>
+            <a href={version.url}>{version.number}</a>
           </div>
         </div>
 

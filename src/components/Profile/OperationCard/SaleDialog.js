@@ -21,6 +21,7 @@ import {
 } from "../../../utils";
 import CommonLoadingBtn from "../../Button/LoadingButton";
 import { useDialog } from "../../../providers/ApproveDialog";
+import { Router, useRouter } from "next/router";
 
 const Wrapper = styled(Box)(() => ({
   display: "flex",
@@ -81,6 +82,7 @@ const SaleDialog = ({ open, title, contractAdd, tax, tokenId, onClose }) => {
   const [submitLoading, setSubmitLoading] = useState(false);
   const keyAddress = getKeyAddress();
   const tradingAddress = getTradingAddress();
+  const router = useRouter();
 
   const { account } = useSelector((state) => ({
     account: state.walletInfo.account,
@@ -154,6 +156,7 @@ const SaleDialog = ({ open, title, contractAdd, tax, tokenId, onClose }) => {
         ethFormatToWei(saleInp),
         tokenId
       );
+      router.push(`/Market/PurchaseList/${contractAdd}`);
       console.log("setOrder:", resp);
       dialogDispatch({ type: "ADD_STEP" });
       dialogDispatch({ type: "CLOSE_DIALOG" });
@@ -170,6 +173,7 @@ const SaleDialog = ({ open, title, contractAdd, tax, tokenId, onClose }) => {
     tokenId,
     dialogDispatch,
     handleCloseDialog,
+    router,
   ]);
 
   const handleSale = useCallback(async () => {

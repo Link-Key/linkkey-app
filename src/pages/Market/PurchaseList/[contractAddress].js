@@ -92,6 +92,7 @@ const PurchaseList = () => {
           <Button
             variant="outlined"
             onClick={() => {
+              console.log("buyRow:", row);
               setBuyInfo(row);
               setBuyOpen(true);
             }}

@@ -106,9 +106,11 @@ const BuyDialog = ({ open, title, onClose, info }) => {
 
   const getOrderFn = useCallback(async () => {
     try {
+      console.log("info:", info);
       const orderInfo = await getOrder(info.tokenOwner, info.contractAddress);
       console.log("getOrderFn:", orderInfo);
       const weiAmount = BNformatToWei(orderInfo.erc20Amount);
+      console.log("getOrderPrice:", weiFormatToEth(weiAmount).toFixed(18));
       setOrderInfoState({
         ...orderInfo,
         erc20Amount: weiFormatToEth(weiAmount).toFixed(18),

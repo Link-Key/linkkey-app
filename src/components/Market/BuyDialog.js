@@ -1,7 +1,7 @@
 import { Typography, Box, styled, Button } from "@mui/material";
 import { memo, useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { getTaxPreparation } from "../../contracts/NFT";
+import { getTaxPreparation, ownerOf } from "../../contracts/NFT";
 import { buy, getOrder } from "../../contracts/Trading";
 import useTransaction from "../../hooks/useTransaction";
 import { useDialog } from "../../providers/ApproveDialog";
@@ -57,6 +57,7 @@ const TypographyBox = styled(Box)(() => ({
 const BuyDialog = ({ open, title, onClose, info }) => {
   console.log("buyInfo:", info);
   const [taxState, setTaxState] = useState("-");
+  const [ownerAddress, setOwnerAddress] = useState("-");
   const [serviceRate, setServiceRate] = useState(2.5);
   const [orderInfoState, setOrderInfoState] = useState({});
   // const [ownerRate, setOwnerRate] = useState();
@@ -72,7 +73,13 @@ const BuyDialog = ({ open, title, onClose, info }) => {
     onClose();
     setTaxState("-");
     dialogDispatch({ type: "SET_LOADING", payload: false });
+    setOrderInfoState({ status: true });
   }, [onClose, dialogDispatch]);
+
+  const getOwnerInfo = useCallback(async () => {
+    const tokenOwnerAdd = await ownerOf(info.contractAddress, info.tokenId);
+    setOwnerAddress(tokenOwnerAdd);
+  }, [info]);
 
   const getTaxFn = useCallback(async () => {
     try {
@@ -138,8 +145,9 @@ const BuyDialog = ({ open, title, onClose, info }) => {
     if (info && info.contractAddress && open) {
       getOrderFn();
       getTaxFn();
+      getOwnerInfo();
     }
-  }, [getTaxFn, info, getOrderFn, open]);
+  }, [getTaxFn, info, getOrderFn, open, getOwnerInfo]);
 
   return (
     <CommonDialog open={open} title={title} onClose={handleCloseFn}>
@@ -163,6 +171,7 @@ const BuyDialog = ({ open, title, onClose, info }) => {
         <CommonLoadingBtn
           loading={state.loading}
           variant="contained"
+          disabled={!orderInfoState.status}
           sx={{
             margin: "5px auto",
           }}

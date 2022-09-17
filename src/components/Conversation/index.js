@@ -7,7 +7,7 @@ import {
   styled,
   Typography,
 } from "@mui/material";
-import { memo, useState } from "react";
+import { memo, useRef, useState } from "react";
 import EllipsisAddress from "../EllipsisAddress";
 import SendIcon from "@mui/icons-material/Send";
 import MessageList from "./MessageList";
@@ -31,6 +31,7 @@ const Conversation = ({ name, recipientAdd }) => {
   const [sendInp, setSendInp] = useState("");
   const [chatList, setChatList] = useState([]);
   const [conversations, setConversations] = useState(null);
+  const messagesEndRef = useRef(null);
 
   // const { account } = useSelector((state) => ({
   //   account: state.walletInfo.account,
@@ -93,6 +94,13 @@ const Conversation = ({ name, recipientAdd }) => {
     startClient();
   }, [startClient]);
 
+  useEffect(() => {
+    const hasMessage = chatList.length > 0;
+    if (!hasMessage) return;
+    console.log("messagesEndRef:", messagesEndRef.current);
+    messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+  }, [chatList]);
+
   console.log("chatList:", chatList);
 
   return (
@@ -121,7 +129,11 @@ const Conversation = ({ name, recipientAdd }) => {
         </ConversationHeader>
       )}
 
-      <MessageList messages={chatList} recipientName={name} />
+      <MessageList
+        messages={chatList}
+        recipientName={name}
+        messagesEndRef={messagesEndRef}
+      />
 
       <Box
         sx={{

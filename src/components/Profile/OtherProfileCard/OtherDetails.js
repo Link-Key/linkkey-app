@@ -8,6 +8,7 @@ import {
   Stack,
   Skeleton,
 } from "@mui/material";
+import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { memo, useCallback, useState } from "react";
 import { useSelector } from "react-redux";
@@ -43,6 +44,8 @@ const OtherDetails = ({ type, contractAdd }) => {
   const { account } = useSelector((state) => ({
     account: state.walletInfo.account,
   }));
+
+  const router = useRouter();
 
   const isFriend = type === "friend" ? true : false;
 
@@ -143,6 +146,9 @@ const OtherDetails = ({ type, contractAdd }) => {
           <CommonLoadingBtn
             variant="outlined"
             disabled={totalNFT === 0 || nftBalance !== 0}
+            onClick={() => {
+              router.push(`/Market/PurchaseList/${nftAdd}`);
+            }}
           >
             {isFriend ? "Buy His Follow-NFT" : "Buy His Group-NFT"}
           </CommonLoadingBtn>

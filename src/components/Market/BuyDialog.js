@@ -55,7 +55,6 @@ const TypographyBox = styled(Box)(() => ({
 }));
 
 const BuyDialog = ({ open, title, onClose, info }) => {
-  console.log("buyInfo:", info);
   const [taxState, setTaxState] = useState("-");
   const [ownerAddress, setOwnerAddress] = useState("-");
   const [serviceRate, setServiceRate] = useState(2.5);
@@ -93,8 +92,6 @@ const BuyDialog = ({ open, title, onClose, info }) => {
 
   const buyFn = useCallback(async () => {
     const keyBalance = await getKeyBalance(account);
-    console.log("keyBalance:", keyBalance);
-    console.log("erc20Amount:", orderInfoState.erc20Amount);
     if (keyBalance > orderInfoState.erc20Amount) {
       try {
         await buy(info.tokenOwner, info.contractAddress, info.tokenId);
@@ -103,7 +100,7 @@ const BuyDialog = ({ open, title, onClose, info }) => {
       } catch (error) {
         dialogDispatch({ type: "CLOSE_DIALOG" });
         ToastMention({ message: "contract error", type: "error" });
-        console.log("buyFn:", error);
+        console.log("buyFnErr:", error);
       }
     } else {
       dialogDispatch({ type: "CLOSE_DIALOG" });
@@ -113,11 +110,10 @@ const BuyDialog = ({ open, title, onClose, info }) => {
 
   const getOrderFn = useCallback(async () => {
     try {
-      console.log("info:", info);
       const orderInfo = await getOrder(info.tokenOwner, info.contractAddress);
-      console.log("getOrderFn:", orderInfo);
+
       const weiAmount = BNformatToWei(orderInfo.erc20Amount);
-      console.log("getOrderPrice:", weiFormatToEth(weiAmount).toFixed(18));
+
       setOrderInfoState({
         ...orderInfo,
         erc20Amount: weiFormatToEth(weiAmount).toFixed(18),

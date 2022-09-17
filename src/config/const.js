@@ -71,3 +71,8 @@ export const contractAddress = (chainId) => {
     resolverAddress
   };
 };
+
+export const version = {
+  url: 'https://github.com/Link-Key/linkkey-app/releases',
+  number: 'v1.0-alpha'
+}

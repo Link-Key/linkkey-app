@@ -284,15 +284,17 @@ export default function Home() {
             </StepLabelWrapper>
           </Step>
         </Stepper>
-        <LoadingBtn
+        <CommonLoadingBtn
+          loading={initialLoading}
           hidden={!token}
           variant="contained"
           onClick={() => {
+            setInitialLoading(true);
             router.push(`Profile/${snsName}`);
           }}
         >
           Get started
-        </LoadingBtn>
+        </CommonLoadingBtn>
       </Wrapper>
     </Box>
   );

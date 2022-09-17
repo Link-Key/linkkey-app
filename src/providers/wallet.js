@@ -9,6 +9,7 @@ import { Client } from "@xmtp/xmtp-js";
 import { getAccount, getSigner } from "../utils/web3";
 import { useState } from "react";
 import { getResolverInfo } from "../contracts/Resolver";
+import { useRouter } from "next/router";
 
 const WalletInfoContent = createContext();
 
@@ -16,6 +17,7 @@ const WalletProvider = ({ children }) => {
   const dispatch = useDispatch();
 
   const [client, setClient] = useState();
+  const router = useRouter();
 
   const startLoading = useCallback(() => {
     dispatch({
@@ -109,6 +111,7 @@ const WalletProvider = ({ children }) => {
 
   // Listening to wallet chain and account changes
   const subscribeFn = useCallback(() => {
+    console.log("subscribe wallet");
     const eth = window.ethereum;
     // Subscribe to accounts change
     eth.on("accountsChanged", async (accounts) => {
@@ -121,6 +124,7 @@ const WalletProvider = ({ children }) => {
         type: "SET_ACCOUNTS",
         value: accounts[0],
       });
+      router.push("/");
       closeLoading();
     });
 

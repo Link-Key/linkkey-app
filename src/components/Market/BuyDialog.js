@@ -7,7 +7,6 @@ import useTransaction from "../../hooks/useTransaction";
 import { useDialog } from "../../providers/ApproveDialog";
 import {
   BNformatToWei,
-  ethFormatToWei,
   getKeyBalance,
   getTradingAddress,
   hexToNumber,
@@ -16,6 +15,7 @@ import {
 import CommonLoadingBtn from "../Button/LoadingButton";
 import CommonDialog from "../CommonDialog";
 import EllipsisAddress from "../EllipsisAddress";
+import ToastMention from "../ToastMessage";
 
 const Wrapper = styled(Box)(() => ({
   display: "flex",

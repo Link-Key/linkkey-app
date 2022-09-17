@@ -104,6 +104,7 @@ const SaleDialog = ({ open, title, contractAdd, tax, tokenId, onClose }) => {
   const handleCloseDialog = useCallback(() => {
     setSaleInp("");
     setReceiveInp("");
+    setSubmitLoading(false);
     onClose();
   }, [onClose]);
 
@@ -160,6 +161,7 @@ const SaleDialog = ({ open, title, contractAdd, tax, tokenId, onClose }) => {
     } catch (error) {
       console.log("saleNFTFnErr:", error);
       dialogDispatch({ type: "CLOSE_DIALOG" });
+      handleCloseDialog();
     }
   }, [
     contractAdd,

@@ -37,6 +37,10 @@ const Conversation = ({ name, recipientAdd }) => {
   //   account: state.walletInfo.account,
   // }));
 
+  const scrollToMessagesEndRef = useCallback(() => {
+    messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+  }, []);
+
   const handleChangeSendInp = useCallback((e) => {
     setSendInp(e.target.value);
   }, []);
@@ -63,32 +67,28 @@ const Conversation = ({ name, recipientAdd }) => {
     console.log("here listen", conversations);
     if (!conversations) return;
     const stream = await conversations.streamMessages();
+    console.log("stream:", stream);
     for await (const message of stream) {
-      console.log(message, "in the message");
       setChatList((v) => [...v, { ...message }]);
-      continue;
     }
   }, [conversations]);
 
   const sendMessages = useCallback(
     async (msg) => {
-      console.log("msg:", msg);
-      if (msg && conversations) {
-        console.log(msg, "send msg", conversations, conversations.send);
-        const resp = await conversations.send(msg);
-        if (resp && resp.id) {
-          setSendInp("");
-        }
+      if (!conversations) return;
+      console.log(msg, "send msg", conversations, conversations.send);
+      const resp = await conversations.send(msg);
+      if (resp && resp.id) {
+        setSendInp("");
       }
     },
     [conversations]
   );
 
   useEffect(() => {
-    if (conversations) {
-      listenChatList();
-    }
-  }, [conversations, listenChatList]);
+    listenChatList();
+    scrollToMessagesEndRef();
+  }, [conversations, listenChatList, scrollToMessagesEndRef]);
 
   useEffect(() => {
     startClient();
@@ -97,11 +97,9 @@ const Conversation = ({ name, recipientAdd }) => {
   useEffect(() => {
     const hasMessage = chatList.length > 0;
     if (!hasMessage) return;
-    console.log("messagesEndRef:", messagesEndRef.current);
-    messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
-  }, [chatList]);
 
-  console.log("chatList:", chatList);
+    scrollToMessagesEndRef();
+  }, [chatList, scrollToMessagesEndRef]);
 
   return (
     <Stack

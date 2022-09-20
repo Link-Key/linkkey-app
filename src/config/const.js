@@ -74,5 +74,5 @@ export const contractAddress = (chainId) => {
 
 export const version = {
   url: 'https://mirror.xyz/linkkeyio.eth/rJ8UlH-gVq-IaM19xJMXzy4wDZdOj8ImVyuY-BcZVww',
-  number: 'v1.0-alpha'
+  number: 'v1.0_alpha'
 }

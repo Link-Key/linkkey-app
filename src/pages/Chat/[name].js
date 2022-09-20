@@ -345,17 +345,6 @@ const Chat = ({ type }) => {
               name={conversation.name}
               recipientAdd={conversation.address}
             />
-            {/* <ul>
-              {chatList.map((item) => (
-                <li key={item.id}>{item.content}</li>
-              ))}
-            </ul>
-            <div
-              onClick={sendMessages.bind(this, "hello world")}
-              style={{ cursor: "pointer" }}
-            >
-              send a message
-            </div> */}
           </RightBox>
         </GridWrapper>
       </Grid>

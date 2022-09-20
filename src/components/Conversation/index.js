@@ -7,7 +7,7 @@ import {
   styled,
   Typography,
 } from "@mui/material";
-import { memo, useState } from "react";
+import { memo, useRef, useState } from "react";
 import EllipsisAddress from "../EllipsisAddress";
 import SendIcon from "@mui/icons-material/Send";
 import MessageList from "./MessageList";
@@ -31,10 +31,15 @@ const Conversation = ({ name, recipientAdd }) => {
   const [sendInp, setSendInp] = useState("");
   const [chatList, setChatList] = useState([]);
   const [conversations, setConversations] = useState(null);
+  const messagesEndRef = useRef(null);
 
   // const { account } = useSelector((state) => ({
   //   account: state.walletInfo.account,
   // }));
+
+  const scrollToMessagesEndRef = useCallback(() => {
+    messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+  }, []);
 
   const handleChangeSendInp = useCallback((e) => {
     setSendInp(e.target.value);
@@ -62,38 +67,39 @@ const Conversation = ({ name, recipientAdd }) => {
     console.log("here listen", conversations);
     if (!conversations) return;
     const stream = await conversations.streamMessages();
+    console.log("stream:", stream);
     for await (const message of stream) {
-      console.log(message, "in the message");
       setChatList((v) => [...v, { ...message }]);
-      continue;
     }
   }, [conversations]);
 
   const sendMessages = useCallback(
     async (msg) => {
-      console.log("msg:", msg);
-      if (msg && conversations) {
-        console.log(msg, "send msg", conversations, conversations.send);
-        const resp = await conversations.send(msg);
-        if (resp && resp.id) {
-          setSendInp("");
-        }
+      if (!conversations) return;
+      console.log(msg, "send msg", conversations, conversations.send);
+      const resp = await conversations.send(msg);
+      if (resp && resp.id) {
+        setSendInp("");
       }
     },
     [conversations]
   );
 
   useEffect(() => {
-    if (conversations) {
-      listenChatList();
-    }
-  }, [conversations, listenChatList]);
+    listenChatList();
+    scrollToMessagesEndRef();
+  }, [conversations, listenChatList, scrollToMessagesEndRef]);
 
   useEffect(() => {
     startClient();
   }, [startClient]);
 
-  console.log("chatList:", chatList);
+  useEffect(() => {
+    const hasMessage = chatList.length > 0;
+    if (!hasMessage) return;
+
+    scrollToMessagesEndRef();
+  }, [chatList, scrollToMessagesEndRef]);
 
   return (
     <Stack
@@ -121,7 +127,11 @@ const Conversation = ({ name, recipientAdd }) => {
         </ConversationHeader>
       )}
 
-      <MessageList messages={chatList} recipientName={name} />
+      <MessageList
+        messages={chatList}
+        recipientName={name}
+        messagesEndRef={messagesEndRef}
+      />
 
       <Box
         sx={{

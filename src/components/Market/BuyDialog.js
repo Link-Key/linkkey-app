@@ -1,13 +1,12 @@
 import { Typography, Box, styled, Button } from "@mui/material";
 import { memo, useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { getTaxPreparation } from "../../contracts/NFT";
+import { getTaxPreparation, ownerOf } from "../../contracts/NFT";
 import { buy, getOrder } from "../../contracts/Trading";
 import useTransaction from "../../hooks/useTransaction";
 import { useDialog } from "../../providers/ApproveDialog";
 import {
   BNformatToWei,
-  ethFormatToWei,
   getKeyBalance,
   getTradingAddress,
   hexToNumber,
@@ -16,6 +15,7 @@ import {
 import CommonLoadingBtn from "../Button/LoadingButton";
 import CommonDialog from "../CommonDialog";
 import EllipsisAddress from "../EllipsisAddress";
+import ToastMention from "../ToastMessage";
 
 const Wrapper = styled(Box)(() => ({
   display: "flex",
@@ -55,8 +55,8 @@ const TypographyBox = styled(Box)(() => ({
 }));
 
 const BuyDialog = ({ open, title, onClose, info }) => {
-  console.log("buyInfo:", info);
   const [taxState, setTaxState] = useState("-");
+  const [ownerAddress, setOwnerAddress] = useState("-");
   const [serviceRate, setServiceRate] = useState(2.5);
   const [orderInfoState, setOrderInfoState] = useState({});
   // const [ownerRate, setOwnerRate] = useState();
@@ -72,7 +72,13 @@ const BuyDialog = ({ open, title, onClose, info }) => {
     onClose();
     setTaxState("-");
     dialogDispatch({ type: "SET_LOADING", payload: false });
+    setOrderInfoState({ status: true });
   }, [onClose, dialogDispatch]);
+
+  const getOwnerInfo = useCallback(async () => {
+    const tokenOwnerAdd = await ownerOf(info.contractAddress, info.tokenId);
+    setOwnerAddress(tokenOwnerAdd);
+  }, [info]);
 
   const getTaxFn = useCallback(async () => {
     try {
@@ -86,8 +92,6 @@ const BuyDialog = ({ open, title, onClose, info }) => {
 
   const buyFn = useCallback(async () => {
     const keyBalance = await getKeyBalance(account);
-    console.log("keyBalance:", keyBalance);
-    console.log("erc20Amount:", orderInfoState.erc20Amount);
     if (keyBalance > orderInfoState.erc20Amount) {
       try {
         await buy(info.tokenOwner, info.contractAddress, info.tokenId);
@@ -96,7 +100,7 @@ const BuyDialog = ({ open, title, onClose, info }) => {
       } catch (error) {
         dialogDispatch({ type: "CLOSE_DIALOG" });
         ToastMention({ message: "contract error", type: "error" });
-        console.log("buyFn:", error);
+        console.log("buyFnErr:", error);
       }
     } else {
       dialogDispatch({ type: "CLOSE_DIALOG" });
@@ -107,8 +111,9 @@ const BuyDialog = ({ open, title, onClose, info }) => {
   const getOrderFn = useCallback(async () => {
     try {
       const orderInfo = await getOrder(info.tokenOwner, info.contractAddress);
-      console.log("getOrderFn:", orderInfo);
+
       const weiAmount = BNformatToWei(orderInfo.erc20Amount);
+
       setOrderInfoState({
         ...orderInfo,
         erc20Amount: weiFormatToEth(weiAmount).toFixed(18),
@@ -136,8 +141,9 @@ const BuyDialog = ({ open, title, onClose, info }) => {
     if (info && info.contractAddress && open) {
       getOrderFn();
       getTaxFn();
+      getOwnerInfo();
     }
-  }, [getTaxFn, info, getOrderFn, open]);
+  }, [getTaxFn, info, getOrderFn, open, getOwnerInfo]);
 
   return (
     <CommonDialog open={open} title={title} onClose={handleCloseFn}>
@@ -161,6 +167,7 @@ const BuyDialog = ({ open, title, onClose, info }) => {
         <CommonLoadingBtn
           loading={state.loading}
           variant="contained"
+          disabled={!orderInfoState.status}
           sx={{
             margin: "5px auto",
           }}

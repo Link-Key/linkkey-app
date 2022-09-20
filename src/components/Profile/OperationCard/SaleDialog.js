@@ -14,9 +14,14 @@ import KeyboardArrowDown from "@mui/icons-material/KeyboardArrowDown";
 import { isApprovedForAll, setApprovalForAll } from "../../../contracts/NFT";
 import { setOrder } from "../../../contracts/Trading";
 import { useSelector } from "react-redux";
-import { getKeyAddress, getTradingAddress } from "../../../utils";
+import {
+  ethFormatToWei,
+  getKeyAddress,
+  getTradingAddress,
+} from "../../../utils";
 import CommonLoadingBtn from "../../Button/LoadingButton";
 import { useDialog } from "../../../providers/ApproveDialog";
+import { Router, useRouter } from "next/router";
 
 const Wrapper = styled(Box)(() => ({
   display: "flex",
@@ -77,6 +82,7 @@ const SaleDialog = ({ open, title, contractAdd, tax, tokenId, onClose }) => {
   const [submitLoading, setSubmitLoading] = useState(false);
   const keyAddress = getKeyAddress();
   const tradingAddress = getTradingAddress();
+  const router = useRouter();
 
   const { account } = useSelector((state) => ({
     account: state.walletInfo.account,
@@ -100,6 +106,7 @@ const SaleDialog = ({ open, title, contractAdd, tax, tokenId, onClose }) => {
   const handleCloseDialog = useCallback(() => {
     setSaleInp("");
     setReceiveInp("");
+    setSubmitLoading(false);
     onClose();
   }, [onClose]);
 
@@ -138,12 +145,18 @@ const SaleDialog = ({ open, title, contractAdd, tax, tokenId, onClose }) => {
       "contractAdd, keyAddress, saleInp, tokenId:",
       contractAdd,
       keyAddress,
-      saleInp,
+      ethFormatToWei(saleInp),
       tokenId
     );
     try {
       clearInterval(window.approveTimer);
-      const resp = await setOrder(contractAdd, keyAddress, saleInp, tokenId);
+      const resp = await setOrder(
+        contractAdd,
+        keyAddress,
+        ethFormatToWei(saleInp),
+        tokenId
+      );
+      router.push(`/Market/PurchaseList/${contractAdd}`);
       console.log("setOrder:", resp);
       dialogDispatch({ type: "ADD_STEP" });
       dialogDispatch({ type: "CLOSE_DIALOG" });
@@ -151,6 +164,7 @@ const SaleDialog = ({ open, title, contractAdd, tax, tokenId, onClose }) => {
     } catch (error) {
       console.log("saleNFTFnErr:", error);
       dialogDispatch({ type: "CLOSE_DIALOG" });
+      handleCloseDialog();
     }
   }, [
     contractAdd,
@@ -159,6 +173,7 @@ const SaleDialog = ({ open, title, contractAdd, tax, tokenId, onClose }) => {
     tokenId,
     dialogDispatch,
     handleCloseDialog,
+    router,
   ]);
 
   const handleSale = useCallback(async () => {

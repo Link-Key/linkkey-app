@@ -8,6 +8,8 @@ const useTransaction = ({ coinAddress, from, to, price, executeFn }) => {
 
   const queryAllowance = useCallback(async () => {
     try {
+      console.log("allowanceFrom:", from);
+      console.log("allowanceTo:", to);
       const value = await allowance(coinAddress, from, to);
       return hexToNumber(value);
     } catch (error) {
@@ -19,6 +21,7 @@ const useTransaction = ({ coinAddress, from, to, price, executeFn }) => {
   const callApprove = useCallback(async () => {
     const value = await queryAllowance();
     console.log("approveFee:", ethFormatToWei(price));
+    console.log("price:", price);
 
     try {
       if (value >= price) {

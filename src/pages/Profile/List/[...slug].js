@@ -20,6 +20,7 @@ import CommonAvatar from "../../../components/Common/CommonAvatar";
 import { getStakedInfo } from "../../../contracts/Stake";
 import CommonLoadingBtn from "../../../components/Button/LoadingButton";
 import { getNFTInfo } from "../../../contracts/NFT";
+import { useSelector } from "react-redux";
 
 const TitleWrapper = styled(Paper)(() => ({
   // display: "flex",
@@ -83,6 +84,10 @@ const ProfileList = ({ type, name }) => {
   const [saleLoading, setSaleLoading] = useState(true);
   const pageSize = 30;
 
+  const { account } = useSelector((state) => ({
+    account: state.walletInfo.account,
+  }));
+
   const TableNoRowComp = () => {
     return (
       <Stack
@@ -106,22 +111,27 @@ const ProfileList = ({ type, name }) => {
     [listType]
   );
 
-  const handleOpenSaleDialog = useCallback(async (address) => {
-    const stakeInfo = await getStakedInfo(address);
-    console.log("stakeInfo:", stakeInfo);
+  const handleOpenSaleDialog = useCallback(
+    async (address) => {
+      const stakeInfo = await getStakedInfo(address);
+      console.log("stakeInfo:", stakeInfo);
 
-    if (stakeInfo && stakeInfo.friendNFTAddress) {
-      const obj = await getNFTInfo(stakeInfo.friendNFTAddress, address);
+      if (stakeInfo && stakeInfo.friendNFTAddress) {
+        const obj = await getNFTInfo(stakeInfo.friendNFTAddress, account);
 
-      setSaleInfo({
-        tokenId: obj.tokenId,
-        tax: obj.tax,
-        contractAdd: stakeInfo.friendNFTAddress,
-      });
-    }
+        console.log("handleOpenSaleDialog:", obj);
 
-    setSaleOpen(true);
-  }, []);
+        setSaleInfo({
+          tokenId: obj.tokenId,
+          tax: obj.tax,
+          contractAdd: stakeInfo.friendNFTAddress,
+        });
+      }
+
+      setSaleOpen(true);
+    },
+    [account]
+  );
 
   const commonColumnsProps = {
     sortable: false,
@@ -191,9 +201,7 @@ const ProfileList = ({ type, name }) => {
               <CommonLoadingBtn
                 variant="outlined"
                 onClick={async () => {
-                  await handleOpenSaleDialog(
-                    "0x5435e8bb74d7ba8f4a76287dc0e75e203d87647e"
-                  );
+                  await handleOpenSaleDialog(row.address);
                 }}
               >
                 Sale

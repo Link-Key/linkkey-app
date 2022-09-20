@@ -1,14 +1,16 @@
+import { CollectionsBookmarkOutlined } from "@mui/icons-material";
 import { Box, Chip, Stack, styled, Typography } from "@mui/material";
 import { useCallback } from "react";
+import { useRef } from "react";
 import { memo, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { formatTime } from "../../utils";
 import CommonAvatar from "../Common/CommonAvatar";
 
 const MessageListWrapper = styled(Box)(() => ({
-  display: "flex",
-  flexDirection: "column",
-
+  // display: "flex",
+  // flexDirection: "column",
+  // justifyContent: "flex-end",
   height: "100%",
   overflow: "auto",
 }));
@@ -29,7 +31,7 @@ const ChipWrapper = styled(Chip)(() => ({
   height: "20px",
 }));
 
-const MessageList = ({ messages, recipientName }) => {
+const MessageList = ({ messages, recipientName, messagesEndRef }) => {
   const { account, snsName } = useSelector((state) => ({
     account: state.walletInfo.account,
     snsName: state.walletInfo.snsName,
@@ -75,6 +77,7 @@ const MessageList = ({ messages, recipientName }) => {
           </Stack>
         </MessageItem>
       ))}
+      <div ref={messagesEndRef}></div>
     </MessageListWrapper>
   );
 };

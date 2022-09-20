@@ -92,6 +92,7 @@ const PurchaseList = () => {
           <Button
             variant="outlined"
             onClick={() => {
+              console.log("buyRow:", row);
               setBuyInfo(row);
               setBuyOpen(true);
             }}
@@ -122,13 +123,13 @@ const PurchaseList = () => {
   );
 
   useEffect(() => {
-    // if (router && router.query && router.query.contractAddress) {
-    //   setListLoading(true);
-    //   queryOrderListFn({ page: 1 });
-    //   setListLoading(false);
-    // }
+    if (router && router.query && router.query.contractAddress) {
+      setListLoading(true);
+      queryOrderListFn({ page: 1 });
+      setListLoading(false);
+    }
 
-    setListLoading(false);
+    // setListLoading(false);
   }, [router]);
 
   return (
@@ -138,8 +139,8 @@ const PurchaseList = () => {
       <Paper sx={{ width: "100%" }}>
         <Box sx={{ height: "72vh", width: "100%" }}>
           <DataGrid
-            // rows={buyList}
-            rows={list}
+            rows={buyList}
+            // rows={list}
             columns={columns}
             pageSize={20}
             loading={listLoading}

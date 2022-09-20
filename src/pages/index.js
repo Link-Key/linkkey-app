@@ -101,8 +101,15 @@ const StepIconFn = (props) => {
 };
 
 export default function Home() {
-  const { connectWallet, disconnectWallet, initialClient, client } =
-    useWalletInfo();
+  const {
+    connectWallet,
+    disconnectWallet,
+    initialClient,
+    startLoading,
+    closeLoading,
+  } = useWalletInfo();
+
+  const [initialLoading, setInitialLoading] = useState(false);
 
   const dispatch = useDispatch();
   const { account, snsName, connecting, clientAddress, token } = useSelector(
@@ -123,6 +130,7 @@ export default function Home() {
   const [activeStep, setActiveStep] = useState(0);
 
   const handleLoginToken = useCallback(async () => {
+    startLoading();
     const singer = await getSigner();
 
     try {
@@ -141,7 +149,8 @@ export default function Home() {
     } catch (error) {
       console.log("signInfoErr:", error);
     }
-  }, [account, snsName, dispatch]);
+    closeLoading();
+  }, [account, snsName, dispatch, closeLoading, startLoading]);
 
   const handleStep = useCallback(() => {
     if (account) {
@@ -244,42 +253,48 @@ export default function Home() {
               <Typography>
                 {clientAddress ? "Initialized" : "Initialize XMTP Client"}
               </Typography>
-              <LoadingBtn
+              <CommonLoadingBtn
                 variant="contained"
+                loading={connecting}
                 hidden={
                   compareAddress(clientAddress, account) || activeStep < 2
                 }
                 onClick={async () => {
+                  startLoading();
                   await initialClient();
+                  closeLoading();
                 }}
               >
                 Initial
-              </LoadingBtn>
+              </CommonLoadingBtn>
             </StepLabelWrapper>
           </Step>
 
           <Step>
             <StepLabelWrapper>
               <Typography>{token ? "Logged in" : "Login"}</Typography>
-              <LoadingBtn
+              <CommonLoadingBtn
+                loading={connecting}
                 variant="contained"
                 hidden={activeStep < 3 || token}
                 onClick={handleLoginToken}
               >
                 Login
-              </LoadingBtn>
+              </CommonLoadingBtn>
             </StepLabelWrapper>
           </Step>
         </Stepper>
-        <LoadingBtn
+        <CommonLoadingBtn
+          loading={initialLoading}
           hidden={!token}
           variant="contained"
           onClick={() => {
+            setInitialLoading(true);
             router.push(`Profile/${snsName}`);
           }}
         >
           Get started
-        </LoadingBtn>
+        </CommonLoadingBtn>
       </Wrapper>
     </Box>
   );

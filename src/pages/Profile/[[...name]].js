@@ -91,8 +91,6 @@ const Profile = ({ name }) => {
   const [isSelf, setIsSelf] = useState(false);
   const [skeletonLoading, setSkeletonLoading] = useState(true);
 
-  console.log("skeletonLoading:", skeletonLoading);
-
   const profileName = name && name[0] ? name : "";
 
   const handleShowDIDCard = useCallback(() => {

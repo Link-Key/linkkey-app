@@ -73,6 +73,6 @@ export const contractAddress = (chainId) => {
 };
 
 export const version = {
-  url: 'https://github.com/Link-Key/linkkey-app/releases',
-  number: 'v1.0-alpha'
+  url: 'https://mirror.xyz/linkkeyio.eth/rJ8UlH-gVq-IaM19xJMXzy4wDZdOj8ImVyuY-BcZVww',
+  number: 'v1.0_alpha'
 }

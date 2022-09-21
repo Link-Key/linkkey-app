@@ -162,7 +162,7 @@ const ProfileList = ({ type, name }) => {
                 spacing={1}
                 alignItems="center"
               >
-                <CommonAvatar avatarUrl={row.ipfsUrl} />
+                <CommonAvatar name={row.name} />
                 <span>{row.name ? row.name : "-"}</span>
               </Stack>
             ) : (

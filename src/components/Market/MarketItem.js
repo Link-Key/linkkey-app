@@ -26,6 +26,8 @@ const MarketItem = ({ type, info }) => {
   const [marketItemOpen, setMarketItemOpen] = useState(false);
   const { name, releaseAmount, floorPrice, mintAmount, ipfsUrl } = info;
 
+  console.log("MarketItem:", info);
+
   const handleCloseDialog = useCallback(() => {
     setMarketItemOpen(false);
   }, []);
@@ -37,11 +39,12 @@ const MarketItem = ({ type, info }) => {
       }}
     >
       <Stack direction="row" p={0} spacing={1}>
-        {ipfsUrl ? (
+        {/* {ipfsUrl ? (
           <CommonAvatar avatarUrl={ipfsUrl} sx={{ borderRadius: "12px" }} />
         ) : (
           <CommonAvatar name={name} />
-        )}
+        )} */}
+        <CommonAvatar name={name} />
         <Stack direction="column" p={0}>
           <Typography
             variant="title"

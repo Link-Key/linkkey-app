@@ -19,6 +19,7 @@ import ToastMention from "../ToastMessage";
 import html2canvas from "html2canvas";
 
 const BaseDialog = styled(Dialog)(() => ({
+  top: "30px",
   "& .MuiDialog-paper": {
     borderRadius: 20,
     "& .MuiDialogTitle-root": {

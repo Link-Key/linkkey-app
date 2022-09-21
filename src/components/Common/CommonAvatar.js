@@ -7,6 +7,7 @@ import { fromAddressGetName, fromNameGetInfo } from "../../utils/web3";
 const BlockiesWrapper = styled(Blockies)(({ sx }) => ({
   width: "40px !important",
   height: "40px !important",
+  borderRadius: "50px",
   ...sx,
 }));
 

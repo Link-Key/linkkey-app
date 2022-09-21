@@ -110,10 +110,13 @@ const Profile = ({ name }) => {
   };
 
   const getBasicUserInfo = useCallback(async () => {
-    const userInfo = await fromNameGetInfo(name[0]);
-
-    setSkeletonLoading(false);
-    setBasicInfo(userInfo);
+    try {
+      const userInfo = await fromNameGetInfo(name[0]);
+      setSkeletonLoading(false);
+      setBasicInfo(userInfo);
+    } catch (error) {
+      console.log("getBasicUserInfoErr:", getBasicUserInfo);
+    }
   }, [name]);
 
   useEffect(() => {
@@ -128,8 +131,9 @@ const Profile = ({ name }) => {
           setIsSelf(true);
         }
       });
+
+      getBasicUserInfo();
     }
-    getBasicUserInfo();
   }, [name, account, getBasicUserInfo]);
 
   console.log("profileAdd:", profileAdd);

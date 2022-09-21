@@ -23,6 +23,7 @@ import { getResolverOwner } from "../../contracts/SNS";
 import OtherProfileCard from "../../components/Profile/OtherProfileCard";
 import CommonAvatar from "../../components/Common/CommonAvatar";
 import { fromNameGetInfo } from "../../utils/web3";
+import ProfileLink from "../../components/Profile/ProfileLink";
 
 const CardInfoWrapper = styled(Card)(() => ({
   display: "flex",
@@ -174,7 +175,8 @@ const Profile = ({ name }) => {
             ) : (
               <Skeleton />
             )}
-            <OuterLink sx={{ justifyContent: "flex-start" }} />
+            {/* <OuterLink sx={{ justifyContent: "flex-start" }} /> */}
+            {profileAdd ? <ProfileLink address={profileAdd} /> : <Skeleton />}
             <Typography>{basicInfo.description}</Typography>
           </Stack>
         </Stack>

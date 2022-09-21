@@ -3,45 +3,40 @@ import CommonApproveDialog from "./CommonApproveDialog";
 import SideBar from "./SideBar";
 
 const Main = styled("main")`
-  /* width: calc(100% - 280px); */
+  width: 100%;
   min-height: calc(100vh - 20px);
   padding: 20px;
-  /* margin: 20px 0 0 260px; */
   background: #ff928d;
   border-radius: 12px 12px 0 0;
 `;
 
 const Layout = ({ children }) => {
   return (
-    <Stack
-      minWidth="1200px"
-      direction="row"
-      justifyContent="center"
-      sx={
-        {
-          // flexGrow: 1,
-        }
-      }
-    >
+    <Box>
       <CssBaseline />
-      <Grid container>
-        <Grid
-          item
-          sx={
-            {
-              // position: "fixed",
-            }
-          }
-        >
+      <Stack p={0} minWidth="1200px" direction="row" justifyContent="center">
+        <Grid item>
           <SideBar />
         </Grid>
-        <Grid item xs>
-          <Main>{children}</Main>
+        <Grid
+          item
+          xs
+          sx={{
+            height: "100vh",
+            overflow: "auto",
+            padding: "16px 20px 0",
+            maxWidth: "calc(1200px - 280px)",
+            margin: "0 auto",
+          }}
+        >
+          <Main>
+            <Box sx={{}}>{children}</Box>
+          </Main>
         </Grid>
-      </Grid>
+      </Stack>
 
       <CommonApproveDialog />
-    </Stack>
+    </Box>
   );
 };
 

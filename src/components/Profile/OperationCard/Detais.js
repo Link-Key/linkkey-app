@@ -344,7 +344,7 @@ const Details = ({ type, contractAdd, profileAdd }) => {
               <CommonLoadingBtn
                 loading={btnLoading}
                 variant="outlined"
-                // hidden={true}
+                hidden={true}
                 onClick={handleUnStakeFn}
               >
                 UnStake

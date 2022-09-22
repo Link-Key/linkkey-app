@@ -30,7 +30,14 @@ const Layout = ({ children }) => {
           }}
         >
           <Main>
-            <Box sx={{}}>{children}</Box>
+            <Box
+              sx={{
+                maxWidth: "calc(1200px)",
+                margin: "0 auto",
+              }}
+            >
+              {children}
+            </Box>
           </Main>
         </Grid>
       </Stack>

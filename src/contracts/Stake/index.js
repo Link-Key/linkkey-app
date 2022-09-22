@@ -38,8 +38,12 @@ const unstakeNFT = async () => {
 };
 
 const getStakedInfo = async (owner) => {
-  const stakeInfo = await StakeInstance().getStakedInfo(owner);
-  return stakeInfo;
+  try {
+    const stakeInfo = await StakeInstance().getStakedInfo(owner);
+    return stakeInfo;
+  } catch (error) {
+    console.log("getStakedInfoErr:", error);
+  }
 };
 
 export {

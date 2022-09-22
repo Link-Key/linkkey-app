@@ -12,8 +12,12 @@ export const SNSInstance = () => {
 };
 
 const getInfo = async (addr_, name_, tokenId_) => {
-  const info = await SNSInstance().getInfo(addr_, name_, tokenId_);
-  return info;
+  try {
+    const info = await SNSInstance().getInfo(addr_, name_, tokenId_);
+    return info;
+  } catch (error) {
+    console.log("getInfoErr:", error);
+  }
 };
 
 const getTokenIdOfName = async (name) => {
@@ -22,8 +26,12 @@ const getTokenIdOfName = async (name) => {
 };
 
 const getResolverOwner = async (name) => {
-  const info = await SNSInstance().getInfo(emptyAddress, name, 0);
-  return info.resolverOwner;
+  try {
+    const info = await SNSInstance().getInfo(emptyAddress, name, 0);
+    return info.resolverOwner;
+  } catch (error) {
+    console.log("getResolverOwnerErr:", error);
+  }
 };
 
 const nameExisted = async (name) => {

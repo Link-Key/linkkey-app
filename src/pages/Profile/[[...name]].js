@@ -71,9 +71,10 @@ export async function getStaticProps({ params }) {
 }
 
 const Profile = ({ name }) => {
-  const { account } = useSelector((state) => {
+  const { account, twitterName } = useSelector((state) => {
     return {
       account: state.walletInfo.account,
+      twitterName: state.userInfo.twitterName,
     };
   });
 
@@ -125,16 +126,25 @@ const Profile = ({ name }) => {
 
   useEffect(() => {
     if (name && name[0]) {
-      getResolverOwner(name[0]).then((address) => {
-        setProfileAdd(address.toLowerCase());
-        if (address.toLowerCase() === account) {
-          setIsSelf(true);
-        }
-      });
+      setSkeletonLoading(true);
+      getResolverOwner(name[0])
+        .then((address) => {
+          setProfileAdd(address.toLowerCase());
+          if (address.toLowerCase() === account) {
+            setIsSelf(true);
+          }
+        })
+        .catch((error) => {
+          console.log("getResolverOwnerErr:", error);
+          router.push("/");
+        })
+        .finally(() => {
+          setSkeletonLoading(false);
+        });
 
       getBasicUserInfo(name[0]);
     }
-  }, [name, account, getBasicUserInfo]);
+  }, [name, account, getBasicUserInfo, router]);
 
   console.log("profileAdd:", profileAdd);
 
@@ -180,7 +190,11 @@ const Profile = ({ name }) => {
               <Skeleton />
             )}
             {/* <OuterLink sx={{ justifyContent: "flex-start" }} /> */}
-            {profileAdd ? <ProfileLink address={profileAdd} /> : <Skeleton />}
+            {profileAdd ? (
+              <ProfileLink address={profileAdd} twitterName={twitterName} />
+            ) : (
+              <Skeleton />
+            )}
             <Typography>{basicInfo.description}</Typography>
           </Stack>
         </Stack>

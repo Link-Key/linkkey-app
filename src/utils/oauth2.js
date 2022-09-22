@@ -6,10 +6,9 @@ export const params = {
   client_id: "RWN0S2Jwa0R0V0dVdkZEQ28tWFo6MTpjaQ",
   redirect_uri: "https://app.linkkey.io/Setting",
   state: "state",
-  code_challenge: store.getState().walletInfo.account,
-  code_challenge_method: "plain",
-  scope:
-    "users.read%20tweet.read%20tweet.write%20follows.read%20follows.write%20offline.access%20like.read%20like.write",
+  code_challenge: "challenge",
+  code_challenge_method: "PLAIN",
+  scope: "offline.access%20tweet.read%20users.read",
 };
 
 function constructAuthorizeURL() {

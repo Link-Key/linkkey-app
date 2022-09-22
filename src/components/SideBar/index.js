@@ -119,7 +119,7 @@ const SideBar = () => {
         }
         return router.push(`/${name}`);
       } else {
-        ToastMention({ message: "未注册SNS域名", type: "warn" });
+        ToastMention({ message: "Unregistered SNS domain name", type: "warn" });
         return null;
       }
     } else {
@@ -189,7 +189,7 @@ const SideBar = () => {
                 handleHref({ name: item.name, type: item.type });
               }}
             >
-              <ListItemIcon>{item.icon}</ListItemIcon>
+              <ListItemIcon style={{color: "rgba(0, 0, 0, 0.8)"}}>{item.icon}</ListItemIcon>
               <ListItemText primary={item.name} />
             </SideListItem>
           ))}

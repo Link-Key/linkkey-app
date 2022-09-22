@@ -68,7 +68,6 @@ const SelectWrapper = styled(Select)(() => ({
   },
 
   ".MuiSelect-select": {
-    padding: "0px",
     borderRadius: "12px",
     color: "#9a9a9a",
     padding: "4px 10px",

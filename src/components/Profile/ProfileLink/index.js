@@ -16,9 +16,9 @@ const ProfileLink = ({ address }) => {
     <Stack
       direction="row"
       justifyContent="flex-start"
-      gap="20px"
+      gap="10px"
       p={0}
-      sx={{ img: { width: "30px !important" } }}
+      sx={{ img: { width: "25px !important" } }}
     >
       <a href={`https://www.twitter.com`} target="_blank" rel="noreferrer">
         <CustomImage src={TwitterImg} alt="twitter" />

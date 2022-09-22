@@ -4924,6 +4924,13 @@ rabin-wasm@^0.1.4:
     node-fetch "^2.6.1"
     readable-stream "^3.6.0"
 
+random-avatar-generator@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/random-avatar-generator/-/random-avatar-generator-2.0.0.tgz#c53db798c032fc5e5c71acf49a62d63b7ec7d08f"
+  integrity sha512-yOLrLkw2CvNuF2sFT23no9Qt7Lz16LS7gw6lVTc5M3TmBAKJEkxX8PZ4PYfxyXOEbnAJt4ttS4tUK+hUlXmLsQ==
+  dependencies:
+    seedrandom "^3.0.5"
+
 react-blockies@^1.4.1:
   version "1.4.1"
   resolved "https://registry.yarnpkg.com/react-blockies/-/react-blockies-1.4.1.tgz#d4f0faf95ac197213a297a370a4d7f77ea3d0b08"
@@ -5210,6 +5217,11 @@ scrypt-js@3.0.1:
   version "3.0.1"
   resolved "https://registry.npmjs.org/scrypt-js/-/scrypt-js-3.0.1.tgz"
   integrity sha512-cdwTTnqPu0Hyvf5in5asVdZocVDTNRmR7XEcJuIzMjJeSHybHl7vpB66AzwTaIg6CLSbtjcxc8fqcySfnTkccA==
+
+seedrandom@^3.0.5:
+  version "3.0.5"
+  resolved "https://registry.yarnpkg.com/seedrandom/-/seedrandom-3.0.5.tgz#54edc85c95222525b0c7a6f6b3543d8e0b3aa0a7"
+  integrity sha512-8OwmbklUNzwezjGInmZ+2clQmExQPvomqjL7LFqOYqtmuxRgQYqOD3mHaU+MvZn5FLUeVxVfQjwLZW/n/JFuqg==
 
 "semver@2 || 3 || 4 || 5":
   version "5.7.1"

@@ -24,6 +24,7 @@ import OtherProfileCard from "../../components/Profile/OtherProfileCard";
 import CommonAvatar from "../../components/Common/CommonAvatar";
 import { fromNameGetInfo } from "../../utils/web3";
 import ProfileLink from "../../components/Profile/ProfileLink";
+import AvatarRandomGenerator from "../../components/Common/AvatarRandomGenerator";
 
 const CardInfoWrapper = styled(Card)(() => ({
   display: "flex",
@@ -152,14 +153,15 @@ const Profile = ({ name }) => {
     <Stack spacing={3}>
       <CardInfoWrapper>
         <Stack direction="row" alignItems="flex-start" spacing={4}>
-          <CommonAvatar
-            account={profileAdd}
-            sx={{
-              width: "100px !important",
-              height: "100px !important",
-              borderRadius: "12px",
-            }}
-          />
+          {/*<CommonAvatar*/}
+          {/*  account={profileAdd}*/}
+          {/*  sx={{*/}
+          {/*    width: "100px !important",*/}
+          {/*    height: "100px !important",*/}
+          {/*    borderRadius: "12px",*/}
+          {/*  }}*/}
+          {/*/>*/}
+          <AvatarRandomGenerator />
           <Stack spacing={2} p={0}>
             {profileName ? (
               <Typography

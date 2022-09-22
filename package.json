@@ -44,6 +44,7 @@
   "devDependencies": {
     "@xmtp/xmtp-js": "^6.0.2",
     "eslint": "8.22.0",
-    "eslint-config-next": "12.2.5"
+    "eslint-config-next": "12.2.5",
+    "random-avatar-generator": "^2.0.0"
   }
 }

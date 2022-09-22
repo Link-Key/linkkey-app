@@ -102,6 +102,11 @@ const Setting = () => {
     try {
       const resp = await bindTwitter(reqParams);
       console.log("bindTwitter:", resp);
+      if (resp && resp.code === 200) {
+        ToastMention({ message: "bind twitter success!", type: "success" });
+      } else {
+        ToastMention({ message: resp.msg, type: "error" });
+      }
     } catch (error) {
       console.log("handleLinkTwitterErr:", error);
     }

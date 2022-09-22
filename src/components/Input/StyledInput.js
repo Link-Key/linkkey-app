@@ -194,6 +194,7 @@ const AreaInput = ({
       onChange(event.target.value);
     }
   };
+
   return (
     <Box>
       {showRequired && (
@@ -264,7 +265,7 @@ const AreaInput = ({
               marginRight: "12px",
             }}
           >
-            {value.length + "/" + maxWords}
+            {value && value.length ? value.length : 0 + "/" + maxWords}
           </Typography>
         )}
       </Box>

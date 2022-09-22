@@ -33,6 +33,7 @@ http.interceptors.request.use(
         store.getState().userInfo.token
       }`;
     }
+
     if (config.url.includes("https://api.nft.storage/upload")) {
       config.headers["Content-Type"] = "image/*'";
       config.headers.Authorization = `Bearer ${IPFS_API_KEY}`;

@@ -126,12 +126,17 @@ const Profile = ({ name }) => {
 
   useEffect(() => {
     if (name && name[0]) {
-      getResolverOwner(name[0]).then((address) => {
-        setProfileAdd(address.toLowerCase());
-        if (address.toLowerCase() === account) {
-          setIsSelf(true);
-        }
-      });
+      setSkeletonLoading(true);
+      getResolverOwner(name[0])
+        .then((address) => {
+          setProfileAdd(address.toLowerCase());
+          if (address.toLowerCase() === account) {
+            setIsSelf(true);
+          }
+        })
+        .finally(() => {
+          setSkeletonLoading(false);
+        });
 
       getBasicUserInfo(name[0]);
     }

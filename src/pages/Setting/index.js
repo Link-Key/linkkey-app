@@ -15,12 +15,15 @@ import { bindTwitter } from "../../api";
 import ToastMention from "../../components/ToastMessage";
 
 const Setting = () => {
-  const { snsName, description, avatar, account } = useSelector((state) => ({
-    snsName: state.walletInfo.snsName,
-    account: state.walletInfo.account,
-    description: state.userInfo.description,
-    avatar: state.userInfo.avatar,
-  }));
+  const { snsName, description, avatar, account, twitterName } = useSelector(
+    (state) => ({
+      snsName: state.walletInfo.snsName,
+      account: state.walletInfo.account,
+      description: state.userInfo.description,
+      avatar: state.userInfo.avatar,
+      twitterName: state.userInfo.twitterName,
+    })
+  );
 
   const dispatch = useDispatch();
 
@@ -74,9 +77,9 @@ const Setting = () => {
     setBtnLoading(false);
   }, [snsName, preViewAvatar, bio, dispatch]);
 
-  const getSettingInfo = useCallback(async () => {
+  const getSettingInfo = useCallback(async (name) => {
     try {
-      const resp = await getResolverInfo(snsName);
+      const resp = await getResolverInfo(name);
       if (resp && resp.ipfsUrl && resp.description) {
         setPreViewAvatar(resp.ipfsUrl);
         setBio(resp.description);
@@ -84,11 +87,14 @@ const Setting = () => {
     } catch (error) {
       console.log("getSettingInfoErr:", error);
     }
-  }, [snsName]);
+  }, []);
 
-  const initialSettingValue = useCallback(async () => {
-    await getSettingInfo();
-  }, [getSettingInfo]);
+  const initialSettingValue = useCallback(
+    async (name) => {
+      await getSettingInfo(name);
+    },
+    [getSettingInfo]
+  );
 
   const handleLinkTwitter = useCallback(async () => {
     if (!code) {
@@ -103,6 +109,7 @@ const Setting = () => {
       const resp = await bindTwitter(reqParams);
       console.log("bindTwitter:", resp);
       if (resp && resp.code === 200) {
+        dispatch({ type: "USER_INFO", value: resp.data });
         ToastMention({ message: "bind twitter success!", type: "success" });
       } else {
         ToastMention({ message: resp.msg, type: "error" });
@@ -111,12 +118,15 @@ const Setting = () => {
       console.log("handleLinkTwitterErr:", error);
     }
     setTwitterLoading(false);
-  }, [code, account]);
+  }, [code, account, dispatch]);
 
   useEffect(() => {
+    if (snsName) {
+      initialSettingValue(snsName);
+    }
     initialSettingValue();
     handleLinkTwitter();
-  }, [initialSettingValue, handleLinkTwitter]);
+  }, [initialSettingValue, handleLinkTwitter, snsName]);
 
   return (
     <Stack spacing={3}>
@@ -166,7 +176,7 @@ const Setting = () => {
             placeholder="Your twitter"
             disabled={true}
             iconUrl={<TwitterIcon width="20" height="20" color="#ea6060" />}
-            value={link}
+            value={twitterName}
             setValue={setLink}
             onChange={handleLinkChange}
           />

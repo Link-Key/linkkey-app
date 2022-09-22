@@ -71,9 +71,10 @@ export async function getStaticProps({ params }) {
 }
 
 const Profile = ({ name }) => {
-  const { account } = useSelector((state) => {
+  const { account, twitterName } = useSelector((state) => {
     return {
       account: state.walletInfo.account,
+      twitterName: state.userInfo.twitterName,
     };
   });
 
@@ -180,7 +181,11 @@ const Profile = ({ name }) => {
               <Skeleton />
             )}
             {/* <OuterLink sx={{ justifyContent: "flex-start" }} /> */}
-            {profileAdd ? <ProfileLink address={profileAdd} /> : <Skeleton />}
+            {profileAdd ? (
+              <ProfileLink address={profileAdd} twitterName={twitterName} />
+            ) : (
+              <Skeleton />
+            )}
             <Typography>{basicInfo.description}</Typography>
           </Stack>
         </Stack>

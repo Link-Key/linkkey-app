@@ -1,12 +1,12 @@
 import { Link } from "@mui/material";
 import { createContext, useCallback, useContext, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import ToastMention from "../components/ToastMessage";
 import { chainsInfo } from "../config/const";
-import { SNSInstance, getInfo } from "../contracts/SNS";
+import { getInfo } from "../contracts/SNS";
 import store from "../store";
 import { Client } from "@xmtp/xmtp-js";
-import { getAccount, getSigner } from "../utils/web3";
+import { getSigner } from "../utils/web3";
 import { useState } from "react";
 import { getResolverInfo } from "../contracts/Resolver";
 import { useRouter } from "next/router";
@@ -43,6 +43,7 @@ const WalletProvider = ({ children }) => {
       try {
         if (address) {
           const info = await getInfo(address, "", 0);
+
           dispatch({
             type: "SET_SNS_NAME",
             value: info[2],
@@ -55,6 +56,7 @@ const WalletProvider = ({ children }) => {
         });
         return "";
       } catch (error) {
+        console.log("getSNSNameErr:", error);
         dispatch({
           type: "SET_SNS_NAME",
           value: null,
@@ -130,19 +132,23 @@ const WalletProvider = ({ children }) => {
 
     // Subscribe to chainId change
     eth.on("chainChanged", (chainId) => {
-      console.log("chianId:", chainId);
-      if (chainId !== chainsInfo.chainIdHex) {
-        dispatch({
-          type: "SET_ACCOUNTS",
-          value: null,
-        });
+      if (chainId == chainsInfo.chainIdHex) {
+        disconnectWallet();
       }
     });
 
     eth.on("disconnect", (error) => {
-      console.log("disconnect:", error);
+      console.log("disconnectErr:", error);
+      disconnectWallet();
     });
-  }, [dispatch, getSNSName, startLoading, closeLoading, disconnectWallet]);
+  }, [
+    dispatch,
+    getSNSName,
+    startLoading,
+    closeLoading,
+    disconnectWallet,
+    router,
+  ]);
 
   const connectWallet = useCallback(async () => {
     const eth = window.ethereum;
@@ -183,6 +189,8 @@ const WalletProvider = ({ children }) => {
       // get sns domain name
       const name = await getSNSName(accounts[0]);
 
+      console.log("name:", name);
+
       if (name) {
         console.log("name:", name);
         await getUserBasicInfo(name);
@@ -216,7 +224,6 @@ const WalletProvider = ({ children }) => {
         await getSigner(),
         process.env.NEXT_PUBLIC_XMTP_URL
       );
-      console.log("initialClient:", client);
       if (client && client.address) {
         dispatch({ type: "SET_CLIENT_ADD", value: client.address });
         setClient(client);

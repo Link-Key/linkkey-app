@@ -134,13 +134,17 @@ const Profile = ({ name }) => {
             setIsSelf(true);
           }
         })
+        .catch((error) => {
+          console.log("getResolverOwnerErr:", error);
+          router.push("/");
+        })
         .finally(() => {
           setSkeletonLoading(false);
         });
 
       getBasicUserInfo(name[0]);
     }
-  }, [name, account, getBasicUserInfo]);
+  }, [name, account, getBasicUserInfo, router]);
 
   console.log("profileAdd:", profileAdd);
 

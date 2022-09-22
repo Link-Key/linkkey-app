@@ -109,15 +109,15 @@ const Profile = ({ name }) => {
     }
   };
 
-  const getBasicUserInfo = useCallback(async () => {
+  const getBasicUserInfo = useCallback(async (name) => {
     try {
-      const userInfo = await fromNameGetInfo(name[0]);
+      const userInfo = await fromNameGetInfo(name);
       setSkeletonLoading(false);
       setBasicInfo(userInfo);
     } catch (error) {
       console.log("getBasicUserInfoErr:", getBasicUserInfo);
     }
-  }, [name]);
+  }, []);
 
   useEffect(() => {
     hasPathParams();
@@ -132,7 +132,7 @@ const Profile = ({ name }) => {
         }
       });
 
-      getBasicUserInfo();
+      getBasicUserInfo(name[0]);
     }
   }, [name, account, getBasicUserInfo]);
 

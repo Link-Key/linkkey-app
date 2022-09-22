@@ -24,9 +24,15 @@ const CommonAvatar = ({ name, account, avatarUrl, sx }) => {
 
   const getAccountAvatar = useCallback(
     async (account) => {
-      const resp = await fromAddressGetName(account);
-      if (resp) {
-        getAvatar(resp);
+      try {
+        if (account) {
+          const resp = await fromAddressGetName(account);
+          if (resp) {
+            getAvatar(resp);
+          }
+        }
+      } catch (error) {
+        console.log("getAccountAvatarErr:", error);
       }
     },
     [getAvatar]

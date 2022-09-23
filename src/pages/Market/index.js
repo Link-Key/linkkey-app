@@ -14,6 +14,7 @@ import CommonTabs from "../../components/CommonTabs";
 import PageTitleWrapper from "../../components/PageTitleWrapper/PageTitleWrapper";
 import MarketItem from "../../components/Market/MarketItem";
 import { queryContractList } from "../../api/market";
+import TableNoRows from "../../assets/icons/common/tableNoRows.svg";
 
 const MarketWrapper = styled(Box)(() => ({
   width: "100%",
@@ -107,6 +108,16 @@ const Market = () => {
         {listLoading ? (
           <Stack height="30vh" justifyContent="center" alignItems="center">
             <CircularProgress sx={{ margin: "0 auto" }} />
+          </Stack>
+        ) : marketList.length === 0 ? (
+          <Stack
+            p={0}
+            direction="row"
+            justifyContent="center"
+            alignItems="center"
+            sx={{ height: "30vh" }}
+          >
+            <TableNoRows />
           </Stack>
         ) : (
           <Stack p={0} justifyContent="center" alignItems="center">

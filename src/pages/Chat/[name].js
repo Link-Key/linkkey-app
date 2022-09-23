@@ -59,7 +59,9 @@ const LeftBox = styled(Box)(() => ({
 
 const RightBox = styled(Box)(() => ({
   height: "100%",
-  width: "calc(1200px - 601px)",
+  width: "calc(100% - 260px)",
+  maxWidth: "1200px",
+  minWidth: "cal(777px- 260px)",
   // width: "100%",
   background: "white",
   borderRadius: "0 12px 12px 0",

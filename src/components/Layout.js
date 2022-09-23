@@ -32,7 +32,7 @@ const Layout = ({ children }) => {
           <Main>
             <Box
               sx={{
-                maxWidth: "calc(1200px)",
+                maxWidth: "calc(1200px - 280px)",
                 margin: "0 auto",
               }}
             >

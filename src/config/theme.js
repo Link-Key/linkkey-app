@@ -96,6 +96,8 @@ const lightTheme = responsiveFontSizes(
           root: {
             borderRadius: "12px",
             padding: "16px 20px",
+            boxShadow: "none",
+            border: "1px solid #ddd",
           },
         },
       },

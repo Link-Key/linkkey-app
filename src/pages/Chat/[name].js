@@ -44,13 +44,12 @@ const ChatHeader = styled(Paper)(() => ({
 const GridWrapper = styled(Grid)(() => ({
   height: "81vh",
   borderRadius: "12px",
-  boxShadow:
-    "0px 2px 1px -1px rgb(0 0 0 / 20%), 0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%)",
+  // boxShadow:
+  //   "0px 2px 1px -1px rgb(0 0 0 / 20%), 0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%)",
 }));
 
 const LeftBox = styled(Box)(() => ({
   height: "100%",
-  width: "260px",
   background: "white",
   borderRadius: "12px 0 0 12px",
   // padding: "16px 20px",
@@ -59,8 +58,6 @@ const LeftBox = styled(Box)(() => ({
 
 const RightBox = styled(Box)(() => ({
   height: "100%",
-  width: "calc(1200px - 601px)",
-  // width: "100%",
   background: "white",
   borderRadius: "0 12px 12px 0",
   padding: "16px 20px",
@@ -281,7 +278,7 @@ const Chat = ({ type }) => {
       </ChatHeader>
 
       <Grid container>
-        <GridWrapper item>
+        <GridWrapper item xs={4}>
           <LeftBox>
             {/* <AccordionWrapper defaultExpanded={true}>
               <AccordionSummary
@@ -340,7 +337,7 @@ const Chat = ({ type }) => {
             </RelationListWrapper>
           </LeftBox>
         </GridWrapper>
-        <GridWrapper item xs="auto">
+        <GridWrapper item xs={8}>
           <RightBox>
             <Conversation
               name={conversation.name}

@@ -36,7 +36,8 @@ const WalletProvider = ({ children }) => {
   const disconnectWallet = useCallback(() => {
     dispatch({ type: "LOGOUT" });
     dispatch({ type: "CLEAR_USER_INFO" });
-  }, [dispatch]);
+    router.push("/");
+  }, [dispatch, router]);
 
   const getSNSName = useCallback(
     async (address) => {
@@ -132,14 +133,15 @@ const WalletProvider = ({ children }) => {
 
     // Subscribe to chainId change
     eth.on("chainChanged", (chainId) => {
+      // disconnectWallet();
       if (chainId == chainsInfo.chainIdHex) {
         disconnectWallet();
       }
     });
 
     eth.on("disconnect", (error) => {
-      console.log("disconnectErr:", error);
       disconnectWallet();
+      console.log("disconnectErr:", error);
     });
   }, [
     dispatch,

@@ -43,6 +43,7 @@ import {
 } from "../../../contracts/NFT";
 import useTransaction from "../../../hooks/useTransaction";
 import InfoDialog from "./InfoDialog";
+import ToastMention from "../../ToastMessage";
 
 const TitleWrapper = styled(Box)(() => ({
   display: "flex",
@@ -117,7 +118,6 @@ const Details = ({ type, contractAdd, profileAdd }) => {
   // details info
   const [detailsInfo, setDetailsInfo] = useState({ tax: "-", balance: "-" });
 
-  const [twitterStatus, setTwitterStatus] = useState(false);
   const [mintInp, setMintInp] = useState("");
   const [royaltiesInp, setRoyaltiesInp] = useState("");
   const [transferTokenId, setTransferTokenId] = useState(0);
@@ -126,8 +126,9 @@ const Details = ({ type, contractAdd, profileAdd }) => {
   // friend:1 , group:2
   const createType = isFriend ? 1 : 2;
 
-  const { account } = useSelector((state) => ({
+  const { account, twitterStatus } = useSelector((state) => ({
     account: state.walletInfo.account,
+    twitterStatus: state.userInfo.twitterStatus,
   }));
   const chainId = getChainId();
   // to address
@@ -409,15 +410,16 @@ const Details = ({ type, contractAdd, profileAdd }) => {
               <Typography>
                 Twitter verify status: {twitterStatus.toString()}
               </Typography>
-              <Button
+              <CommonLoadingBtn
+                hidden={twitterStatus}
                 variant="outlined"
-                sx={{
-                  display: twitterStatus ? "none" : "block",
+                onClick={() => {
+                  router.push("/Setting");
                 }}
               >
                 <TwitterIcon />
                 To Verify
-              </Button>
+              </CommonLoadingBtn>
             </TypographyBox>
 
             <TypographyBox aria-label="mint">
@@ -465,7 +467,14 @@ const Details = ({ type, contractAdd, profileAdd }) => {
             margin: "0 auto",
           }}
           onClick={() => {
-            handlePayMintFn();
+            if (twitterStatus) {
+              handlePayMintFn();
+            } else {
+              ToastMention({
+                message: "Please verify your twitter!",
+                type: "warn",
+              });
+            }
           }}
         >
           Pay {feeState} Key

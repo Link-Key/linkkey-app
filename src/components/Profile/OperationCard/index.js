@@ -35,7 +35,7 @@ const OperationCard = ({ profileAdd }) => {
 
   const getStakeInfoFn = useCallback(async () => {
     const resp = await getStakedInfo(profileAdd);
-    console.log("resp:", resp);
+
     if (resp && resp.friendNFTAddress && resp.groupNFTAddress) {
       setFriendAddress(resp.friendNFTAddress);
       setGroupAddress(resp.groupNFTAddress);
@@ -51,13 +51,13 @@ const OperationCard = ({ profileAdd }) => {
   return (
     <OperationCardWrapper>
       <Typography variant="title">NTFs</Typography>
-      {friendAddress === emptyAddress || groupAddress === emptyAddress ? (
+      {friendAddress !== emptyAddress || groupAddress !== emptyAddress ? (
+        <></>
+      ) : (
         <OperationAlert>
           ⚠️ You are not currently release Follow-NFT or Group-NFT, click the
           button below to release your NFT!
         </OperationAlert>
-      ) : (
-        <></>
       )}
 
       <Box

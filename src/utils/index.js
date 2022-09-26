@@ -1,6 +1,4 @@
-import BigNumber from "bignumber.js";
 import { formatEther, parseEther, formatUnits } from "ethers/lib/utils";
-import { useSelector } from "react-redux";
 import { contractAddress } from "../config/const";
 import { getBalance } from "../contracts/ERC20";
 import store from "../store/index";

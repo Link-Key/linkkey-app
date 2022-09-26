@@ -25,7 +25,7 @@ export const bindTwitter = async (data) => {
 export const queryUserInfo = async (data) => {
   const res = await http({
     url: "/api/chatService/user/userInfo",
-    data: {
+    params: {
       ...data,
     },
     method: "get",

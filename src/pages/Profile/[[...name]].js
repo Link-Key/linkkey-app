@@ -25,6 +25,7 @@ import CommonAvatar from "../../components/Common/CommonAvatar";
 import { fromNameGetInfo } from "../../utils/web3";
 import ProfileLink from "../../components/Profile/ProfileLink";
 import AvatarRandomGenerator from "../../components/Common/AvatarRandomGenerator";
+import { queryUserInfo } from "../../api";
 
 const CardInfoWrapper = styled(Card)(() => ({
   display: "flex",
@@ -72,10 +73,9 @@ export async function getStaticProps({ params }) {
 }
 
 const Profile = ({ name }) => {
-  const { account, twitterName } = useSelector((state) => {
+  const { account } = useSelector((state) => {
     return {
       account: state.walletInfo.account,
-      twitterName: state.userInfo.twitterName,
     };
   });
 
@@ -89,6 +89,7 @@ const Profile = ({ name }) => {
   const [showDIDCard, setShowDIDCard] = useState(false);
   // profile address
   const [profileAdd, setProfileAdd] = useState("");
+  const [userInfo, setUserInfo] = useState({});
 
   // is self profile
   const [isSelf, setIsSelf] = useState(false);
@@ -121,6 +122,14 @@ const Profile = ({ name }) => {
     }
   }, []);
 
+  const getUserInfo = useCallback(async (address) => {
+    const resp = await queryUserInfo({ address });
+
+    if (resp && resp.code === 200 && resp.data.address) {
+      setUserInfo(resp.data);
+    }
+  }, []);
+
   useEffect(() => {
     hasPathParams();
   }, []);
@@ -134,6 +143,7 @@ const Profile = ({ name }) => {
           if (address.toLowerCase() === account) {
             setIsSelf(true);
           }
+          getUserInfo(address);
         })
         .catch((error) => {
           console.log("getResolverOwnerErr:", error);
@@ -145,9 +155,10 @@ const Profile = ({ name }) => {
 
       getBasicUserInfo(name[0]);
     }
-  }, [name, account, getBasicUserInfo, router]);
+  }, [name, account, getBasicUserInfo, router, getUserInfo]);
 
   console.log("profileAdd:", profileAdd);
+  console.log("userInfo:", userInfo);
 
   return (
     <Stack spacing={3}>
@@ -193,7 +204,10 @@ const Profile = ({ name }) => {
             )}
             {/* <OuterLink sx={{ justifyContent: "flex-start" }} /> */}
             {profileAdd ? (
-              <ProfileLink address={profileAdd} twitterName={twitterName} />
+              <ProfileLink
+                address={profileAdd}
+                twitterName={userInfo.twitterName}
+              />
             ) : (
               <Skeleton />
             )}

@@ -54,11 +54,15 @@ export const contractAddress = (chainId) => {
       resolverAddress = "0x08f4372e1CdBDcD958cF5ad6ECcb5637E64A9Ac7"
       break;
     case "80001":
-      snsAddress = "0x23bf7e618c5C2F2772620aa7D57fE6db27eeA176";
+      // snsAddress = "0x23bf7e618c5C2F2772620aa7D57fE6db27eeA176";
+      snsAddress = "0x362945C3ffa822854240788EcdB509f104E56588";
       keyAddress = "0xFA12F5ff3c2A137a02F1678E50c54276624b50FB";
-      stakeAddress = "0x279339127a5B4b7580044E5De0DBEA201e0BF723";
-      tradingAddress = "0xB1d8DCf3d31FF8A50F5023883332d03827009056";
-      resolverAddress = "0x71Bc31C3eE2896408B93E41b0b43ea1bf9a20FE3";
+      // stakeAddress = "0x279339127a5B4b7580044E5De0DBEA201e0BF723";
+      stakeAddress = "0xaA4F164fE5992CF7940C502aa2fDf53aFE09cD54";
+      // tradingAddress = "0xB1d8DCf3d31FF8A50F5023883332d03827009056";
+      tradingAddress = "0xB6Da7994180a6F074B0E1221ad8b4f89179088CA";
+      // resolverAddress = "0x71Bc31C3eE2896408B93E41b0b43ea1bf9a20FE3";
+      resolverAddress = "0xb5f4eA9970Ad78B7dbCB0c5FF7835A93e36c40B6";
       break;
     default:
       break;

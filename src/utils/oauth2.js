@@ -15,15 +15,7 @@ function constructAuthorizeURL() {
   console.log("code_challenge:", params.code_challenge);
   return (
     twitterOAuth2URL +
-    `response_type=${params.response_type}&client_id=${
-      params.client_id
-    }&redirect_uri=${params.redirect_uri}&state=${
-      params.state
-    }&code_challenge=${
-      store.getState().walletInfo.account
-    }&code_challenge_method=${params.code_challenge_method}&scope=${
-      params.scope
-    }`
+    `response_type=${params.response_type}&client_id=${params.client_id}&redirect_uri=${params.redirect_uri}&state=${params.state}&code_challenge=${params.code_challenge}&code_challenge_method=${params.code_challenge_method}&scope=${params.scope}`
   );
 }
 

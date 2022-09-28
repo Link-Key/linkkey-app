@@ -311,8 +311,8 @@ const Chat = ({ type }) => {
 
                 <SelectWrapper value={selectItem} onChange={handleSelectChange}>
                   <MenuItem value="empty">All</MenuItem>
-                  <MenuItem value="following">My</MenuItem>
-                  <MenuItem value="followers">His</MenuItem>
+                  <MenuItem value="following">Following</MenuItem>
+                  <MenuItem value="followers">Followers</MenuItem>
                 </SelectWrapper>
               </Stack>
               <RelationList component="nav">

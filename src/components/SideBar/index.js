@@ -16,6 +16,7 @@ import OuterLink from "./OuterLink";
 import InsertEmoticonIcon from "@mui/icons-material/InsertEmoticon";
 import PortraitIcon from '@mui/icons-material/Portrait';
 import DescriptionRoundedIcon from "@mui/icons-material/DescriptionRounded";
+import QuizIcon from '@mui/icons-material/Quiz';
 import SmsIcon from "@mui/icons-material/Sms";
 import StoreIcon from "@mui/icons-material/Store";
 import InterestsIcon from '@mui/icons-material/Interests';
@@ -91,6 +92,11 @@ const menuList = [
     name: "Docs",
     type: "https://docs.linkkey.tech",
     icon: <DescriptionRoundedIcon />,
+  },
+  {
+    name: "Support",
+    type: "https://discord.gg/nMQwb3cpcA",
+    icon: <QuizIcon />,
   },
 ];
 

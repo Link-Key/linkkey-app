@@ -153,10 +153,10 @@ const BuyDialog = ({ open, title, onClose, info }) => {
           <EllipsisAddress account={info.contractAddress} />
         </Items>
         <TypographyBox aria-label="Transfer" sx={{ gap: "5px" }}>
-          <Typography>Price: {info.orderPrice}KEY</Typography>
+          <Typography>Price: {info.orderPrice} KEY</Typography>
         </TypographyBox>
 
-        <Typography variant="subtitle1">You will pay: 10KEY </Typography>
+        <Typography variant="subtitle1">You will pay: {info.orderPrice} KEY </Typography>
         <Typography variant="subtitle1">
           - Service fee: {serviceRate}%
         </Typography>

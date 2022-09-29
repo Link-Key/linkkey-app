@@ -73,6 +73,7 @@ const ReleaseDetailsWrapper = styled(Box)(() => ({
     fontWeight: 500,
   },
   ".MuiTypography-subtitle1": {
+    marginTop: "20px",
     color: "#777",
   },
 }));
@@ -329,9 +330,8 @@ const Details = ({ type, contractAdd, profileAdd }) => {
             <Typography>Holding Amount: {detailsInfo.balance}</Typography>
             <Typography>Royalties: {detailsInfo.tax}%</Typography>
 
-            <Typography variant="subtitle1">
-              Note:Your Follow-NFT is still not listed,please click button below
-              for listing operation
+            <Typography variant="subtitle1" style={{fontStyle: "italic"}}>
+              Note: Transfer your follow-nft, others with your nft can become your friend
             </Typography>
             <Stack direction="row" justifyContent="center" spacing={2}>
               <CommonLoadingBtn
@@ -405,7 +405,7 @@ const Details = ({ type, contractAdd, profileAdd }) => {
         <DialogContent aria-label="Release_NFT">
           <ReleaseData>
             <Typography>Release amount: {isFriend ? "150" : "1500"}</Typography>
-            <Typography>Floor price: 0.88KEY</Typography>
+            <Typography>Floor price: 10 KEY</Typography>
             <TypographyBox aria-label="verify-twitter">
               <Typography>
                 Twitter verify status: {twitterStatus.toString()}

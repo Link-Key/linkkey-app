@@ -64,7 +64,7 @@ const PurchaseList = () => {
   const columns = [
     {
       field: "tokenOwnerName",
-      headerName: "Domain name",
+      headerName: "Owner",
       width: 90,
       ...commonColumnsProps,
     },

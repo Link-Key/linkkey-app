@@ -20,7 +20,7 @@ const MarketDialog = ({ open, onClose, type, info }) => {
             router.push(`/Profile/${info.name}`);
           }}
         >
-          Mint at owner
+          Mint from Owner
         </Button>
         <Button
           variant="outlined"
@@ -28,7 +28,7 @@ const MarketDialog = ({ open, onClose, type, info }) => {
             router.push(`/Market/PurchaseList/${info.contractAddress}`);
           }}
         >
-          Buy at market
+          Buy from Market
         </Button>
 
         <Typography
@@ -38,11 +38,10 @@ const MarketDialog = ({ open, onClose, type, info }) => {
             fontWeight: 500,
           }}
         >
-          {type
+          {type === 0
             ? `
-          Note:Your Follow-NFT is still not listed,please click button below for
-          listing operation`
-            : `Note: buy a Group-NFT, you will automatically join the Group chat. You can buy it in the above two ways`}
+          Note: Buy his(her) Follow-NFT and you will automatically become his(her) friend.You can buy it in the above two ways`
+            : `Note: buy his(her) Group-NFT, you will automatically join the Group chat. You can buy it in the above two ways`}
         </Typography>
       </Stack>
     </CommonDialog>

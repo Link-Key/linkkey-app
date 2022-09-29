@@ -75,6 +75,7 @@ const SelectWrapper = styled(Select)(() => ({
 }));
 
 const SaleDialog = ({ open, title, contractAdd, tax, tokenId, onClose }) => {
+  let newTax = tax/10;
   const [saleInp, setSaleInp] = useState("");
   const [selectItem, setSelectItem] = useState("key");
   const [receiveInp, setReceiveInp] = useState("-");
@@ -95,11 +96,11 @@ const SaleDialog = ({ open, title, contractAdd, tax, tokenId, onClose }) => {
       console.log("value:", typeof value);
       if (/^[0-9]*$/.test(value) && !value.startsWith("0")) {
         setSaleInp(value);
-        const receivePrice = (value * (100 - tax - 2.5)) / 100;
+        const receivePrice = (value * (100 - newTax - 2.5)) / 100;
         setReceiveInp(receivePrice);
       }
     },
-    [tax]
+    [newTax]
   );
 
   const handleCloseDialog = useCallback(() => {
@@ -223,7 +224,7 @@ const SaleDialog = ({ open, title, contractAdd, tax, tokenId, onClose }) => {
         </TypographyBox>
 
         <Typography variant="subtitle1">- Service fee: 2.5%</Typography>
-        <Typography variant="subtitle1">- Royalties: {tax}%</Typography>
+        <Typography variant="subtitle1">- Royalties: {newTax}%</Typography>
         <Typography variant="subtitle1">
           You will receive: {receiveInp}
         </Typography>

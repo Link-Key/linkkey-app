@@ -33,7 +33,7 @@ const Market = () => {
   const [pageTotal, setPageTotal] = useState(0);
   const [searchInp, setSearchInp] = useState("");
 
-  const tabList = ["Friend", <span key="group">Group</span>];
+  const tabList = ["Follow-NFT", <span key="group">Group-NFT</span>];
 
   const handleChangeTabs = useCallback((e, newValue) => {
     setTabValue(newValue);

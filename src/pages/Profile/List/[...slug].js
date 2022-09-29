@@ -146,7 +146,7 @@ const ProfileList = ({ type, name }) => {
   const friendColumns = [
     {
       field: "name",
-      headerName: "Domain",
+      headerName: "SNS",
       width: 90,
       ...commonColumnsProps,
       align: "left",

@@ -159,6 +159,8 @@ const Setting = () => {
             onChange={handleBioChange}
           />
 
+          <div style={{color: "#9a9a9a", fontStyle: "italic"}}>Note: The above data will be uploaded to IPFS</div>
+
           <CommonLoadingBtn
             loading={btnLoading}
             variant="contained"

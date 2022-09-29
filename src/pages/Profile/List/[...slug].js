@@ -301,7 +301,7 @@ const ProfileList = ({ type, name }) => {
     <Stack spacing={3}>
       <TitleWrapper>
         <TypographyWrapper>
-          {type === "0" ? "Friends List" : "Groups List"}
+          {type === "0" ? "Friend Lists" : "Group Lists"}
         </TypographyWrapper>
       </TitleWrapper>
       <Paper
@@ -356,6 +356,7 @@ const ProfileList = ({ type, name }) => {
           setSaleOpen(false);
           setSaleInfo({ address: "", contractAdd: "", tokenId: "", tax: "" });
         }}
+      />
       />
     </Stack>
   );

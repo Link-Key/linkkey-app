@@ -342,7 +342,7 @@ const LinkInput = ({
           marginTop: "20px",
           padding: "3px 10px",
           svg: {
-            marginRight: "5px",
+            // marginRight: "5px",
           },
         }}
       >

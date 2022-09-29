@@ -130,12 +130,11 @@ const ItemsCard = ({ type }) => {
                   width: "40%",
                 }}
               >
-                {/* {item && item.ipfsUrl ? (
+                {item && item.ipfsUrl ? (
                   <CommonAvatar avatarUrl={item.ipfsUrl} />
                 ) : (
                   <CommonAvatar account={item.address} />
-                )} */}
-                <CommonAvatar account={item.name} />
+                )}
                 <Typography>{item && item.name ? item.name : "-"}</Typography>
               </Box>
             ))}

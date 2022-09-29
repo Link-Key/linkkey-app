@@ -73,11 +73,14 @@ export async function getStaticProps({ params }) {
 }
 
 const Profile = ({ name }) => {
-  const { account } = useSelector((state) => {
+  const { account, avatar } = useSelector((state) => {
     return {
       account: state.walletInfo.account,
+      avatar: state.userInfo.avatar,
     };
   });
+
+  console.log("avatar:", avatar);
 
   const [basicInfo, setBasicInfo] = useState({
     avatar: name,
@@ -164,15 +167,19 @@ const Profile = ({ name }) => {
     <Stack spacing={3}>
       <CardInfoWrapper>
         <Stack direction="row" alignItems="flex-start" spacing={4}>
-          {/*<CommonAvatar*/}
-          {/*  account={profileAdd}*/}
-          {/*  sx={{*/}
-          {/*    width: "100px !important",*/}
-          {/*    height: "100px !important",*/}
-          {/*    borderRadius: "12px",*/}
-          {/*  }}*/}
-          {/*/>*/}
-          <AvatarRandomGenerator />
+          {avatar ? (
+            <CommonAvatar
+              account={profileAdd}
+              sx={{
+                width: "100px !important",
+                height: "100px !important",
+                borderRadius: "12px",
+              }}
+            />
+          ) : (
+            <AvatarRandomGenerator />
+          )}
+
           <Stack spacing={2} p={0}>
             {profileName ? (
               <Typography

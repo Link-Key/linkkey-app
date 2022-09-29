@@ -83,8 +83,9 @@ const BuyDialog = ({ open, title, onClose, info }) => {
   const getTaxFn = useCallback(async () => {
     try {
       const tax = await getTaxPreparation(info.contractAddress);
-      setTaxState(hexToNumber(tax));
-      return hexToNumber(tax);
+      const newTax = hexToNumber(tax)/10
+      setTaxState(newTax);
+      return newTax;
     } catch (error) {
       console.log("getTaxFnErr:", error);
     }
@@ -160,7 +161,7 @@ const BuyDialog = ({ open, title, onClose, info }) => {
         <Typography variant="subtitle1">
           - Service fee: {serviceRate}%
         </Typography>
-        <Typography variant="subtitle1">- Royalties: {taxState/10}%</Typography>
+        <Typography variant="subtitle1">- Royalties: {taxState}%</Typography>
         <Typography variant="subtitle1">
           - Owner: {100 - taxState - serviceRate}%
         </Typography>

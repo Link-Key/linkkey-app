@@ -189,7 +189,7 @@ export default function Home() {
 
         <Typography variant="subtitle1">
           Get started by reading the <Link href={linkList.docs}>docs</Link> or
-          joining the <Link href={linkList.telegram}>community</Link>
+          joining the <Link href={linkList.discord}>community</Link>
         </Typography>
 
         <Stepper

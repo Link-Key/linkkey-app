@@ -40,7 +40,7 @@ const MarketDialog = ({ open, onClose, type, info }) => {
         >
           {type === 0
             ? `
-          Note:Buy his(her) Follow-NFT and you will automatically become his(her) friend.You can buy it in the above two ways`
+          Note: Buy his(her) Follow-NFT and you will automatically become his(her) friend.You can buy it in the above two ways`
             : `Note: buy his(her) Group-NFT, you will automatically join the Group chat. You can buy it in the above two ways`}
         </Typography>
       </Stack>

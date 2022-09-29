@@ -223,7 +223,7 @@ const SaleDialog = ({ open, title, contractAdd, tax, tokenId, onClose }) => {
         </TypographyBox>
 
         <Typography variant="subtitle1">- Service fee: 2.5%</Typography>
-        <Typography variant="subtitle1">- Royalties: {tax}%</Typography>
+        <Typography variant="subtitle1">- Royalties: {tax/10}%</Typography>
         <Typography variant="subtitle1">
           You will receive: {receiveInp}
         </Typography>

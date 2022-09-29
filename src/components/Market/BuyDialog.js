@@ -160,7 +160,7 @@ const BuyDialog = ({ open, title, onClose, info }) => {
         <Typography variant="subtitle1">
           - Service fee: {serviceRate}%
         </Typography>
-        <Typography variant="subtitle1">- Royalties: {taxState}%</Typography>
+        <Typography variant="subtitle1">- Royalties: {taxState/10}%</Typography>
         <Typography variant="subtitle1">
           - Owner: {100 - taxState - serviceRate}%
         </Typography>

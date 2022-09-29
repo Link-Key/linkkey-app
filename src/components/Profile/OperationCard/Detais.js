@@ -405,7 +405,7 @@ const Details = ({ type, contractAdd, profileAdd }) => {
         <DialogContent aria-label="Release_NFT">
           <ReleaseData>
             <Typography>Release amount: {isFriend ? "150" : "1500"}</Typography>
-            <Typography>Floor price: 0.88KEY</Typography>
+            <Typography>Floor price: 10 KEY</Typography>
             <TypographyBox aria-label="verify-twitter">
               <Typography>
                 Twitter verify status: {twitterStatus.toString()}

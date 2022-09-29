@@ -175,7 +175,7 @@ const Details = ({ type, contractAdd, profileAdd }) => {
       try {
         const tokenId = await getTokenIdOfName(keyName);
 
-        await stakeNFT(tokenId, createType, mintInp, royaltiesInp);
+        await stakeNFT(tokenId, createType, mintInp, royaltiesInp * 10);
 
         setTimeout(() => {
           window.stakeInfoTimer = setInterval(async () => {

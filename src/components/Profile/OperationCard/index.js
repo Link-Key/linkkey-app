@@ -50,7 +50,7 @@ const OperationCard = ({ profileAdd }) => {
 
   return (
     <OperationCardWrapper>
-      <Typography variant="title">NTFs</Typography>
+      <Typography variant="title">NFTs</Typography>
       {friendAddress !== emptyAddress || groupAddress !== emptyAddress ? (
         <></>
       ) : (

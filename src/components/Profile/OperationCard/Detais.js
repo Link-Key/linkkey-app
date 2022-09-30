@@ -312,19 +312,23 @@ const Details = ({ type, contractAdd, profileAdd }) => {
         <Typography variant="subtitle1">
           {isFriend ? "Follow-NFT details" : "Group-NFT details"}
         </Typography>
-        <Button
-          startIcon={<TwitterIcon />}
-          size="small"
-          variant="outlined"
-          onClick={() => {
-            window.open(
-              `https://twitter.com/intent/tweet?original_referer=https%3A%2F%2Fpublish.twitter.com%2F&ref_src=twsrc%5Etfw%7Ctwcamp%5Ebuttonembed%7Ctwterm%5Eshare%7Ctwgr%5E&text=Follow-NFT%3A%20I%20released%20Follow-NFT%20at%20linkkey%20(https://linkkey.io)%2C%20hold%20my%20NFT%20to%20join%20my%20circle%20and%20become%20my%20Web3%20friend&via=%40LinkkeyOfficial`,
-              "_blank"
-            );
-          }}
-        >
-          Share
-        </Button>
+        {showDetails ? (
+          <Button
+            startIcon={<TwitterIcon />}
+            size="small"
+            variant="outlined"
+            onClick={() => {
+              window.open(
+                `https://twitter.com/intent/tweet?original_referer=https%3A%2F%2Fpublish.twitter.com%2F&ref_src=twsrc%5Etfw%7Ctwcamp%5Ebuttonembed%7Ctwterm%5Eshare%7Ctwgr%5E&text=Follow-NFT%3A%20I%20released%20Follow-NFT%20at%20linkkey%20(https://linkkey.io)%2C%20hold%20my%20NFT%20to%20join%20my%20circle%20and%20become%20my%20Web3%20friend&via=LinkkeyOfficial`,
+                "_blank"
+              );
+            }}
+          >
+            Share
+          </Button>
+        ) : (
+          <></>
+        )}
         {!isFriend && showDetails ? (
           <Button variant="outlined">Info</Button>
         ) : (

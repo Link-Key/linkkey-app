@@ -27,6 +27,7 @@ const getTokenIdOfName = async (name) => {
 
 const getResolverOwner = async (name) => {
   console.log("getResolverOwner:", name);
+  console.log("SNSInstance:", SNSInstance());
   try {
     const info = await SNSInstance().getInfo(emptyAddress, name, 0);
     return info.resolverOwner;

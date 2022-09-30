@@ -181,8 +181,8 @@ export default function Home() {
       sx={{
         display: "flex",
         justifyContent: "flex-end",
-        marginTop: "30vh",
-        marginRight: "100px",
+        marginTop: "20vh",
+        marginRight: "80px",
       }}
     >
       <Stack direction="column" justifyContent="center" spacing={2} p={0}>

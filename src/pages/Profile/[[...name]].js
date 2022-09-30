@@ -139,25 +139,27 @@ const Profile = ({ name }) => {
 
   useEffect(() => {
     console.log("profileName:", name);
-    if (name && name[0]) {
-      setSkeletonLoading(true);
-      getResolverOwner(name[0])
-        .then((address) => {
-          setProfileAdd(address.toLowerCase());
-          if (address.toLowerCase() === account) {
-            setIsSelf(true);
-          }
-          getUserInfo(address);
-        })
-        .catch((error) => {
-          console.log("getResolverOwnerErr:", error);
-          router.push("/");
-        })
-        .finally(() => {
-          setSkeletonLoading(false);
-        });
-      getBasicUserInfo(name[0]);
-    }
+    setTimeout(() => {
+      if (name && name[0]) {
+        setSkeletonLoading(true);
+        getResolverOwner(name[0])
+          .then((address) => {
+            setProfileAdd(address.toLowerCase());
+            if (address.toLowerCase() === account) {
+              setIsSelf(true);
+            }
+            getUserInfo(address);
+          })
+          .catch((error) => {
+            console.log("getResolverOwnerErr:", error);
+            router.push("/");
+          })
+          .finally(() => {
+            setSkeletonLoading(false);
+          });
+        getBasicUserInfo(name[0]);
+      }
+    }, 1000);
   }, [name, account, getBasicUserInfo, router, getUserInfo]);
 
   return (

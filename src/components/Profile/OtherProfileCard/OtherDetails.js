@@ -141,7 +141,7 @@ const OtherDetails = ({ type, contractAdd }) => {
             variant="outlined"
             onClick={handleOpenMintNFTDialog}
           >
-            {isFriend ? "Mint His Follow-NFT" : "Mint His Group-NFT"}
+            {isFriend ? "Mint" : "Mint"}
           </CommonLoadingBtn>
           <CommonLoadingBtn
             variant="outlined"
@@ -150,7 +150,7 @@ const OtherDetails = ({ type, contractAdd }) => {
               router.push(`/Market/PurchaseList/${nftAdd}`);
             }}
           >
-            {isFriend ? "Buy His Follow-NFT" : "Buy His Group-NFT"}
+            {isFriend ? "Buy" : "Buy"}
           </CommonLoadingBtn>
         </Stack>
       </Wrapper>

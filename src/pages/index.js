@@ -191,13 +191,14 @@ export default function Home() {
           severity="warning"
           style={{
             maxWidth: "400px",
+            color: "#ca8a04"
           }}
         >
-          <AlertTitle>Beta warning !</AlertTitle>
+          <AlertTitle style={{fontWeight: "600"}}>Beta warning !</AlertTitle>
           Linkkey is still in the beta phase(deployed on{" "}
           {
-            <Link href="https://polygon.technology/solutions/polygon-pos">
-              Polygon PoS Network
+            <Link style={{fontWeight: "600", color: "#ca8a04"}} href="https://polygon.technology/solutions/polygon-pos">
+              Polygon PoS
             </Link>
           }
           ), things may break, please handle us with care.

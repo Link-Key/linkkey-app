@@ -116,6 +116,7 @@ const Profile = ({ name }) => {
   };
 
   const getBasicUserInfo = useCallback(async (name) => {
+    console.log("getBasicUserInfo:", name);
     try {
       const userInfo = await fromNameGetInfo(name);
       setSkeletonLoading(false);
@@ -137,6 +138,7 @@ const Profile = ({ name }) => {
   }, []);
 
   useEffect(() => {
+    console.log("profileName:", name);
     if (name && name[0]) {
       setSkeletonLoading(true);
       getResolverOwner(name[0])
@@ -154,13 +156,9 @@ const Profile = ({ name }) => {
         .finally(() => {
           setSkeletonLoading(false);
         });
-
       getBasicUserInfo(name[0]);
     }
   }, [name, account, getBasicUserInfo, router, getUserInfo]);
-
-  console.log("profileAdd:", profileAdd);
-  console.log("userInfo:", userInfo);
 
   return (
     <Stack spacing={3}>

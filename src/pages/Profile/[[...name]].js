@@ -127,8 +127,7 @@ const Profile = ({ name }) => {
 
   const getUserInfo = useCallback(async (address) => {
     const resp = await queryUserInfo({ address });
-
-    if (resp && resp.code === 200 && resp.data.address) {
+    if (resp && resp.code === 200 && resp.data && resp.data.address) {
       setUserInfo(resp.data);
     }
   }, []);

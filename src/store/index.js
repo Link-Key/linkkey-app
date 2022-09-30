@@ -13,6 +13,7 @@ const rootReducer = combineReducers({
 const persistConfig = {
   key: "root",
   storage,
+  blacklist: ["chainId"],
 };
 
 console.log("persistConfig:", persistConfig);

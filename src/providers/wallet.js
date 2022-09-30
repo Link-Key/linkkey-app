@@ -154,6 +154,7 @@ const WalletProvider = ({ children }) => {
 
   const connectWallet = useCallback(async () => {
     const eth = window.ethereum;
+
     //judge wallet installed
     if (typeof eth == "undefined") {
       ToastMention({
@@ -170,6 +171,8 @@ const WalletProvider = ({ children }) => {
     }
 
     startLoading();
+
+    store.dispatch({ type: "SET_CHAIN_ID", value: chainsInfo.chainId });
 
     // connect wallet
     let accounts = [];

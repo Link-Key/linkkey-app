@@ -109,7 +109,7 @@ const ItemsCard = ({ type }) => {
           <MenuItem value="following">Following</MenuItem>
         </SelectWrapper>
       </TitleWrapper>
-      {friendList.length !== 0 ? (<Typography style={{fontStyle: "italic", marginBottom: "20px", color: "#777", fontSize: "15px"}}>Note: Need to sync blocks to update data of friends, pls wait if delay.</Typography>) : (<div></div>) }
+      {/*{friendList.length !== 0 ? (<Typography style={{fontStyle: "italic", marginBottom: "20px", color: "#777", fontSize: "15px"}}>Note: Need to sync blocks to update data of friends, pls wait if delay.</Typography>) : (<div></div>) }*/}
       {friendList.length !== 0 ? (
         <CardContentWrapper>
           <Box

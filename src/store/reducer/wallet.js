@@ -1,7 +1,7 @@
 import { chainsInfo } from "../../config/const";
 
 const initialWalletState = {
-  chainId: chainsInfo.chainId,
+  chainId: null,
   account: null,
   snsName: null,
   connecting: false,

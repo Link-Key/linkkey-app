@@ -129,7 +129,7 @@ const OtherDetails = ({ type, contractAdd }) => {
       </TitleWrapper>
 
       <Wrapper>
-        <Typography>Contract Address: {nftAdd}</Typography>
+        <Typography>Contract Address: {nftAdd === emptyAddress ? "-" : nftAdd}</Typography>
         <Typography>{`Minted/All: ${totalNFT} / ${
           isFriend ? "150" : "1500"
         }`}</Typography>

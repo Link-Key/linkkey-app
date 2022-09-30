@@ -357,7 +357,6 @@ const ProfileList = ({ type, name }) => {
           setSaleInfo({ address: "", contractAdd: "", tokenId: "", tax: "" });
         }}
       />
-      />
     </Stack>
   );
 };

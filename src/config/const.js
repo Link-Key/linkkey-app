@@ -16,27 +16,28 @@ export const linkList = {
 export const emptyAddress = "0x0000000000000000000000000000000000000000";
 
 // Main Network
-// export const chainsInfo = {
-//   chainId: "137",
-//   chainIdHex: "0x89",
-//   chainName: "Polygon Mainnet",
-//   token: "MATIC",
-//   rpcUrl: "https://polygon-rpc.com",
-//   blockExplorerUrls: "https://polygonscan.com",
-//   infuraUrl:'https://polygon-mainnet.infura.io/v3/5a380f9dfbb44b2abf9f681d39ddc382'
-// };
+export const chainsInfo = {
+  chainId: 137,
+  chainIdHex: "0x89",
+  chainName: "Polygon Mainnet",
+  token: "MATIC",
+  rpcUrl: "https://polygon-rpc.com",
+  blockExplorerUrls: "https://polygonscan.com",
+  infuraUrl:
+    "https://polygon-mainnet.infura.io/v3/5a380f9dfbb44b2abf9f681d39ddc382",
+};
 
 // Test Network //可以不需要这个
-export const chainsInfo = {
-  chainId: 80001,
-  chainIdHex: "0x13881",
-  chainName: "Polygon Mumbai",
-  token: "MATIC",
-  rpcUrl: "https://rpc-mumbai.maticvigil.com/",
-  blockExplorerUrls: "https://mumbai.polygonscan.com/",
-  infuraUrl:
-    "https://polygon-mumbai.g.alchemy.com/v2/lzpTmazJeflJIPmTouaSiDo4uYtKC1tw",
-};
+// export const chainsInfo = {
+//   chainId: 80001,
+//   chainIdHex: "0x13881",
+//   chainName: "Polygon Mumbai",
+//   token: "MATIC",
+//   rpcUrl: "https://rpc-mumbai.maticvigil.com/",
+//   blockExplorerUrls: "https://mumbai.polygonscan.com/",
+//   infuraUrl:
+//     "https://polygon-mumbai.g.alchemy.com/v2/lzpTmazJeflJIPmTouaSiDo4uYtKC1tw",
+// };
 
 // Test Network
 export const contractAddress = (chainId) => {
@@ -51,7 +52,7 @@ export const contractAddress = (chainId) => {
       keyAddress = "0x5CA9A8405499a1Ee8fbB1849f197b2b7e518985f";
       stakeAddress = "0x4417C0ABF812a943ca2491E0330970d42fa43E99";
       tradingAddress = "0x5E1E453C50AECCd16Fb2DaA8959FBBa8B35e5B63";
-      resolverAddress = "0x08f4372e1CdBDcD958cF5ad6ECcb5637E64A9Ac7"
+      resolverAddress = "0x08f4372e1CdBDcD958cF5ad6ECcb5637E64A9Ac7";
       break;
     case "80001":
       // snsAddress = "0x23bf7e618c5C2F2772620aa7D57fE6db27eeA176";
@@ -72,11 +73,11 @@ export const contractAddress = (chainId) => {
     keyAddress,
     stakeAddress,
     tradingAddress,
-    resolverAddress
+    resolverAddress,
   };
 };
 
 export const version = {
-  url: 'https://mirror.xyz/linkkeyio.eth/rJ8UlH-gVq-IaM19xJMXzy4wDZdOj8ImVyuY-BcZVww',
-  number: 'v1.0_alpha'
-}
+  url: "https://mirror.xyz/linkkeyio.eth/rJ8UlH-gVq-IaM19xJMXzy4wDZdOj8ImVyuY-BcZVww",
+  number: "v1.0_alpha",
+};

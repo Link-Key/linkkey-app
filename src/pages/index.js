@@ -8,6 +8,9 @@ import {
   styled,
   Typography,
   Link,
+  Alert,
+  AlertTitle,
+  Stack,
 } from "@mui/material";
 import { useState } from "react";
 import { useCallback, useEffect } from "react";
@@ -17,7 +20,7 @@ import { chainsInfo, linkList } from "../config/const";
 import { useWalletInfo } from "../providers/wallet";
 import store from "../store";
 import { compareAddress, splitAddress } from "../utils";
-
+import CoffeeIcon from "@mui/icons-material/Coffee";
 import Check from "@mui/icons-material/Check";
 import CircularProgress from "@mui/material/CircularProgress";
 import http from "../utils/https";
@@ -182,120 +185,138 @@ export default function Home() {
         marginRight: "100px",
       }}
     >
-      <Wrapper>
-        <Typography variant="title">
-          Welcome to LINNKEY, a Web3 Social Circle Protocol
-        </Typography>
-
-        <Typography variant="subtitle1">
-          Get started by reading the <Link href={linkList.docs}>docs</Link> or
-          joining the <Link href={linkList.discord}>community</Link>
-        </Typography>
-
-        <Stepper
-          activeStep={activeStep}
-          orientation="vertical"
-          sx={{ padding: "20px 10px" }}
-        >
-          <Step>
-            <StepLabelWrapper>
-              <Typography>
-                {account
-                  ? `Connected ${splitAddress(account)}`
-                  : "Connect Metamask"}
-              </Typography>
-
-              <LoadingBtn
-                variant="contained"
-                hidden={account}
-                loading={connecting}
-                onClick={() => {
-                  if (account) {
-                    disconnectWallet();
-                  } else {
-                    connectWallet();
-                  }
-                }}
-              >
-                Connect
-              </LoadingBtn>
-            </StepLabelWrapper>
-          </Step>
-
-          <Step>
-            <StepLabelWrapper>
-              <Typography>
-                {snsName
-                  ? `Hi, ${snsName} ~`
-                  : activeStep === 0
-                  ? "Get your sns domain name"
-                  : "SNS is not registered"}
-              </Typography>
-              {snsName ? (
-                <></>
-              ) : (
-                <LoadingBtn
-                  variant="contained"
-                  hidden={activeStep < 1}
-                  loading={connecting}
-                  onClick={() => {
-                    window.open(`${linkList.sns}`, "__blank");
-                  }}
-                >
-                  Register
-                </LoadingBtn>
-              )}
-            </StepLabelWrapper>
-          </Step>
-
-          <Step>
-            <StepLabelWrapper>
-              <Typography>
-                {clientAddress ? "Initialized" : "Initialize XMTP Client"}
-              </Typography>
-              <CommonLoadingBtn
-                variant="contained"
-                loading={connecting}
-                hidden={
-                  compareAddress(clientAddress, account) || activeStep < 2
-                }
-                onClick={async () => {
-                  startLoading();
-                  await initialClient();
-                  closeLoading();
-                }}
-              >
-                Initial
-              </CommonLoadingBtn>
-            </StepLabelWrapper>
-          </Step>
-
-          <Step>
-            <StepLabelWrapper>
-              <Typography>{token ? "Logged in" : "Login"}</Typography>
-              <CommonLoadingBtn
-                loading={connecting}
-                variant="contained"
-                hidden={activeStep < 3 || token}
-                onClick={handleLoginToken}
-              >
-                Login
-              </CommonLoadingBtn>
-            </StepLabelWrapper>
-          </Step>
-        </Stepper>
-        <CommonLoadingBtn
-          loading={initialLoading}
-          hidden={!token}
-          variant="contained"
-          onClick={() => {
-            setInitialLoading(true);
-            router.push(`Profile/${snsName}`);
+      <Stack direction="column" justifyContent="center" spacing={2} p={0}>
+        <Alert
+          icon={<CoffeeIcon />}
+          severity="warning"
+          style={{
+            maxWidth: "400px",
           }}
         >
-          Get started
-        </CommonLoadingBtn>
-      </Wrapper>
+          <AlertTitle>Beta warning !</AlertTitle>
+          Linkkey is still in the beta phase(deployed on{" "}
+          {
+            <Link href="https://polygon.technology/solutions/polygon-pos">
+              Polygon PoS Network
+            </Link>
+          }
+          ), things may break, please handle us with care.
+        </Alert>
+        <Wrapper>
+          <Typography variant="title">
+            Welcome to LINNKEY, a Web3 Social Circle Protocol
+          </Typography>
+
+          <Typography variant="subtitle1">
+            Get started by reading the <Link href={linkList.docs}>docs</Link> or
+            joining the <Link href={linkList.discord}>community</Link>
+          </Typography>
+
+          <Stepper
+            activeStep={activeStep}
+            orientation="vertical"
+            sx={{ padding: "20px 10px" }}
+          >
+            <Step>
+              <StepLabelWrapper>
+                <Typography>
+                  {account
+                    ? `Connected ${splitAddress(account)}`
+                    : "Connect Metamask"}
+                </Typography>
+
+                <LoadingBtn
+                  variant="contained"
+                  hidden={account}
+                  loading={connecting}
+                  onClick={() => {
+                    if (account) {
+                      disconnectWallet();
+                    } else {
+                      connectWallet();
+                    }
+                  }}
+                >
+                  Connect
+                </LoadingBtn>
+              </StepLabelWrapper>
+            </Step>
+
+            <Step>
+              <StepLabelWrapper>
+                <Typography>
+                  {snsName
+                    ? `Hi, ${snsName} ~`
+                    : activeStep === 0
+                    ? "Get your sns domain name"
+                    : "SNS is not registered"}
+                </Typography>
+                {snsName ? (
+                  <></>
+                ) : (
+                  <LoadingBtn
+                    variant="contained"
+                    hidden={activeStep < 1}
+                    loading={connecting}
+                    onClick={() => {
+                      window.open(`${linkList.sns}`, "__blank");
+                    }}
+                  >
+                    Register
+                  </LoadingBtn>
+                )}
+              </StepLabelWrapper>
+            </Step>
+
+            <Step>
+              <StepLabelWrapper>
+                <Typography>
+                  {clientAddress ? "Initialized" : "Initialize XMTP Client"}
+                </Typography>
+                <CommonLoadingBtn
+                  variant="contained"
+                  loading={connecting}
+                  hidden={
+                    compareAddress(clientAddress, account) || activeStep < 2
+                  }
+                  onClick={async () => {
+                    startLoading();
+                    await initialClient();
+                    closeLoading();
+                  }}
+                >
+                  Initial
+                </CommonLoadingBtn>
+              </StepLabelWrapper>
+            </Step>
+
+            <Step>
+              <StepLabelWrapper>
+                <Typography>{token ? "Logged in" : "Login"}</Typography>
+                <CommonLoadingBtn
+                  loading={connecting}
+                  variant="contained"
+                  hidden={activeStep < 3 || token}
+                  onClick={handleLoginToken}
+                >
+                  Login
+                </CommonLoadingBtn>
+              </StepLabelWrapper>
+            </Step>
+          </Stepper>
+          <CommonLoadingBtn
+            loading={initialLoading}
+            hidden={!token}
+            variant="contained"
+            onClick={() => {
+              setInitialLoading(true);
+              router.push(`Profile/${snsName}`);
+            }}
+          >
+            Get started
+          </CommonLoadingBtn>
+        </Wrapper>
+      </Stack>
     </Box>
   );
 }

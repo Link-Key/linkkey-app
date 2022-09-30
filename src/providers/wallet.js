@@ -208,7 +208,7 @@ const WalletProvider = ({ children }) => {
 
     const chainId = eth.networkVersion;
 
-    if (chainId && chainId !== 80001) {
+    if (chainId && chainId !== 137) {
       await switchChainToPolygon();
     }
   }, [

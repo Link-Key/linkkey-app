@@ -52,6 +52,8 @@ export const getTradingAddress = () => {
 
 export const getKeyBalance = async (owner) => {
   const keyAddress = getKeyAddress();
+  console.log("keyAddress:".keyAddress);
+  console.log("utilsChainId:", chainId);
   try {
     const balance = await getBalance(keyAddress, owner);
     const weiBalance = BNformatToWei(balance);

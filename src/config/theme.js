@@ -154,6 +154,13 @@ const lightTheme = responsiveFontSizes(
           },
         },
       },
+      MuiSkeleton: {
+        styleOverrides: {
+          root: {
+            borderRadius: "12px",
+          },
+        },
+      },
     },
   })
 );

@@ -25,7 +25,7 @@ const OtherProfileCard = ({ profileAdd }) => {
 
   const getStakeInfoFn = useCallback(async () => {
     const resp = await getStakedInfo(profileAdd);
-    console.log("resp:", resp);
+    console.log("getStakeInfoFn:", resp);
     if (resp && resp.friendNFTAddress && resp.groupNFTAddress) {
       setFriendAddress(resp.friendNFTAddress);
       setGroupAddress(resp.groupNFTAddress);

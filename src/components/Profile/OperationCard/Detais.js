@@ -389,7 +389,7 @@ const Details = ({ type, contractAdd, profileAdd }) => {
             minHeight="200px"
             spacing={1}
           >
-            <Tooltip title="Coming soon!" open={!isFriend}>
+            {isFriend ? (
               <CommonLoadingBtn
                 loading={btnLoading}
                 variant="outlined"
@@ -402,7 +402,22 @@ const Details = ({ type, contractAdd, profileAdd }) => {
               >
                 {isFriend ? "Release Follow-NFT" : "Release Group-NFT"}
               </CommonLoadingBtn>
-            </Tooltip>
+            ) : (
+              <Tooltip title="Coming soon!">
+                <CommonLoadingBtn
+                  loading={btnLoading}
+                  variant="outlined"
+                  sx={{
+                    fontWeight: 500,
+                  }}
+                  onClick={() => {
+                    isFriend ? handleReleaseDialogOpen() : "";
+                  }}
+                >
+                  {isFriend ? "Release Follow-NFT" : "Release Group-NFT"}
+                </CommonLoadingBtn>
+              </Tooltip>
+            )}
             <InfoOutlinedIcon
               onClick={() => {
                 setInfoOpen(true);

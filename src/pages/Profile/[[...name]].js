@@ -172,7 +172,7 @@ const Profile = ({ name }) => {
               sx={{
                 width: "100px !important",
                 height: "100px !important",
-                borderRadius: "12px",
+                borderRadius: "50%",
               }}
             />
           ) : (
@@ -186,7 +186,7 @@ const Profile = ({ name }) => {
                   fontWeight: 700,
                   fontSize: "28px",
                   lineHeight: "32px",
-                  color: "#ea6060",
+                  color: "#ee7e7e",
                 }}
               >
                 {profileName}

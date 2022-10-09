@@ -176,7 +176,7 @@ const Profile = ({ name }) => {
               }}
             />
           ) : (
-            <AvatarRandomGenerator />
+            <AvatarRandomGenerator account={profileAdd} />
           )}
 
           <Stack spacing={2} p={0}>

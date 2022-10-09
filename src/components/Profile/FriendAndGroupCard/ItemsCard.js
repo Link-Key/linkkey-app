@@ -16,6 +16,7 @@ import { queryFriends } from "../../../api";
 import { getResolverOwner } from "../../../contracts/SNS";
 import TableNoData from "../../../assets/icons/common/tableNoRows.svg";
 import CommonAvatar from "../../Common/CommonAvatar";
+import {splitAddress} from "../../../utils";
 
 const TitleWrapper = styled(Box)(() => ({
   display: "flex",
@@ -136,7 +137,7 @@ const ItemsCard = ({ type }) => {
                 ) : (
                   <CommonAvatar account={item.address} />
                 )}
-                <Typography>{item && item.name ? item.name : "-"}</Typography>
+                <Typography>{item && item.name ? (item.name.length == 42 ? splitAddress(item.name) : item.name) : "-"}</Typography>
               </Box>
             ))}
           </Box>

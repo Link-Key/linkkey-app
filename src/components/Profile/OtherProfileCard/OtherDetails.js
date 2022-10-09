@@ -157,7 +157,7 @@ const OtherDetails = ({ type, contractAdd }) => {
 
       <MintOtherDialog
         open={mintOpen}
-        title={isFriend ? "Release Follow-NFT" : "Release Group-NFT"}
+        title={isFriend ? "Mint Follow-NFT" : "Mint Group-NFT"}
         isFriend={isFriend}
         coinAddress={keyAddress}
         from={account}

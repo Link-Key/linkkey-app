@@ -60,7 +60,7 @@ const MarketItem = ({ type, info }) => {
       <Stack direction="row" justifyContent="space-between" p={0}>
         <Box>
           <Typography sx={{ fontWeight: 500, fontSize: "14px" }}>
-            Minable/All
+            Mintable/All
           </Typography>
           <Typography sx={{ fontWeight: 600 }}>{releaseAmount}/150</Typography>
         </Box>

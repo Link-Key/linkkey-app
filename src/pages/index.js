@@ -126,6 +126,14 @@ export default function Home() {
       };
     }
   );
+
+  Array.prototype.random = function () {
+    return this[Math.floor((Math.random()*this.length))];
+  }
+
+  const icon = ['😁', '🔢', '😁', '👀', '😎', '🤡', '💬', '🚣', '🏊‍♂️', '🐳', '🍚', '🏝️', '🏖️', '🚛', '🚢', '⏱️', '🌈', '⚛️', '☯️', '♎', '🏳️‍🌈', '🚩'].random();
+
+
   console.log("clientAddress:", clientAddress);
 
   const router = useRouter();
@@ -247,7 +255,7 @@ export default function Home() {
               <StepLabelWrapper>
                 <Typography>
                   {snsName
-                    ? `Hi, ${snsName} ~`
+                    ? `Hi, ${snsName} ${icon}`
                     : activeStep === 0
                     ? "Get your sns domain name"
                     : "SNS is not registered"}

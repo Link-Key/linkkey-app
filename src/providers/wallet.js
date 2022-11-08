@@ -243,6 +243,13 @@ const WalletProvider = ({ children }) => {
     subscribeFn();
   }, [subscribeFn]);
 
+  useEffect(() => {
+    const chainId = window.ethereum.networkVersion;
+    if (chainId && chainId !== 137) {
+      switchChainToPolygon();
+    }
+  }, [switchChainToPolygon]);
+
   return (
     <WalletInfoContent.Provider
       value={{

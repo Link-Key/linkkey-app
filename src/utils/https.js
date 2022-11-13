@@ -50,9 +50,6 @@ http.interceptors.response.use(
   (response) => {
     const { data, config } = response;
     const { code, msg: message } = data;
-
-    console.log("code:", code);
-
     if (code === 10001) {
       handleCode(code, message, config.url);
     }

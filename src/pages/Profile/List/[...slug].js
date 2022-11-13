@@ -272,7 +272,6 @@ const ProfileList = ({ type, name }) => {
         pageSize,
       };
       const resp = await queryFriends(reqParams);
-      console.log("resp:", resp);
       if (resp && resp.code === 200 && resp.data && resp.data.list) {
         setPageTotal(resp.data.pages);
         setFriendRows(resp.data.list);

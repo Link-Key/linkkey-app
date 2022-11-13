@@ -39,7 +39,6 @@ const CommonAvatar = ({ name, account, avatarUrl, sx }) => {
   );
 
   useEffect(() => {
-    // console.log("avatarUrl:", avatarUrl);
     if (avatarUrl) {
       setAvatarState(avatarUrl);
     } else {

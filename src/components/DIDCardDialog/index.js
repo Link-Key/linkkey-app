@@ -56,7 +56,6 @@ const DIDCardDialog = ({ open, onOpen, onClose, name }) => {
 
   const sharedImg = () => {
     let detailElement = document.getElementById("share");
-    console.log("detailElement:", detailElement);
     html2canvas(detailElement, {
       allowTaint: false,
       useCORS: true,

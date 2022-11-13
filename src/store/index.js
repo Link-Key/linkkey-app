@@ -16,8 +16,6 @@ const persistConfig = {
   blacklist: ["chainId"],
 };
 
-console.log("persistConfig:", persistConfig);
-
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 const store = configureStore({

@@ -172,6 +172,7 @@ const Details = ({ type, contractAdd, profileAdd }) => {
 
   const mintNFT = useCallback(async () => {
     const keyBalance = await getKeyBalance(account);
+    console.log("mintNFT-keyBalance:", keyBalance);
     if (keyBalance > feeState) {
       try {
         const tokenId = await getTokenIdOfName(keyName);
@@ -203,6 +204,7 @@ const Details = ({ type, contractAdd, profileAdd }) => {
         dialogDispatch({ type: "CLOSE_DIALOG" });
       }
     } else {
+      ToastMention({ message: "Balance is not enough !", type: "warn" });
       handleCloseReleaseDialog();
       dialogDispatch({ type: "CLOSE_DIALOG" });
     }

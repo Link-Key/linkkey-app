@@ -197,7 +197,6 @@ const WalletProvider = ({ children }) => {
       console.log("name:", name);
 
       if (name) {
-        console.log("name:", name);
         await getUserBasicInfo(name);
       }
 

@@ -42,7 +42,6 @@ const Conversation = ({ name, recipientAdd }) => {
   }, []);
 
   const handleChangeSendInp = useCallback((e) => {
-    console.log("e", e.target.value)
     setSendInp(e.target.value);
   }, []);
 
@@ -103,20 +102,18 @@ const Conversation = ({ name, recipientAdd }) => {
   }, [chatList, scrollToMessagesEndRef]);
 
   useEffect(() => {
-    const keyDownHandler = event => {
-
-      if (event.key === 'Enter') {
+    const keyDownHandler = (event) => {
+      if (event.key === "Enter") {
         event.preventDefault();
         // 👇️ your logic here
-        sendMessages(sendInp)
-
+        sendMessages(sendInp);
       }
     };
 
-    document.addEventListener('keydown', keyDownHandler);
+    document.addEventListener("keydown", keyDownHandler);
 
     return () => {
-      document.removeEventListener('keydown', keyDownHandler);
+      document.removeEventListener("keydown", keyDownHandler);
     };
   }, [sendInp]);
 

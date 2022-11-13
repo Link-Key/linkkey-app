@@ -20,7 +20,6 @@ const useTransaction = ({ coinAddress, from, to, price, executeFn }) => {
 
   const callApprove = useCallback(async () => {
     const value = await queryAllowance();
-    console.log("approveFee:", ethFormatToWei(price));
     console.log("price:", price);
 
     try {
@@ -47,7 +46,7 @@ const useTransaction = ({ coinAddress, from, to, price, executeFn }) => {
   const handlePayMint = useCallback(async () => {
     dialogDispatch({ type: "SET_LOADING", payload: true });
     const approveStatus = await callApprove();
-    console.log("approveStatus:", approveStatus);
+    console.log("approveStatus111:", approveStatus);
     if (approveStatus === "unApprove") {
       dialogDispatch({ type: "OPEN_DIALOG" });
       setTimeout(() => {

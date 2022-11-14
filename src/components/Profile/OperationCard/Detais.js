@@ -288,8 +288,12 @@ const Details = ({ type, contractAdd, profileAdd }) => {
 
   const getNFTInfoFn = useCallback(
     async (nftAddress) => {
-      const obj = await getNFTInfo(nftAddress, profileAdd);
+      let obj = await getNFTInfo(nftAddress, profileAdd);
       if (obj.tax || obj.balance) {
+        if (obj.tax) {
+          obj.tax = obj.tax / 10;
+        }
+        console.log("TaxObj:", obj.tax);
         setDetailsInfo(obj);
       }
       return obj;

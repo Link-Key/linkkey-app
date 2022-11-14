@@ -291,9 +291,8 @@ const Details = ({ type, contractAdd, profileAdd }) => {
       let obj = await getNFTInfo(nftAddress, profileAdd);
       if (obj.tax || obj.balance) {
         if (obj.tax) {
-          obj.tax = obj.tax / 10;
+          obj.tax = hexToNumber(tax) / 10;
         }
-        console.log("taxObj:", obj);
         setDetailsInfo(obj);
       }
       return obj;

@@ -37,7 +37,7 @@ jobs:
           npm install -g pm2
           yarn install
           yarn build
-          pm2 reload linkkey-app
+          # pm2 reload linkkey-app
           # pm2 start yarn --name "linkkey-app" --interpreter bash -- start
         env:
           CI: true

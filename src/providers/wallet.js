@@ -43,6 +43,7 @@ const WalletProvider = ({ children }) => {
     async (address) => {
       try {
         if (address) {
+          console.log("address:", address);
           const info = await getInfo(address, "", 0);
 
           dispatch({

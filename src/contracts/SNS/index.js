@@ -11,9 +11,9 @@ export const SNSInstance = () => {
   return SNS;
 };
 
-const getInfo = async (addr_, name_, tokenId_) => {
+const getInfo = async (addr_, name_, tokenId_, inviteAdd = emptyAddress) => {
   try {
-    const info = await SNSInstance().getInfo(addr_, name_, tokenId_);
+    const info = await SNSInstance().getInfo(addr_, name_, tokenId_, inviteAdd);
     return info;
   } catch (error) {
     console.log("getInfoErr:", error);
@@ -21,7 +21,7 @@ const getInfo = async (addr_, name_, tokenId_) => {
 };
 
 const getTokenIdOfName = async (name) => {
-  const info = await SNSInstance().getInfo(emptyAddress, name, 0);
+  const info = await SNSInstance().getInfo(emptyAddress, name, 0, emptyAddress);
   return info.tokenIdOfName;
 };
 
@@ -29,7 +29,12 @@ const getResolverOwner = async (name) => {
   console.log("getResolverOwner:", name);
   console.log("SNSInstance:", SNSInstance());
   try {
-    const info = await SNSInstance().getInfo(emptyAddress, name, 0);
+    const info = await SNSInstance().getInfo(
+      emptyAddress,
+      name,
+      0,
+      emptyAddress
+    );
     return info.resolverOwner;
   } catch (error) {
     console.log("getResolverOwnerErr:", error);
@@ -37,7 +42,7 @@ const getResolverOwner = async (name) => {
 };
 
 const nameExisted = async (name) => {
-  const info = await SNSInstance().getInfo(emptyAddress, name, 0);
+  const info = await SNSInstance().getInfo(emptyAddress, name, 0, emptyAddress);
   return info.recordExists;
 };
 

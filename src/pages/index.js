@@ -261,7 +261,7 @@ export default function Home() {
 
                 <LoadingBtn
                   variant="contained"
-                  loading={connecting}
+                  loading={account ? false : connecting}
                   onClick={() => {
                     if (account) {
                       disconnectWallet();

@@ -89,7 +89,6 @@ export const fromNameGetInfo = async (name) => {
 export const fromAddressGetName = async (address) => {
   try {
     const info = await getInfo(address, "", 0);
-    console.log("fromAddressGetName:", info);
     return info[2];
   } catch (error) {
     console.log("fromAddressGetNameErr:", error);

@@ -43,6 +43,7 @@ const WalletProvider = ({ children }) => {
     async (address) => {
       try {
         if (address) {
+          console.log("address:", address);
           const info = await getInfo(address, "", 0);
 
           dispatch({
@@ -197,7 +198,6 @@ const WalletProvider = ({ children }) => {
       console.log("name:", name);
 
       if (name) {
-        console.log("name:", name);
         await getUserBasicInfo(name);
       }
 
@@ -240,8 +240,17 @@ const WalletProvider = ({ children }) => {
   }, [dispatch]);
 
   useEffect(() => {
-    subscribeFn();
+    if (window.ethereum) {
+      subscribeFn();
+    }
   }, [subscribeFn]);
+
+  useEffect(() => {
+    const chainId = window.ethereum ? window.ethereum.networkVersion : false;
+    if (chainId && chainId !== 137) {
+      switchChainToPolygon();
+    }
+  }, [switchChainToPolygon]);
 
   return (
     <WalletInfoContent.Provider

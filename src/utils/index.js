@@ -1,9 +1,9 @@
 import { formatEther, parseEther, formatUnits } from "ethers/lib/utils";
-import { contractAddress } from "../config/const";
+import { chainsInfo, contractAddress } from "../config/const";
 import { getBalance } from "../contracts/ERC20";
 import store from "../store/index";
 
-const { chainId } = store.getState().walletInfo;
+const chainId = chainsInfo.chainId;
 
 export const compareAddress = (add1, add2) => {
   if (add1 && add2 && add1.toLowerCase() === add2.toLowerCase()) {
@@ -52,8 +52,6 @@ export const getTradingAddress = () => {
 
 export const getKeyBalance = async (owner) => {
   const keyAddress = getKeyAddress();
-  console.log("keyAddress:".keyAddress);
-  console.log("utilsChainId:", chainId);
   try {
     const balance = await getBalance(keyAddress, owner);
     const weiBalance = BNformatToWei(balance);

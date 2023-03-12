@@ -221,6 +221,37 @@
   {
     "inputs": [
       {
+        "internalType": "address",
+        "name": "addr_",
+        "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "name_",
+        "type": "string"
+      }
+    ],
+    "name": "InstitutionalRegist",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "_invite",
+    "outputs": [
+      {
+        "internalType": "contract InviteInterface",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "uint256",
         "name": "tokenId_",
         "type": "uint256"
@@ -327,6 +358,11 @@
         "internalType": "uint256",
         "name": "",
         "type": "uint256"
+      },
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
       }
     ],
     "stateMutability": "view",
@@ -407,6 +443,16 @@
     "inputs": [
       {
         "internalType": "address",
+        "name": "minter_",
+        "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "name_",
+        "type": "string"
+      },
+      {
+        "internalType": "address",
         "name": "inviter_",
         "type": "address"
       }
@@ -414,24 +460,31 @@
     "name": "getPrice",
     "outputs": [
       {
-        "internalType": "uint256",
-        "name": "maticPrice",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "keyPrice",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "lowbPrice",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "usdcPrice",
-        "type": "uint256"
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "maticPrice",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "keyPrice",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "lowbPrice",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "usdcPrice",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct ISns.PriceInfo",
+        "name": "priceInfo",
+        "type": "tuple"
       }
     ],
     "stateMutability": "view",
@@ -492,34 +545,6 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "key_",
-        "type": "address"
-      },
-      {
-        "internalType": "string",
-        "name": "name_",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "symbol_",
-        "type": "string"
-      },
-      {
-        "internalType": "address payable",
-        "name": "feeTo_",
-        "type": "address"
-      }
-    ],
-    "name": "initialize",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
         "name": "inviteAddress_",
         "type": "address"
       }
@@ -559,19 +584,6 @@
         "internalType": "string",
         "name": "name_",
         "type": "string"
-      }
-    ],
-    "name": "mint",
-    "outputs": [],
-    "stateMutability": "payable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "string",
-        "name": "name_",
-        "type": "string"
       },
       {
         "internalType": "uint256",
@@ -584,9 +596,9 @@
         "type": "address"
       }
     ],
-    "name": "mintByMoreCoins",
+    "name": "mint",
     "outputs": [],
-    "stateMutability": "nonpayable",
+    "stateMutability": "payable",
     "type": "function"
   },
   {
@@ -713,37 +725,6 @@
   {
     "inputs": [
       {
-        "internalType": "address[]",
-        "name": "addrs_",
-        "type": "address[]"
-      },
-      {
-        "internalType": "bool",
-        "name": "status_",
-        "type": "bool"
-      }
-    ],
-    "name": "setAssetsManager",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "bool",
-        "name": "canManagerMint_",
-        "type": "bool"
-      }
-    ],
-    "name": "setCanManagerMint",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
         "internalType": "uint256",
         "name": "newCoinsType_",
         "type": "uint256"
@@ -767,6 +748,11 @@
         "internalType": "uint256",
         "name": "coinsDestroyPercentage_",
         "type": "uint256"
+      },
+      {
+        "internalType": "bool",
+        "name": "isClose",
+        "type": "bool"
       }
     ],
     "name": "setCoins",
@@ -777,43 +763,32 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "defaultResolverAddress_",
-        "type": "address"
-      }
-    ],
-    "name": "setDefaultResolverAddress",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "newFeeTo_",
-        "type": "address"
-      }
-    ],
-    "name": "setFeeTo",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
         "internalType": "uint256",
-        "name": "increasesNumber_",
+        "name": "offerStartTime_",
         "type": "uint256"
       },
       {
         "internalType": "uint256",
-        "name": "increasesPrice_",
+        "name": "offerPeriod_",
         "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "offerTime_",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "offerRate_",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bool",
+        "name": "offerOpen_",
+        "type": "bool"
       }
     ],
-    "name": "setIncreases",
+    "name": "setIsOffer",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -834,41 +809,30 @@
   {
     "inputs": [
       {
-        "internalType": "string",
-        "name": "name_",
-        "type": "string"
+        "internalType": "uint256",
+        "name": "shortLength_",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "maticPrice_",
+        "type": "uint256"
       },
       {
         "internalType": "address",
-        "name": "resolverAddress_",
+        "name": "keyAddress_",
         "type": "address"
-      }
-    ],
-    "name": "setResolverInfo",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
+      },
       {
         "internalType": "uint256",
-        "name": "short_Length_MAX_",
+        "name": "keyPrice_",
         "type": "uint256"
       },
       {
         "internalType": "uint256",
-        "name": "short_Length_MIN_",
+        "name": "offerEndingTime_",
         "type": "uint256"
-      }
-    ],
-    "name": "setShortLength",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
+      },
       {
         "internalType": "address[]",
         "name": "addrs_",
@@ -876,11 +840,11 @@
       },
       {
         "internalType": "bool",
-        "name": "allowed_",
+        "name": "isFreeShortMint_",
         "type": "bool"
       }
     ],
-    "name": "setShortNameAllowed",
+    "name": "setShortMintParams",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -906,12 +870,12 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "stakeAddress_",
-        "type": "address"
+        "internalType": "uint256",
+        "name": "freeMintLength",
+        "type": "uint256"
       }
     ],
-    "name": "setStakeAddress",
+    "name": "setSystemInfo",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -930,37 +894,6 @@
       }
     ],
     "name": "setTokenURI",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address[]",
-        "name": "addrs_",
-        "type": "address[]"
-      },
-      {
-        "internalType": "bool",
-        "name": "status_",
-        "type": "bool"
-      }
-    ],
-    "name": "setUserTokenManager",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "string",
-        "name": "name_",
-        "type": "string"
-      }
-    ],
-    "name": "shortNameMint",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

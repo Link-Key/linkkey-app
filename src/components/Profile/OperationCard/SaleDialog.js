@@ -75,7 +75,7 @@ const SelectWrapper = styled(Select)(() => ({
 }));
 
 const SaleDialog = ({ open, title, contractAdd, tax, tokenId, onClose }) => {
-  let newTax = tax/10;
+  let newTax = tax / 10;
   const [saleInp, setSaleInp] = useState("");
   const [selectItem, setSelectItem] = useState("key");
   const [receiveInp, setReceiveInp] = useState("-");
@@ -93,7 +93,6 @@ const SaleDialog = ({ open, title, contractAdd, tax, tokenId, onClose }) => {
   const handleChangeSaleInp = useCallback(
     (e) => {
       const value = e.target.value;
-      console.log("value:", typeof value);
       if (/^[0-9]*$/.test(value) && !value.startsWith("0")) {
         setSaleInp(value);
         const receivePrice = (value * (100 - newTax - 2.5)) / 100;
@@ -132,7 +131,6 @@ const SaleDialog = ({ open, title, contractAdd, tax, tokenId, onClose }) => {
           tradingAddress,
           isApprove
         );
-        console.log("resp:", resp);
       } catch (error) {
         console.log("handleApproveFnErr:", error);
       }

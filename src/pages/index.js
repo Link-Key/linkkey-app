@@ -128,11 +128,33 @@ export default function Home() {
   );
 
   Array.prototype.random = function () {
-    return this[Math.floor((Math.random()*this.length))];
-  }
+    return this[Math.floor(Math.random() * this.length)];
+  };
 
-  const icon = ['😁', '🔢', '😁', '👀', '😎', '🤡', '💬', '🚣', '🏊‍♂️', '🐳', '🍚', '🏝️', '🏖️', '🚛', '🚢', '⏱️', '🌈', '⚛️', '☯️', '♎', '🏳️‍🌈', '🚩'].random();
-
+  const icon = [
+    "😁",
+    "🔢",
+    "😁",
+    "👀",
+    "😎",
+    "🤡",
+    "💬",
+    "🚣",
+    "🏊‍♂️",
+    "🐳",
+    "🍚",
+    "🏝️",
+    "🏖️",
+    "🚛",
+    "🚢",
+    "⏱️",
+    "🌈",
+    "⚛️",
+    "☯️",
+    "♎",
+    "🏳️‍🌈",
+    "🚩",
+  ].random();
 
   console.log("clientAddress:", clientAddress);
 
@@ -199,13 +221,16 @@ export default function Home() {
           severity="warning"
           style={{
             maxWidth: "400px",
-            color: "#ca8a04"
+            color: "#ca8a04",
           }}
         >
-          <AlertTitle style={{fontWeight: "600"}}>Beta warning</AlertTitle>
+          <AlertTitle style={{ fontWeight: "600" }}>Beta warning</AlertTitle>
           Linkkey is still in the experience phase(deployed on{" "}
           {
-            <Link style={{color: "#ca8a04"}} href="https://polygon.technology/solutions/polygon-pos">
+            <Link
+              style={{ color: "#ca8a04" }}
+              href="https://polygon.technology/solutions/polygon-pos"
+            >
               Polygon PoS
             </Link>
           }
@@ -236,8 +261,7 @@ export default function Home() {
 
                 <LoadingBtn
                   variant="contained"
-                  hidden={account}
-                  loading={connecting}
+                  loading={account ? false : connecting}
                   onClick={() => {
                     if (account) {
                       disconnectWallet();
@@ -246,7 +270,7 @@ export default function Home() {
                     }
                   }}
                 >
-                  Connect
+                  {account ? "Disconnect" : "Connect"}
                 </LoadingBtn>
               </StepLabelWrapper>
             </Step>

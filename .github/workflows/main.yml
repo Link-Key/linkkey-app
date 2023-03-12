@@ -38,6 +38,6 @@ jobs:
           yarn install
           yarn build
           pm2 reload linkkey-app
-          # pm2 start yarn --name "linkkey-app" --interpreter bash -- start
+          # /home/action/actions-runner/_work/_tool/node/16.15.0/x64/bin/pm2 start yarn --name "linkkey-app" --interpreter bash -- start
         env:
           CI: true
